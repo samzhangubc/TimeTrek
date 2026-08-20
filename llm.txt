@@ -1,0 +1,37 @@
+# TimeTrek: context for coding assistants
+
+TimeTrek is currently a planning-stage, public Windows desktop project. Do not begin implementation or select a stack unless the project owner asks.
+
+Purpose:
+- Help students track study time by course with very low interaction cost.
+- Store user information locally in the initial product.
+
+Confirmed product requirements:
+- The home screen resembles a DAW mixer structurally: one simple vertical strip per course.
+- Each course strip shows its main data and provides start timing, finish timing, add time, and delete time controls.
+- Starting timing opens an in-app popup, not a separate OS window.
+- A bare duration value means minutes; an `h` suffix means hours.
+- A timer stops automatically at its entered duration.
+- Closing the main window during an active timer keeps the app in the Windows notification area and tracking continues.
+- The notification-area representation should communicate elapsed session time, subject to Windows icon constraints.
+- Closing the main window with no active timer exits the app.
+- Course and time information persists locally.
+
+Guardrails:
+- Do not assume cloud sync, accounts, telemetry, third-party integrations, or cross-platform support.
+- Do not assume a framework, language, database, installer, or packaging technology.
+- Do not silently resolve open product questions such as simultaneous timers, optional durations, course metrics, or deletion semantics.
+- Use timestamps, not UI ticks, as the conceptual source of truth for elapsed time.
+- Treat "right side of the task bar" as the Windows notification area/system tray unless the owner clarifies otherwise.
+- Put mutable data in an appropriate per-user Windows application-data location when implementation begins.
+- Keep product documentation synchronized with confirmed decisions.
+
+Canonical repository context:
+- README.md: public project overview
+- docs/SDD.md: requirements and technical baseline
+- docs/CONTEXT.md: durable product background, terminology, assumptions, and open questions
+
+Current state as of 2026-08-20:
+- Documentation baseline only.
+- Implementation has not started.
+- More owner context is expected.
