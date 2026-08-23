@@ -1,37 +1,77 @@
 # TimeTrek: context for coding assistants
 
-TimeTrek is currently a planning-stage, public Windows desktop project. Do not begin implementation or select a stack unless the project owner asks.
+TimeTrek is a planning-stage source-available Windows desktop time tracker. Do not implement it or choose a stack until the owner asks. `docs/SDD.md` is the requirements authority; do not invent behavior for decisions it marks open.
 
-Purpose:
-- Help students track study time by course with very low interaction cost.
-- Store user information locally in the initial product.
+Core product:
+- Local-first and offline-capable; students are primary, but work/research/personal use is supported.
+- Home screen resembles a DAW mixer: one vertical strip per top-level Stream.
+- A Stream can be a course, job, client, research area, hobby, or similar context.
+- A scoped Category belongs to exactly one Stream; a global Category has no Stream parent.
+- A Project is standalone or optionally owned by one Stream.
+- A Session can be stray or use at most one Stream, multiple Categories, and one Project. Scoped Categories and an owned Project must match the Stream; a global Category does not require one.
 
-Confirmed product requirements:
-- The home screen resembles a DAW mixer structurally: one simple vertical strip per course.
-- Each course strip shows its main data and provides start timing, finish timing, add time, and delete time controls.
-- Starting timing opens an in-app popup, not a separate OS window.
-- A bare duration value means minutes; an `h` suffix means hours.
-- A timer stops automatically at its entered duration.
-- Closing the main window during an active timer keeps the app in the Windows notification area and tracking continues.
-- The notification-area representation should communicate elapsed session time, subject to Windows icon constraints.
-- Closing the main window with no active timer exits the app.
-- Course and time information persists locally.
+Timing and capture:
+- Start timing in an in-app dialog. Bare duration means minutes; `h` means hours.
+- Bounded Sessions stop automatically; all Sessions preserve timestamps/date/time-zone context.
+- Continue creates a new independent Session from a historical Session and does not copy timestamps or description.
+- Common manual entries can be recreated quickly as new Sessions.
+- Completion dialog appears after tracked/manual time. `Enter` saves/exits, even empty; `Shift+Enter` adds a line break.
+- Exactly one Session runs globally and every started Session requires a duration. Pause/resume is supported; cancel saves elapsed time.
+- Pomodoro repeats to a chosen total duration, remembers adjusted work/break defaults, uses a five-minute work buffer before break confirmation, and manually confirms every next work interval.
+
+History and Stats:
+- Built-in history filters by Stream, Category, Project, duration, date, billability, and origin; sorts by date, duration, and relevant names.
+- Stats contains a local day/hour timeline plus weekly/monthly totals and charts by Stream, Project, Category, and billability.
+- Stats defaults to current week with total, daily bar, selectable organization pie, billable split, top Projects, and timeline. Do not add productivity targets.
+
+Billing, rounding, archive, and data:
+- Billability and wage are optional; preserve historical rate/status.
+- Rounding is off by default, configurable globally/per Session, and never destroys raw timestamps/duration.
+- Streams, Categories, and Projects are archivable/restorable without changing history.
+- CSV and JSON export semantics are defined; physical column/property ordering is frozen during technical design without changing those semantics.
+- Offline local-file backup/restore is required; never include credentials silently.
+- Optional time budgets belong to Streams/Projects, are non-recurring by default with optional weekly/monthly reset, and have no alerts.
+
+Windows lifecycle:
+- Active Session + close: hide to notification area and continue. Nothing active/pending + close: exit.
+- `Ctrl+W` invokes that state-dependent close behavior. Other global shortcuts are limited to the documented quit and layout/accessibility commands, including Ctrl++/Ctrl+- icon scaling.
+- Optional idle/display handling stops on detected display-off/lock/screen-saver/suspend and notifies on next activity.
+- When enabled, active, and foreground, TimeTrek requests prevention of automatic sleep/display-off. Never block explicit user sleep/lock/shutdown.
+- Windows wake prevention does not itself prevent screen savers; framework-specific handling must be tested.
+
+Optional integrations and privacy:
+- Google Calendar does not ship initially. Preserve an integration boundary for a possible later backend-free read-only overlay and event-to-manual-Session conversion; the local timeline never depends on it.
+- Foreground-app tracking is off by default, opt-in, only active during Sessions, local, visible, and deletable.
+- Baseline foreground data is application identity and duration only. No keystrokes, screenshots, clipboard/content, browser history, window titles, or domains.
+- Never request administrator access unless an approved capability demonstrably requires it, and only during its opt-in flow.
+
+Appearance:
+- Modes: Light, Dark, Follow Windows, or scheduled switching.
+- Default is GitHub-inspired Light/Dark.
+- Each variant uses three primary palette colors: Canvas, Surface, Accent; supporting colors are derived/system-defined.
+- Preset order: GitHub Default, Codex Plus, Catppuccin, Gruvbox Medium, Solarized, Claude-inspired Warm, Google-inspired Material, Nord-inspired, Dracula-inspired, Monokai-inspired.
+- Custom palettes accept light/dark `#RRGGBB` triplets, import/export, contrast preview, and accessibility warnings.
+- Exact preset hex values and derivation await visual design. Custom colors are text hex in Settings; saved presets are JSON; low contrast warns but is allowed.
 
 Guardrails:
-- Do not assume cloud sync, accounts, telemetry, third-party integrations, or cross-platform support.
-- Do not assume a framework, language, database, installer, or packaging technology.
-- Do not silently resolve open product questions such as simultaneous timers, optional durations, course metrics, or deletion semantics.
-- Use timestamps, not UI ticks, as the conceptual source of truth for elapsed time.
-- Treat "right side of the task bar" as the Windows notification area/system tray unless the owner clarifies otherwise.
-- Put mutable data in an appropriate per-user Windows application-data location when implementation begins.
-- Keep product documentation synchronized with confirmed decisions.
-
-Canonical repository context:
-- README.md: public project overview
-- docs/SDD.md: requirements and technical baseline
-- docs/CONTEXT.md: durable product background, terminology, assumptions, and open questions
+- Use timestamps, not UI ticks, as time truth.
+- Preserve raw and rounded values separately.
+- Keep optional features progressive and core tracking simple.
+- Do not add cloud sync, accounts, telemetry, teams, approvals, GPS, screenshots, targets, or extra shortcuts.
+- Keep data in per-user Windows app data and secrets in protected credential storage.
+- Keep README.md, docs/SDD.md, docs/CONTEXT.md, and this file synchronized.
 
 Current state as of 2026-08-20:
-- Documentation baseline only.
-- Implementation has not started.
-- More owner context is expected.
+- Documentation only; implementation has not started.
+- Windows 10/11, x64/ARM64, per-user MSIX, single instance. Stack selection is intentionally later.
+- `docs/FIRST_RUN_WIZARD.md` defines the wizard baseline; Google Calendar is deferred and absent from the initial wizard. All choices remain editable.
+- Automatic updates must use authenticated, signed artifacts published through GitHub Releases; the MSIX updater, signing, and release workflow wait for the stack decision.
+- Functional behavior is closed for interface-design purposes. Late confirmed decisions include previewed organization migration or replacement, cascading deletion with delayed purge/Undo, scheduled-end crash recovery, signed negative adjustments, hard-cap Pomodoro wall-clock duration, no break application tracking, non-duplicating multi-Category Stats, per-Session currency-minor-unit earnings, historical budget counting, versioned ZIP backup with rollback snapshots/remapped merge conflicts, packaged CSV documentation, and stable-only prompted updates.
+- Intended license is PolyForm Noncommercial 1.0.0, pending inclusion/review; until then all rights are reserved.
+- Interface phase: follow `docs/INTERFACE.md`. The shell uses a non-collapsible icon-only navigation column (64 px default, draggable) and Archive as a primary destination. Home targets about six visible low-alpha color-tinted Stream channels at 1280 px. A persistent Studio One-like bottom transport bar owns global Session selection/configuration and Start/Pause/Stop; channels show their own time and also expose direct Start Timer.
+- Transport details: timer left, selectors/mode centered, controls right; visible everywhere except Settings; two-row reflow at 960 px. Every start prompts selected `25`; normal active duration remains editable to move the auto-stop boundary. Channel summary order is Total/Today/This Week with optional vertical budget progress.
+- Layout customization: practical horizontal regions and columns are draggable and saved immediately. All Stream channels share one persisted width; dragging any channel edge resizes every channel. Ctrl++/Ctrl+- changes persisted icon size without changing text, and Settings can reset the layout.
+- History uses one dense header above a virtualized table grouped by sticky date headings, persistent checkboxes, saved non-reorderable column widths, narrow-width priority hiding, and an optional saved-width right inspector. It defaults All time/newest first. Normal Delete confirms; Shift+Delete skips confirmation but still moves the Session to the dedicated recoverable Recently Deleted view.
+- Stats: five exact-time headline metrics; fixed-height four-month effective-time daily heatmap with Daily/Weekly/Cumulative/Timeline modes; selected-day inspector with Sessions and Stream pie; equal fixed lower Time-insight and ranking/breakdown columns that stack narrowly. Show both Top Streams and Top Projects, conditional billing/earnings/budgets below the headline strip, removable filter chips, and filtered-range Export.
+- Timeline: read-only seven-day vertical time grid inside the fixed Stats activity area; month-calendar day picking plus week navigation; active-hour fit with 24-hour toggle; hour-line zoom by buttons, Ctrl+wheel, and touchpad pinch; horizontally scrollable days; fixed day totals/current-time line; low-alpha Stream blocks with origin icons. Split overlaps/cross-midnight/pauses, shade and label stored breaks plus the work-time buffer, dim filtered blocks, and open History for edits. Empty-space selection starts manual entry.
+- Archive: tabs are All/Streams/Categories/Projects with Streams as default; persistent search/filters/sort/checkboxes; expandable Stream children; separate Global Category section; saved column/inspector widths; narrow overlay inspector. Projects have zero or one owning Stream, never multiple owners. When a Stream is archived, owned Projects archive automatically; standalone Projects shared through Sessions across Streams are optional unchecked choices with a cross-Stream impact warning. Restore can be bulk for compatible items, defaults parent-archived children selected and independently archived children unselected, and includes an archived owner when required. Active conflicts can queue Archive after Session stops. Permanent organization deletion is one root at a time with cascade preview and typed-name confirmation for large cascades; Session and organization data share configurable-retention Recently Deleted, and organization restores are atomic.
