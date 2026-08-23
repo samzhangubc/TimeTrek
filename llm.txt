@@ -61,6 +61,10 @@ Guardrails:
 - Keep data in per-user Windows app data and secrets in protected credential storage.
 - Keep README.md, docs/SDD.md, docs/CONTEXT.md, and this file synchronized.
 
+Repository workflow:
+- TimeTrek is a one-person project. Commit directly to `main` by default rather than creating feature branches or pull requests.
+- Use a separate branch only while a release is active or when the owner explicitly requests one.
+
 Current state as of 2026-08-20:
 - Documentation only; implementation has not started.
 - Windows 10/11, x64/ARM64, per-user MSIX, single instance. Stack selection is intentionally later.
