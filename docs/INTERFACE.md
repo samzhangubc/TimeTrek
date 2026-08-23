@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Status | Active interface-design specification |
-| Last updated | 2026-08-20 |
+| Last updated | 2026-08-23 |
 | Authority | Supplements `docs/SDD.md`; functional behavior remains defined by the SDD |
 
 ## 1. Design direction
@@ -21,7 +21,7 @@ Reference: [PreSonus Studio One Console documentation](https://s1manual.presonus
 - Every navigation icon has an accessible name and a hover/focus tooltip.
 - The navigation column contains navigation only. Active-Session status and transport controls live in the persistent bottom transport bar.
 - Archive is a dedicated primary navigation destination.
-- Home, History, Stats, and Settings are also primary destinations; final icon order and exact treatment remain to be designed.
+- Home, History, Stats, Archive, and Settings are the finalized primary destinations in that order, with Settings anchored at the bottom. Exact icon glyph and palette treatment remain visual-polish work.
 - Practical horizontal regions, split panes, and data columns expose pointer-drag resize handles plus keyboard-accessible resizing. Every customized width is saved immediately and restored automatically.
 - `Ctrl++` and `Ctrl+-` increase or decrease application icon size without changing text size. The chosen icon scale is saved automatically.
 - Settings provides a Reset Layout action for restoring default widths and icon size.
@@ -66,7 +66,7 @@ The Studio One-inspired bottom transport bar is the authoritative global Session
 
 - At ordinary width it is a single 88–96 px row. At the 960 px minimum it reflows into two rows rather than hiding or horizontally scrolling controls.
 - Its left area shows the `hh:mm:ss` selected/active timer. Its center contains Stream, searchable multi-select Category chips, searchable single-select Project, Normal/Pomodoro segmented mode, and timing configuration. Its right area contains transport controls.
-- It provides Previous-state/Cancel, Pause/Resume, and a visually dominant Start/Stop action; unavailable actions remain visible but disabled.
+- Before timing starts, Cancel dismisses the start workflow without creating a Session. Once active, the transport provides Pause/Resume and a visually dominant Stop action that saves elapsed time; unavailable actions remain visible but disabled.
 - Pomodoro work/break values remain visibly editable in the transport whenever Pomodoro mode is selected.
 - Billing, wage, currency, and rounding do not occupy permanent transport controls. Category defaults are managed with Categories, and Session overrides are handled in Session-start settings.
 - With no active Session, clicking a Stream selects it and loads that Stream plus its remembered next-Session defaults into the transport bar.
@@ -98,7 +98,7 @@ The requested total duration remains editable while a normal Session is active. 
 - The active channel replaces direct Start with an **Active** state. Pause and Stop remain authoritative in the bottom transport.
 - A faint empty Session-progress rail remains on every channel for alignment; the active Stream fills it according to requested-duration progress.
 - Summary order is **Total**, **Today**, then **This Week**, each as a vertically aligned labelled row.
-- If a time budget exists, a separate vertical budget-progress bar appears and uses the configured daily, weekly, monthly, or total basis. No budget bar is reserved when none is configured.
+- If a time budget exists, a separate vertical budget-progress bar appears, uses raw actual time, and follows the configured daily, weekly, monthly, or total basis. No budget bar is reserved when none is configured.
 - Labelled **Add Session** and **Adjust Time** actions occupy the channel bottom.
 
 ### Mixer movement and editing
@@ -158,7 +158,7 @@ The result remains restrained and information-dense, but uses slightly larger ty
 
 ### Header and headline strip
 
-- One compact header contains previous/next period controls, Week/Month/Custom range, Stream/Category/Project/billability filter popovers, and Export. Applied filters appear as removable chips.
+- One compact header contains previous/next period controls, Week/Month/Custom range, a Raw/Effective basis selector that defaults Raw, Stream/Category/Project/billability filter popovers, and Export. Applied filters appear as removable chips.
 - The headline strip is one subtly rounded container divided evenly into five exact `hh:mm:ss` values: lifetime total, selected-range total, daily average, longest Session, and Session count.
 - Billing never replaces a headline metric. Billable and earnings information appears in the lower insights when applicable.
 - Clicking a headline metric changes the dominant activity view to explain that metric.
@@ -166,11 +166,11 @@ The result remains restrained and information-dense, but uses slightly larger ty
 ### Activity area
 
 - The fixed-height dominant area uses a compact **Daily / Weekly / Cumulative / Timeline** view switch aligned with its heading.
-- Daily is a calendar heatmap covering the most recent four months. Every cell is one day and encodes effective tracked duration using intensity relative to the greatest displayed day.
-- Weekly is a seven-day stacked-bar view. Cumulative is a cumulative-time line chart. Timeline is a separate view within this activity area; its detailed layout remains the next Stats decision round.
+- Daily is a calendar heatmap covering the most recent four months. Every cell is one day and encodes the selected raw/effective duration basis using intensity relative to the greatest displayed day; Raw is the first-launch default.
+- Weekly is a seven-day stacked-bar view. Cumulative is a cumulative-time line chart. Timeline is the finalized seven-day time-grid view within this activity area.
 - The heatmap uses the global accent color, switching to the configured Stream color when exactly one Stream is filtered. Empty days remain as faint neutral cells.
 - Month labels and sparse weekday labels follow the configured Sunday/Monday week start.
-- Hover shows date, effective and raw time, Session count, and top Stream.
+- Hover shows date, raw and effective time, Session count, and top Stream.
 - Single-click selects a day and opens a right inspector with that day's Sessions plus a Stream pie breakdown. Double-click has no separate action.
 
 ### Timeline view
@@ -194,10 +194,11 @@ The result remains restrained and information-dense, but uses slightly larger ty
 
 - Two equal fixed-width columns sit beneath activity and stack at narrow widths. This is an explicit exception to the general draggable-width rule; their divider is not resizable.
 - **Time insights** uses quiet label/value rows for most active day, longest Session, daily average, active days, and total Sessions.
-- When applicable, Time insights also presents billable/non-billable time, earnings grouped by currency, and small budget-progress indicators beside relevant rows.
+- When applicable, Time insights also presents billable/non-billable time, earnings grouped by currency, and raw-time budget-progress indicators beside relevant rows.
 - The right side simultaneously lists **Top Streams** and **Top Projects**, five each with Show All. Every row shows a color marker, name, exact duration, and percentage.
 - Clicking a ranking row filters the entire Stats page to that item.
 - The right side also offers a Breakdown view using a Stream/Project/Category donut chart with compact legend.
+- Additive Category charts use one **Multiple Categories** segment for multi-Category Sessions. Selecting it drills into Category combinations and constituent Sessions. A separate **Category involvement** view is explicitly non-additive and warns that its values cannot be summed into total time.
 - The lower columns are equal rather than user-resizable. The activity height is also fixed; all other global navigation, inspector, and icon-size persistence rules still apply.
 
 ## 7. Archive reference layout
@@ -260,10 +261,10 @@ Cards appear in this order: **General, Appearance, Timing, Pomodoro, Billing, Ac
 - **Timing:** default duration, last-used mode, accepted formats, completion behavior, rounding controls, and live rounding examples.
 - **Pomodoro:** work, break, five-minute buffer, break-billing, and notification defaults.
 - **Billing:** enablement overview and progressively revealed details. Category wage editing remains with Categories and is reached through a shortcut.
-- **Activity & Privacy:** disclosure, foreground tracking, idle/display handling, elevation preference, approximate records/storage, and Purge All.
+- **Activity & Privacy:** disclosure, foreground tracking, idle/display handling, the non-elevating **Unknown elevated application** behavior, approximate records/storage, and Purge All.
 - **Windows:** startup, notification-area, notification, sound, and window behavior.
-- **Data:** distinct Export, Backup, Restore, Recently Deleted, and Reset groups. Reset All Settings previews preference changes and preserves data.
-- **Updates:** installed version, last check, stable-only policy, automatic-update control, and Check Now.
+- **Data:** distinct Export, Backup, Restore, Recently Deleted, and Reset groups. Export keeps **Include application breakdown** off by default; full Backup discloses that opted-in application records are included. Reset All Settings previews preference changes and preserves data.
+- **Updates:** installed version, last check, stable-only policy, separate Check automatically and Download automatically controls, and Check Now.
 - **About:** version, update state, license, repository, acknowledgements, and privacy-preserving Copy Diagnostics.
 
 ### Recently Deleted and destructive thresholds
@@ -277,7 +278,7 @@ Cards appear in this order: **General, Appearance, Timing, Pomodoro, Billing, Ac
 
 - Layout groups navigation width, icon size, shared channel width, saved panels/columns, and Reset Layout. The reset action previews its scope and confirms.
 - Applicable detail-panel widths and Advanced expansion states save automatically.
-- The Settings design follows WCAG 2.2 AA principles where applicable, Windows UI Automation, system text scaling, complete keyboard operation, screen-reader labels, and non-color state cues.
+- Default and built-in Settings presentation follows WCAG 2.2 AA principles where applicable, Windows UI Automation, system text scaling, complete keyboard operation, screen-reader labels, and non-color state cues. A low-contrast custom palette may be saved only after an explicit warning acknowledgement and is treated as a user-selected palette-contrast exception.
 
 ## 9. Current design phase
 

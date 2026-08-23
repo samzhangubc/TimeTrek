@@ -47,7 +47,7 @@ A Session can be stray; use only a Stream, Project, or global Category; or use a
 - The Stats page includes weekly/monthly summaries and graphs such as proportional breakdowns by Stream, Project, Category, or billability.
 - Productivity targets are explicitly excluded.
 
-Stats defaults to the current week, with month and custom ranges. It initially includes total time, a daily bar chart, a selectable Stream/Project/Category pie chart, billable split, top Projects, and the timeline. Timeline editing initially occurs through History.
+Stats defaults to a four-month Daily heatmap and provides Week, Month, Custom, Weekly, Cumulative, and Timeline views. Raw actual time is the default reporting basis, with an explicit Effective/Rounded basis available. Timeline geometry always follows raw timestamps, and editing occurs through History.
 
 ## Billing, time budgets, and rounding
 
@@ -59,14 +59,14 @@ Stats defaults to the current week, with month and custom ranges. It initially i
 - Rounding is off by default and supports increments such as nearest 5 or 10 minutes.
 - Raw timestamps/duration remain preserved when a rounded duration is used.
 
-Rounding offers 5/10/15/30-minute presets and custom 1–60-minute increments, uses banker's rounding at midpoints, and is configured in the first-run wizard and Settings. Billing and Stats use rounded time; History and exports expose raw and rounded values.
+Rounding offers 5/10/15/30-minute presets and custom 1–60-minute increments, uses banker's rounding at midpoints, and is configured in the first-run wizard and Settings. Billing uses rounded time. Stats defaults to raw actual time with an explicit Effective/Rounded basis; History and exports expose both values.
 
 ## Windows lifecycle and interruption behavior
 
 - Closing the main window during an active Session hides it to the Windows notification area and tracking continues.
 - Closing when nothing is active or pending exits the application.
 - `Ctrl+W` invokes that same state-dependent close behavior.
-- No other custom shortcuts are planned beyond normal quit behavior.
+- Only documented keyboard behavior is allowed: contextual navigation, search, timeline zoom, accessibility, layout, close, and quit commands. Hidden global action shortcuts are excluded.
 - Optional idle/display interruption handling is configured in Settings.
 - When enabled and TimeTrek is foreground during a Session, it requests that Windows prevent automatic sleep and monitor power-off.
 - Explicit user sleep, lock, sign-out, shutdown, or display-off actions are never blocked.
@@ -77,14 +77,14 @@ Windows' documented wake-prevention API does not suppress screen savers, so the 
 ## Optional foreground-application tracking
 
 - Off by default.
-- Enabled only through an explicit Settings action and disclosure.
+- Enabled only through an explicit action and full disclosure in Settings or the optional Advanced wizard.
 - Collects only during an active Session.
 - Baseline data is application identity plus foreground duration.
 - No keystrokes, screenshots, clipboard data, content, or browser history.
-- No permission or administrator request until the user enables the feature, and then only the minimum technically necessary access.
+- No permission request occurs until the user enables the feature, and then only the minimum non-administrator access is requested. The initial feature never elevates.
 - Stored locally, visibly indicated while active, and deletable by the user.
 
-Only application display name and executable filename are stored. Window titles, full paths, and browser domains are excluded. A per-Session application breakdown appears at completion. Identification failures may offer elevation, which the user may decline and ignore.
+Only application display name and executable filename are stored. Window titles, full paths, and browser domains are excluded. A per-Session application breakdown appears at completion. TimeTrek never elevates for this feature; inaccessible elevated applications accumulate under **Unknown elevated application**.
 
 ## Calendar integration
 
@@ -132,15 +132,15 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 
 ## Confirmed decision baseline — 2026-08-20
 
-- Windows 10/11, x64 and ARM64 at launch; per-user MSIX; one instance per user.
-- One active Session globally. A duration is required; supported formats include bare minutes, hours, mixed units, minute suffixes, and `HH:MM`. Warn at 24 hours but continue. Pause/resume excludes pauses; cancelling saves elapsed time.
+- Windows 10/11, x64 and ARM64 from the first executable build intended for use; per-user MSIX; one instance per user.
+- One active Session globally. A duration is required; supported formats include bare minutes, hours, mixed units, minute suffixes, and `HH:MM`. Warn at 24 hours but continue. Pre-start Cancel creates no Session; after start, Stop saves elapsed time.
 - A Session supports at most one Stream, multiple Categories, and one Project. Category scope changes prompt for the desired valid historical behavior.
 - Stream strips show active timing, start/stop, manual add, negative/delete time, next-Session Category/Project defaults, and today/week/total. Negative/delete time asks between selecting exact Sessions and making a negative adjustment.
 - Archiving a Stream automatically archives its scoped Categories and owned Projects. Projects cannot have multiple owning Streams, but standalone Projects can be used with several Streams; those shared Projects appear as optional, unchecked archive choices with a cross-Stream impact warning.
 - Continue copies associations, billability, and wage. Quick manual recreation copies associations only.
 - Hidden completion uses a Windows notification that restores the in-app completion view; pending descriptions queue; descriptions remain editable.
-- `Ctrl+Q` explicitly quits with active-Session confirmation. `Alt+F4` behaves like explicit quit; `Ctrl+W` retains state-dependent hide/exit behavior. The notification-area timer uses compact `h:mm` plus an exact tooltip.
-- Pomodoro repeats to a requested total duration, asks total/work/break values, remembers the most recent work/break defaults, uses a five-minute work buffer before break confirmation, requires confirmation for each new work interval, and asks whether separately stored breaks are billable.
+- `Ctrl+Q` explicitly quits with active-Session confirmation. The window close control, `Alt+F4`, and `Ctrl+W` share state-dependent hide/exit behavior. The notification-area timer uses compact `h:mm` plus an exact tooltip.
+- Pomodoro repeats to a requested total cycle duration, asks total/work/break values, remembers the most recent work/break defaults, uses a five-minute work buffer before break confirmation, requires confirmation for each new work interval, and asks whether separately stored breaks are billable. Manual pauses freeze and do not consume the total countdown.
 - Idle/display handling and configurable generic inactivity default on, with the user's detailed choices finalized in first-run setup. Resume uses a notification into pending completion.
 - History uses OR within dimensions and AND between dimensions, searches descriptions and organization names, defaults newest-first, supports full editing, and provides confirmation plus Undo for deletion.
 - Categories provide the default billability for Sessions; a Session may override it at start. Multiple currencies are supported. Earnings are estimates only; invoicing is excluded.
@@ -151,13 +151,13 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Explicit quit stops and saves after confirmation; crash recovery reconstructs active bounded Sessions and uses the scheduled end when it has passed.
 - Negative corrections are signed adjustment records and may make totals visibly negative. Manual Sessions partly or wholly in the future warn but are allowed after confirmation.
 - Pomodoro shortens its final work interval, caps boundary overtime at five minutes before automatic break recording, supports defined Pause/Skip behavior, and preserves partial segments when stopped.
-- Multi-Category chart time appears once as Multiple Categories; stray time is Uncategorized; earnings remain grouped by currency; cross-midnight rounded time is allocated proportionally.
-- Time budgets count toward both associated Stream and Project, exclude breaks, include negative adjustments, and reset on local calendar boundaries.
-- CSV keeps one Session row with JSON-array Category cells and uses a companion application CSV; JSON nests application records. Backups are versioned ZIP containers with checksums and deterministic merge remapping.
-- Backups include all non-secret app data and settings, are not application-encrypted, and restore by previewed Replace or Merge (Replace default).
-- Appearance warns but permits low contrast, derives accessible chart colors, and schedules light at 07:00/dark at 19:00 by default.
+- Multi-Category additive chart time appears once as Multiple Categories and drills into combinations/Sessions; a separate Category-involvement view is explicitly non-additive. Stray time is Uncategorized; earnings remain grouped by currency; cross-midnight rounded time is allocated proportionally.
+- Time budgets count raw actual time toward both associated Stream and Project, exclude breaks, include negative adjustments, and reset on local calendar boundaries. Billing uses rounded effective time.
+- CSV keeps one Session row with JSON-array Category cells; an explicit per-export **Include application breakdown** option, off by default, adds the companion application CSV, while JSON nests the same opted-in records. Backups are versioned ZIP containers with checksums and deterministic merge remapping.
+- Backups include all non-secret app data and settings, including opted-in application records after disclosure, are not application-encrypted, and restore by previewed Replace or Merge (Replace default).
+- Appearance warns but permits low-contrast custom palettes after explicit acknowledgement. Built-in/default palettes target WCAG 2.2 AA; acknowledged custom palettes are a contrast exception. Scheduled mode defaults light at 07:00 and dark at 19:00.
 - The first-run wizard covers all user defaults, including Sunday/Monday week start, rounding, idle handling, and start with Windows. All choices remain editable.
-- The finalized wizard flow is recorded in `docs/FIRST_RUN_WIZARD.md`: required basic setup, optional advanced setup, restart-on-abandon, rerunnable settings, optional MATH 100 and Work samples, overwrite-on-type 25-minute default, last-used timing mode, Windows-derived regional/accessibility choices, optional billing and activity tracking, and hover/focus tooltips after setup.
+- The finalized wizard flow is recorded in `docs/FIRST_RUN_WIZARD.md`: **Use recommended defaults** fast path, required step-by-step basic setup, genuinely optional Advanced setup, restart-before-basic-completion with saved values prefilled, rerunnable settings, optional MATH 100 and Work samples, overwrite-on-type 25-minute default, last-used timing mode, Windows-derived regional/accessibility choices, optional billing and activity tracking, and hover/focus tooltips after setup.
 - Application updates shall use authenticated, signed artifacts published through GitHub Releases. The eventual release pipeline must build/sign x64 and ARM64 MSIX packages and publish updater metadata; its exact implementation waits for stack and signing decisions.
 - `docs/RELEASE.md` records the verified repository state and the required release workflow, integrity checks, safe deferral during active Sessions, and signing controls.
 - Intended licensing is PolyForm Noncommercial 1.0.0 (source-available, not open source), pending inclusion of its unmodified terms and required notice; until then, all rights are reserved.
@@ -175,7 +175,8 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Settings uses a responsive card dashboard with General first, no internal section sidebar, persistent global search, immediate ordinary saves with quiet status, Advanced disclosures, no bottom transport, and one-column narrow reflow. Cards follow General, Appearance, Timing, Pomodoro, Billing, Activity & Privacy, Windows, Data, Updates, and About.
 - Recently Deleted defaults to 30 days, supports 7/14/30/60/90-day presets and custom 1–365 days, shows purge deadlines, and purges automatically. A large organization cascade begins at five affected organization objects or 25 Sessions.
 - Settings provides live appearance/rounding previews, progressive billing controls, privacy/storage disclosure, update status, data tools, preference-only reset, sample-data creation, safe wizard rerun, and content-excluding diagnostics. Google Calendar has no placeholder UI before it ships.
-- Accessibility targets WCAG 2.2 AA principles where applicable, complete keyboard access, Windows UI Automation, screen-reader labeling, system text scaling, and non-color state cues.
+- Built-in/default presentation targets WCAG 2.2 AA principles where applicable, complete keyboard access, Windows UI Automation, screen-reader labeling, system text scaling, and non-color state cues. Explicitly acknowledged custom palettes may violate contrast only.
+- All non-Calendar functional requirements form one initial-release baseline rather than a reduced MVP. Implementation may be sequenced incrementally, but Windows 10/11 and x64/ARM64 support are expected from the first executable build intended for use.
 
 ## Technical guardrails
 
@@ -203,6 +204,11 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Never commit secrets, local databases, build output, or machine-specific configuration.
 
 ## Context history
+
+### 2026-08-23 — First-principles consistency audit
+
+- Resolved Pomodoro pause timing, setup completion, documented shortcut scope, close behavior, raw-default Stats and budgets, multi-Category drill-down, non-elevating activity tracking, explicit activity-export inclusion, update-control semantics, and low-contrast accessibility exceptions.
+- Confirmed one unified non-Calendar initial-release baseline and Windows 10/11 x64/ARM64 coverage from the first executable build intended for use.
 
 ### 2026-08-20 — Initial baseline
 

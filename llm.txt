@@ -16,13 +16,13 @@ Timing and capture:
 - Continue creates a new independent Session from a historical Session and does not copy timestamps or description.
 - Common manual entries can be recreated quickly as new Sessions.
 - Completion dialog appears after tracked/manual time. `Enter` saves/exits, even empty; `Shift+Enter` adds a line break.
-- Exactly one Session runs globally and every started Session requires a duration. Pause/resume is supported; cancel saves elapsed time.
+- Exactly one Session runs globally and every started Session requires a duration. Pause/resume is supported. Pre-start Cancel creates no record; after start, Stop always saves elapsed time.
 - Pomodoro repeats to a chosen total duration, remembers adjusted work/break defaults, uses a five-minute work buffer before break confirmation, and manually confirms every next work interval.
 
 History and Stats:
 - Built-in history filters by Stream, Category, Project, duration, date, billability, and origin; sorts by date, duration, and relevant names.
 - Stats contains a local day/hour timeline plus weekly/monthly totals and charts by Stream, Project, Category, and billability.
-- Stats defaults to current week with total, daily bar, selectable organization pie, billable split, top Projects, and timeline. Do not add productivity targets.
+- Stats defaults to a four-month Daily heatmap and raw actual time, with an explicit Effective/Rounded basis. It includes five headline metrics, Daily/Weekly/Cumulative/Timeline views, Stream/Project rankings, additive breakdowns, and no productivity targets. Timeline geometry always uses raw timestamps.
 
 Billing, rounding, archive, and data:
 - Billability and wage are optional; preserve historical rate/status.
@@ -30,11 +30,11 @@ Billing, rounding, archive, and data:
 - Streams, Categories, and Projects are archivable/restorable without changing history.
 - CSV and JSON export semantics are defined; physical column/property ordering is frozen during technical design without changing those semantics.
 - Offline local-file backup/restore is required; never include credentials silently.
-- Optional time budgets belong to Streams/Projects, are non-recurring by default with optional weekly/monthly reset, and have no alerts.
+- Optional time budgets belong to Streams/Projects, use raw actual time, are non-recurring by default with optional weekly/monthly reset, and have no alerts. Billing uses rounded effective time.
 
 Windows lifecycle:
 - Active Session + close: hide to notification area and continue. Nothing active/pending + close: exit.
-- `Ctrl+W` invokes that state-dependent close behavior. Other global shortcuts are limited to the documented quit and layout/accessibility commands, including Ctrl++/Ctrl+- icon scaling.
+- `Ctrl+W` and `Alt+F4` invoke that state-dependent close behavior; `Ctrl+Q` is explicit quit. Only documented contextual navigation, search, zoom, accessibility, layout, close, and quit shortcuts are allowed.
 - Optional idle/display handling stops on detected display-off/lock/screen-saver/suspend and notifies on next activity.
 - When enabled, active, and foreground, TimeTrek requests prevention of automatic sleep/display-off. Never block explicit user sleep/lock/shutdown.
 - Windows wake prevention does not itself prevent screen savers; framework-specific handling must be tested.
@@ -43,7 +43,7 @@ Optional integrations and privacy:
 - Google Calendar does not ship initially. Preserve an integration boundary for a possible later backend-free read-only overlay and event-to-manual-Session conversion; the local timeline never depends on it.
 - Foreground-app tracking is off by default, opt-in, only active during Sessions, local, visible, and deletable.
 - Baseline foreground data is application identity and duration only. No keystrokes, screenshots, clipboard/content, browser history, window titles, or domains.
-- Never request administrator access unless an approved capability demonstrably requires it, and only during its opt-in flow.
+- Never request administrator access for initial foreground-application tracking. Inaccessible elevated intervals are retained as Unknown elevated application.
 
 Appearance:
 - Modes: Light, Dark, Follow Windows, or scheduled switching.
@@ -51,7 +51,7 @@ Appearance:
 - Each variant uses three primary palette colors: Canvas, Surface, Accent; supporting colors are derived/system-defined.
 - Preset order: GitHub Default, Codex Plus, Catppuccin, Gruvbox Medium, Solarized, Claude-inspired Warm, Google-inspired Material, Nord-inspired, Dracula-inspired, Monokai-inspired.
 - Custom palettes accept light/dark `#RRGGBB` triplets, import/export, contrast preview, and accessibility warnings.
-- Exact preset hex values and derivation await visual design. Custom colors are text hex in Settings; saved presets are JSON; low contrast warns but is allowed.
+- Exact preset hex values and derivation await visual design. Custom colors are text hex in Settings; saved presets are JSON. Low contrast warns but is allowed after acknowledgement; custom palettes are an explicit contrast-conformance exception while built-in/default palettes target WCAG 2.2 AA.
 
 Guardrails:
 - Use timestamps, not UI ticks, as time truth.
@@ -65,18 +65,18 @@ Repository workflow:
 - TimeTrek is a one-person project. Commit directly to `main` by default rather than creating feature branches or pull requests.
 - Use a separate branch only while a release is active or when the owner explicitly requests one.
 
-Current state as of 2026-08-20:
+Current state as of 2026-08-23:
 - Documentation only; implementation has not started.
-- Windows 10/11, x64/ARM64, per-user MSIX, single instance. Stack selection is intentionally later.
-- `docs/FIRST_RUN_WIZARD.md` defines the wizard baseline; Google Calendar is deferred and absent from the initial wizard. All choices remain editable.
+- Windows 10/11, x64/ARM64 from the first executable build intended for use; per-user MSIX, single instance. Stack selection is intentionally later.
+- `docs/FIRST_RUN_WIZARD.md` defines the wizard baseline, including a one-action Use recommended defaults path. Basic completion makes optional Advanced setup non-blocking. Google Calendar is deferred and absent from the initial wizard. All choices remain editable.
 - Automatic updates must use authenticated, signed artifacts published through GitHub Releases; the MSIX updater, signing, and release workflow wait for the stack decision.
-- Functional behavior is closed for interface-design purposes. Late confirmed decisions include previewed organization migration or replacement, cascading deletion with delayed purge/Undo, scheduled-end crash recovery, signed negative adjustments, hard-cap Pomodoro wall-clock duration, no break application tracking, non-duplicating multi-Category Stats, per-Session currency-minor-unit earnings, historical budget counting, versioned ZIP backup with rollback snapshots/remapped merge conflicts, packaged CSV documentation, and stable-only prompted updates.
+- Functional behavior is closed for interface-design purposes. All non-Calendar requirements form one initial-release baseline rather than a reduced MVP. Late confirmed decisions include previewed organization migration or replacement, cascading deletion with recoverable retention, scheduled-end crash recovery, signed negative adjustments, Pomodoro cycle-duration pauses that freeze the hard cap, no break application tracking, additive Multiple Categories with drill-down plus non-additive involvement reporting, per-Session currency-minor-unit earnings, raw-time budget counting, versioned ZIP backup with rollback snapshots/remapped merge conflicts, application data excluded from exports unless explicitly selected, packaged CSV documentation, and stable-only prompted updates.
 - Intended license is PolyForm Noncommercial 1.0.0, pending inclusion/review; until then all rights are reserved.
 - Interface phase: follow `docs/INTERFACE.md`. The shell uses a non-collapsible icon-only navigation column (64 px default, draggable) and Archive as a primary destination. Home targets about six visible low-alpha color-tinted Stream channels at 1280 px. A persistent Studio One-like bottom transport bar owns global Session selection/configuration and Start/Pause/Stop; channels show their own time and also expose direct Start Timer.
 - Transport details: timer left, selectors/mode centered, controls right; visible everywhere except Settings; two-row reflow at 960 px. Every start prompts selected `25`; normal active duration remains editable to move the auto-stop boundary. Channel summary order is Total/Today/This Week with optional vertical budget progress.
 - Layout customization: practical horizontal regions and columns are draggable and saved immediately. All Stream channels share one persisted width; dragging any channel edge resizes every channel. Ctrl++/Ctrl+- changes persisted icon size without changing text, and Settings can reset the layout.
 - History uses one dense header above a virtualized table grouped by sticky date headings, persistent checkboxes, saved non-reorderable column widths, narrow-width priority hiding, and an optional saved-width right inspector. It defaults All time/newest first. Normal Delete confirms; Shift+Delete skips confirmation but still moves the Session to the dedicated recoverable Recently Deleted view.
-- Stats: five exact-time headline metrics; fixed-height four-month effective-time daily heatmap with Daily/Weekly/Cumulative/Timeline modes; selected-day inspector with Sessions and Stream pie; equal fixed lower Time-insight and ranking/breakdown columns that stack narrowly. Show both Top Streams and Top Projects, conditional billing/earnings/budgets below the headline strip, removable filter chips, and filtered-range Export.
+- Stats: five exact-time headline metrics; fixed-height four-month raw-default daily heatmap with an Effective/Rounded basis option and Daily/Weekly/Cumulative/Timeline modes; selected-day inspector with Sessions and Stream pie; equal fixed lower Time-insight and ranking/breakdown columns that stack narrowly. Show both Top Streams and Top Projects, conditional billing/earnings/raw-time budgets below the headline strip, removable filter chips, and filtered-range Export.
 - Timeline: read-only seven-day vertical time grid inside the fixed Stats activity area; month-calendar day picking plus week navigation; active-hour fit with 24-hour toggle; hour-line zoom by buttons, Ctrl+wheel, and touchpad pinch; horizontally scrollable days; fixed day totals/current-time line; low-alpha Stream blocks with origin icons. Split overlaps/cross-midnight/pauses, shade and label stored breaks plus the work-time buffer, dim filtered blocks, and open History for edits. Empty-space selection starts manual entry.
 - Archive: tabs are All/Streams/Categories/Projects with Streams as default; persistent search/filters/sort/checkboxes; expandable Stream children; separate Global Category section; saved column/inspector widths; narrow overlay inspector. Projects have zero or one owning Stream, never multiple owners. When a Stream is archived, owned Projects archive automatically; standalone Projects shared through Sessions across Streams are optional unchecked choices with a cross-Stream impact warning. Restore can be bulk for compatible items, defaults parent-archived children selected and independently archived children unselected, and includes an archived owner when required. Active conflicts can queue Archive after Session stops. Permanent organization deletion is one root at a time with cascade preview and typed-name confirmation for large cascades; Session and organization data share configurable-retention Recently Deleted, and organization restores are atomic.
-- Settings: responsive card dashboard without an internal sidebar; General first, followed by Appearance, Timing, Pomodoro, Billing, Activity & Privacy, Windows, Data, Updates, About. It has persistent cross-section search, immediate ordinary saves with quiet status, saved Advanced disclosures/detail widths, single-column narrow reflow, and no bottom transport. Retention defaults to 30 days with 7/14/30/60/90 and custom 1–365-day choices; a large organization cascade means at least five organization objects or 25 Sessions. Diagnostics exclude paths, tracked activity, descriptions, secrets, and user content. No Google Calendar placeholder ships. Accessibility targets WCAG 2.2 AA principles where applicable plus keyboard access, Windows UI Automation, screen readers, text scaling, and non-color cues.
+- Settings: responsive card dashboard without an internal sidebar; General first, followed by Appearance, Timing, Pomodoro, Billing, Activity & Privacy, Windows, Data, Updates, About. It has persistent cross-section search, immediate ordinary saves with quiet status, saved Advanced disclosures/detail widths, single-column narrow reflow, and no bottom transport. Updates have separate automatic-check and automatic-download controls. Retention defaults to 30 days with 7/14/30/60/90 and custom 1–365-day choices; a large organization cascade means at least five organization objects or 25 Sessions. Diagnostics exclude paths, tracked activity, descriptions, secrets, and user content. No Google Calendar placeholder ships. Built-in/default UI targets WCAG 2.2 AA principles plus keyboard access, Windows UI Automation, screen readers, text scaling, and non-color cues; acknowledged custom palettes may violate contrast.

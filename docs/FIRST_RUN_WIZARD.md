@@ -3,16 +3,16 @@
 | Field | Value |
 | --- | --- |
 | Status | Functional baseline |
-| Last updated | 2026-08-20 |
+| Last updated | 2026-08-23 |
 | Authority | Supplements `docs/SDD.md`; the SDD wins if a conflict is introduced |
 
 ## 1. Goals
 
 The wizard configures TimeTrek's important defaults without forcing optional integrations or organization. It uses a short basic setup followed by an optional advanced section. All choices remain editable in Settings, and the wizard can be run again without erasing Sessions or organization data.
 
-Essential setup must be completed. Optional sections may be skipped. Closing the wizard before completion discards wizard progress and restarts it from the beginning on the next launch. A first screen offers **Start fresh** or **Restore a backup**.
+Essential basic setup must be completed unless the user chooses **Use recommended defaults**. Optional Advanced sections may be skipped. Closing before basic setup completes returns to the beginning on the next launch while retaining validated choices from completed pages for prefilling. After basic setup completes, closing during optional Advanced setup does not block application use.
 
-Each page saves its validated choices immediately when the user selects **Next**. The final screen confirms completion rather than presenting a second editable review. Setup counts as complete once essential choices have been saved, even if every optional integration is skipped.
+Each page saves its validated choices immediately when the user selects **Next**. Basic setup counts as complete once its last required page has been saved. The user may then finish immediately or continue into optional Advanced setup. The final screen confirms completion rather than presenting a second editable review.
 
 ## 2. Navigation and accessibility
 
@@ -26,7 +26,9 @@ Each page saves its validated choices immediately when the user selects **Next**
 
 ### 3.1 Welcome and data source
 
-Explain that TimeTrek is local-first. Ask whether to start fresh or restore a TimeTrek backup. Restore follows the SDD's validated preview flow.
+Explain that TimeTrek is local-first. Offer **Use recommended defaults**, **Set up step by step**, or **Restore a backup**. Restore follows the SDD's validated preview flow.
+
+**Use recommended defaults** completes basic setup immediately, creates no sample organization, and opens Home with: Normal 25-minute Sessions, remembered Pomodoro 25/5, notifications on, sound off, Windows-derived time/region/week start, Follow Windows appearance, start with Windows off, rounding off, billing off, idle/display handling on with a 10-minute generic inactivity threshold, and foreground-application tracking off. Every value remains editable in Settings.
 
 Do not ask the user's role or purpose and do not personalize defaults based on school, work, research, or personal use.
 
@@ -53,7 +55,7 @@ The exact example Category/Project names will be finalized with onboarding copy.
 
 ### 3.4 Appearance
 
-Ask for Light, Dark, Follow Windows, or Scheduled appearance. Include live preset previews and direct custom light/dark `#RRGGBB` entry. If Scheduled is selected, show editable defaults of light at 07:00 and dark at 19:00.
+Ask for Light, Dark, Follow Windows, or Scheduled appearance. Include live preset previews and direct custom light/dark `#RRGGBB` entry. A custom palette that fails the contrast threshold may be saved only after an explicit warning acknowledgement. If Scheduled is selected, show editable defaults of light at 07:00 and dark at 19:00.
 
 Accessibility behavior follows Windows automatically rather than adding a separate accessibility questionnaire.
 
@@ -65,7 +67,7 @@ Ask whether TimeTrek starts with Windows. Preselect **Off**.
 
 ### 4.1 Rounding
 
-Ask whether rounding is enabled, with **Off** preselected. If enabled, ask for a preset or custom increment. Explain that Stats and enabled billing use rounded time while History and exports preserve and expose both raw and rounded time.
+Ask whether rounding is enabled, with **Off** preselected. If enabled, ask for a preset or custom increment. Explain that billing uses rounded time, Stats defaults to raw actual time with an Effective/Rounded option, and History and exports preserve and expose both values.
 
 ### 4.2 Billing
 
@@ -90,7 +92,7 @@ Ask whether idle/display interruption handling is enabled, with **On** preselect
 
 ### 4.4 Foreground-application tracking
 
-Explain the feature and allow explicit opt-in, with **Off** preselected. Before enabling, require acknowledgement that collection occurs only during active work intervals, pauses during Session pauses and Pomodoro breaks, and stores only application display name, executable filename, and duration locally. Explicitly state that applications used during Pomodoro breaks are not collected. Also explain deletion and the possible optional elevation prompt for otherwise unidentified elevated applications.
+Explain the feature and allow explicit opt-in, with **Off** preselected. Before enabling, require acknowledgement that collection occurs only during active work intervals, pauses during Session pauses and Pomodoro breaks, and stores only application display name, executable filename, and duration locally. Explicitly state that applications used during Pomodoro breaks are not collected. Also explain deletion and that TimeTrek never requests elevation; inaccessible elevated applications are grouped as **Unknown elevated application**.
 
 Google Calendar is deferred and does not appear in the initial wizard. The application architecture retains the integration boundary described in the SDD for possible later implementation.
 
@@ -101,7 +103,7 @@ The last screen confirms that settings were saved. It does not repeat every sele
 ## 6. Acceptance criteria
 
 - Essential pages cannot be skipped; optional advanced pages can.
-- Closing before completion causes a clean restart from page one without corrupting partially saved settings.
+- Closing before basic setup completion causes a clean restart from page one with completed-page values prefilled; closing during optional Advanced setup does not make setup incomplete.
 - Restore is available before fresh configuration.
 - No Stream, Category, Project, billing setup, foreground tracking, or external account is required.
 - The 25-minute duration can be replaced with one typing action.
@@ -109,3 +111,4 @@ The last screen confirms that settings were saved. It does not repeat every sele
 - Privacy-sensitive features remain off without explicit consent.
 - Rerunning setup preserves all existing user data.
 - Completing setup with every optional feature skipped opens the functional main page.
+- Choosing **Use recommended defaults** completes basic setup in one action, creates no samples, and opens the same functional main page.

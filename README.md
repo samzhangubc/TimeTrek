@@ -22,7 +22,7 @@ Starting a Session will open an in-app dialog rather than another operating-syst
 
 History, Stats, CSV/JSON export, local backup/restore, archiving, billable time, rounding, time budgets, appearance palettes, and privacy-preserving optional features are specified in the SDD. Google Calendar is deferred, with an architectural extension boundary retained for possible later implementation.
 
-While a timer is active, closing the main window should leave TimeTrek available in the Windows notification area. The icon should communicate elapsed session time as far as Windows platform constraints allow. If no timer is active, closing the window should exit the application.
+While a timer or completion workflow is active or pending, closing the main window leaves TimeTrek available in the Windows notification area. The icon communicates elapsed Session time as far as Windows platform constraints allow. If neither timing nor completion work is active or pending, closing the window exits the application.
 
 ## Documentation
 
@@ -35,7 +35,7 @@ While a timer is active, closing the main window should leave TimeTrek available
 
 ## Repository status
 
-The functional product requirements are finalized and the active product phase is interface design. TimeTrek targets Windows 10/11 on x64 and ARM64 as a per-user MSIX. Technology choices, physical data schemas, visual designs, and release processes remain undecided.
+The functional product requirements are finalized as one initial-release baseline rather than a reduced MVP, with Google Calendar explicitly deferred. TimeTrek targets Windows 10/11 on x64 and ARM64 from its first executable build intended for use as a per-user MSIX. Technology choices, physical data schemas, final visual values, and release-process implementation remain undecided.
 
 Released builds will support authenticated automatic updates from signed artifacts published through GitHub Releases. The exact updater and GitHub Actions release workflow will be added after the application stack, MSIX identity, and code-signing approach are selected.
 

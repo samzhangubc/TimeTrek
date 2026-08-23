@@ -16,10 +16,10 @@ An executable release workflow cannot be added responsibly until the application
 
 - Git version tags and GitHub Releases are the authoritative public version channel.
 - Release artifacts include signed Windows x64 and ARM64 MSIX packages, cryptographic checksums, and any updater-specific signed metadata.
-- The application checks the configured release channel for a newer compatible version. Automatic checks may be disabled in Settings.
+- The application exposes separate **Check automatically** and **Download automatically** settings. Disabling automatic checks also disables automatic downloads; manual **Check Now** remains available.
 - The initial channel includes stable GitHub Releases only; prereleases are ignored.
-- On launch, TimeTrek checks when at least 24 hours have elapsed since its last update check.
-- On unmetered networks, an authenticated update may download automatically. Installation always requires a user prompt and is deferred while a Session or completion workflow is active.
+- On launch, TimeTrek checks when automatic checking is enabled and at least 24 hours have elapsed since its last update check.
+- When automatic downloading is enabled, an authenticated update may download on unmetered networks. Installation always requires a user prompt and is deferred while a Session or completion workflow is active.
 - Downloaded packages and metadata must be authenticated before installation. An unsigned or invalidly signed update must be rejected with a clear error.
 - An update must not terminate or replace TimeTrek while a Session or completion workflow is active. It may download safely and defer installation.
 - Failed or interrupted update attempts must leave the installed version usable and preserve the local data store.
@@ -38,6 +38,8 @@ The release workflow shall:
 6. Create a draft GitHub Release and attach all required artifacts.
 7. Publish only after all architecture builds and verification checks succeed and the owner authorizes publication.
 8. Retain enough provenance to identify the source commit, workflow run, package versions, and signing identity.
+
+Every executable build intended for use must target Windows 10 and Windows 11 on both x64 and ARM64. Architecture builds may run in parallel, but none is deferred to a later product milestone.
 
 Use a protected GitHub Environment for release authorization and signing credentials. Grant the workflow only the minimum repository permissions needed, normally read access to source and scoped write access to release contents during the publish job.
 

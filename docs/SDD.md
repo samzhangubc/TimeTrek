@@ -5,7 +5,7 @@
 | Document status | Working product specification; unresolved decisions are marked explicitly |
 | Product status | Planning; implementation not started |
 | Target platform | Windows desktop |
-| Last updated | 2026-08-20 |
+| Last updated | 2026-08-23 |
 
 ## 1. Purpose
 
@@ -57,7 +57,7 @@ A Stream can represent a course, job, client, research area, hobby, or other ong
 - Multi-user collaboration, managers, permissions, timesheet approvals, payroll, and workforce surveillance.
 - Productivity targets, streak targets, or required time goals.
 - GPS, screenshots, keystroke capture, and content inspection.
-- Undocumented global keyboard shortcuts other than the defined quit/close, accessibility, and layout commands.
+- Undocumented global action shortcuts. Documented contextual navigation, search, timeline zoom, accessibility, layout, close, and quit shortcuts are permitted.
 - Invoicing, expense tracking, employee scheduling, time off, or accounting integrations.
 
 Google Calendar is the only currently approved optional external integration. It must not become a dependency for local tracking or the built-in timeline.
@@ -82,8 +82,9 @@ A student who wants a low-friction record of study time. The same model should a
 10. Export data or create and restore a local backup.
 11. Archive completed Streams, Categories, or Projects without losing history.
 12. Optionally compare tracked time with time budgets.
-13. Optionally view Google Calendar events without requiring a TimeTrek backend.
-14. Optionally record which foreground applications were used during a Session.
+13. Optionally record which foreground applications were used during a Session.
+
+A possible later Google Calendar overlay is an extension use case rather than an initial product use case.
 
 ## 6. Functional requirements
 
@@ -149,7 +150,7 @@ Renaming an organization object changes the name shown throughout current UI and
 - **FR-028:** A manually entered Session shall store a date in addition to its entered duration or start/end values.
 - **FR-029:** Continuing a previous Session shall create a new independent Session and shall not reopen or extend the historical Session.
 
-Exactly one Session may be active globally. A positive duration is required for every started Session; open-ended stopwatch Sessions are not supported. Accepted formats are bare minutes, `h`, decimal hours, mixed hours/minutes, minute suffixes, and `HH:MM` (for example `45`, `1.5h`, `1h 30m`, `90m`, and `01:30`). Input trims surrounding whitespace, accepts both `.` and the Windows regional decimal separator, and interprets `HH:MM` as hours and minutes. Invalid input shows accepted-format examples. The application warns at 24 hours but allows the Session to continue. Pause/resume is supported within one Session, with paused time excluded. Cancelling always saves elapsed time. Manual overlaps and any manual Session extending partly or wholly into the future warn but are allowed after confirmation. Sessions crossing midnight remain one Session while Stats and the timeline split their duration by local day.
+Exactly one Session may be active globally. A positive duration is required for every started Session; open-ended stopwatch Sessions are not supported. Accepted formats are bare minutes, `h`, decimal hours, mixed hours/minutes, minute suffixes, and `HH:MM` (for example `45`, `1.5h`, `1h 30m`, `90m`, and `01:30`). Input trims surrounding whitespace, accepts both `.` and the Windows regional decimal separator, and interprets `HH:MM` as hours and minutes. Invalid input shows accepted-format examples. The application warns at 24 hours but allows the Session to continue. Pause/resume is supported within one Session, with paused time excluded. **Cancel** is available only before a Session starts and dismisses the start workflow without creating a record. Once timing begins, **Stop** is the terminating action and always saves elapsed time. Manual overlaps and any manual Session extending partly or wholly into the future warn but are allowed after confirmation. Sessions crossing midnight remain one Session while Stats and the timeline split their duration by local day.
 
 Explicit quit during an active Session offers **Stop, save, and quit** or **Cancel**. After a crash or forced shutdown, TimeTrek reconstructs the active Session from persisted timestamps. If its requested end has passed, it ends at the scheduled end and queues the normal completion workflow; otherwise it resumes as active.
 
@@ -169,7 +170,7 @@ Continue copies associations, billability, and wage only; it does not copy descr
 - **FR-043:** Work and break intervals shall be distinguishable in stored data and in the active UI.
 - **FR-044:** Pomodoro shall remain optional and shall not change the default non-Pomodoro Session workflow.
 
-Pomodoro repeats work/break cycles until a required total wall-clock duration is reached. The total is a hard cap that includes work, breaks, pauses, and five-minute boundary buffers. The start prompt asks for total duration plus work and break durations. Work/break defaults begin at 25/5 minutes, and the most recently entered work/break values become future defaults. If the remaining wall-clock time cannot contain a full interval, the current/final segment is shortened to the remaining time; reaching the cap saves that partial segment and starts no further interval.
+Pomodoro repeats work/break cycles until a required total cycle duration is reached. The total is a hard cap over work, breaks, and five-minute boundary buffers; time spent manually paused is excluded because pausing freezes the active interval and the total countdown. The start prompt asks for total duration plus work and break durations. Work/break defaults begin at 25/5 minutes, and the most recently entered work/break values become future defaults. If the remaining cycle time cannot contain a full interval, the current/final segment is shortened to the remaining time; reaching the cap saves that partial segment and starts no further interval.
 
 At a work interval boundary, TimeTrek continues recording work for a maximum five-minute buffer while waiting for the user to return and confirm the break. If the user does not return, work stops at boundary plus five minutes and break recording begins automatically. Each next work interval still requires manual confirmation.
 
@@ -254,9 +255,9 @@ Windows exposes system/display power notifications and wake-prevention APIs, but
 - **FR-103:** The user shall be able to restore the main window from the notification area.
 - **FR-104:** When a Session ends while the main window is hidden, TimeTrek shall persist the elapsed result and remain able to complete the description workflow.
 - **FR-105:** `Ctrl+W` shall invoke the same state-dependent close-window behavior as the window close control: hide to the notification area when work is active or pending, otherwise exit.
-- **FR-106:** No custom keyboard shortcuts shall be added at this stage beyond FR-105 and the normal quit behavior selected for the Windows application.
+- **FR-106:** TimeTrek shall expose only documented keyboard behavior. Contextual navigation, search, timeline zoom, accessibility, layout, close, and quit shortcuts are permitted; hidden global action shortcuts are prohibited.
 
-The notification-area icon shall show compact elapsed time in `h:mm` where legible and exact time in its tooltip. `Ctrl+Q` explicitly quits and confirms when a Session is active. `Alt+F4` uses the same explicit-quit behavior, not the state-dependent `Ctrl+W` behavior.
+The notification-area icon shall show compact elapsed time in `h:mm` where legible and exact time in its tooltip. `Ctrl+Q` is the explicit-quit command and confirms when a Session is active. The window close control, `Ctrl+W`, and `Alt+F4` all use the same state-dependent close behavior: hide while a Session or completion workflow is active or pending, otherwise exit.
 
 ### 6.10 Calendar timeline and Stats page
 
@@ -269,10 +270,11 @@ The notification-area icon shall show compact elapsed time in `h:mm` where legib
 - **FR-116:** The user shall be able to choose the dimension used for a summary visualization.
 - **FR-117:** The Stats page shall include relevant totals and graphs, including pie or donut charts where proportional breakdowns are meaningful.
 - **FR-118:** Summary and timeline calculations shall respect the selected date range and documented rounding basis.
+- **FR-119:** Stats shall use raw actual duration by default and shall provide an explicit Effective/Rounded basis for users who want stored rounded values. Billing and earnings calculations shall continue using effective rounded duration.
 
 Stats defaults to the most recent four months and provides previous/next, week, month, and custom-range controls. Its summary page uses five headline values: lifetime total, selected-range total, daily average, longest Session, and Session count; time values use exact `hh:mm:ss`. The dominant activity area initially shows that four-month range as a daily calendar heatmap, with Daily, Weekly, Cumulative, and Timeline views. Weekly uses seven-day stacked bars; Cumulative uses a cumulative-time line chart. The user's Sunday/Monday week-start choice comes from the first-run wizard.
 
-The heatmap measures effective tracked duration per day, scales intensity relative to the greatest visible day, uses the global accent unless exactly one Stream filter is active, and follows the current Stats range. Empty days remain faintly visible. Month and sparse weekday labels follow the configured week start. Hover shows date, effective/raw time, Session count, and top Stream. Selecting a day opens a right inspector containing that day's Sessions and a Stream pie breakdown; double-click has no separate action. The activity area has a fixed height.
+The heatmap measures the selected raw/effective Stats basis per day, defaults to raw actual duration, scales intensity relative to the greatest visible day, uses the global accent unless exactly one Stream filter is active, and follows the current Stats range. Empty days remain faintly visible. Month and sparse weekday labels follow the configured week start. Hover shows date, raw and effective time, Session count, and top Stream. Timeline geometry always uses raw timestamps and pause intervals even when summaries use the Effective/Rounded basis. Selecting a day opens a right inspector containing that day's Sessions and a Stream pie breakdown; double-click has no separate action. The activity area has a fixed height.
 
 Timeline is a read-only seven-day view inside the fixed Stats activity region. It shows days as columns and time vertically, opening on the week containing the latest selected day. Week data navigates by previous/next week; choosing an individual day uses a month-calendar picker. Visible hours automatically fit the earliest and latest Session with padding, with a Show 24 Hours toggle. Day headings remain fixed while time scrolls; each shows weekday, date, and daily total. Narrow windows preserve readable day widths with horizontal scrolling.
 
@@ -282,20 +284,20 @@ Stored Pomodoro breaks appear as a labeled light shade of the related work-block
 
 Below activity, equal fixed-width columns show Time insights on the left and rankings/breakdown on the right, stacking at narrow widths. Time insights are quiet label/value rows for most active day, longest Session, daily average, active days, and total Sessions; conditional billable time, per-currency earnings, and relevant budget progress appear without changing the headline strip. Rankings simultaneously show Top Streams and Top Projects, five each with Show All, using color marker, name, duration, and percentage. Clicking a ranking filters the entire page. The right section can switch to a Stream/Project/Category donut breakdown. Global Stream, Category, Project, and billability filters use popovers with removable chips, and Export applies to the filtered Stats range. Summary typography is slightly larger and more spacious than the supplied structural reference.
 
-Stray Sessions appear as **Uncategorized** in breakdowns. Global Categories appear normally in Category views. A Session with multiple Categories contributes once to a **Multiple Categories** segment in Category pie charts, avoiding duplicated or arbitrary allocation. Earnings totals are grouped by currency and are never combined without explicit exchange-rate data; the initial application performs no currency conversion. For a rounded Session crossing midnight, rounded duration is distributed between local days in proportion to raw duration and the last day absorbs any rounding remainder.
+Stray Sessions appear as **Uncategorized** in breakdowns. Global Categories appear normally in Category views. A Session with multiple Categories contributes once to a **Multiple Categories** segment in additive Category time charts, avoiding duplicated or arbitrary allocation. That segment drills down into Category combinations and constituent Sessions. Stats also provides a clearly labelled, non-additive **Category involvement** view that credits each selected Category with the Session for discovery while warning that its values must not be summed into total time. Earnings totals are grouped by currency and are never combined without explicit exchange-rate data; the initial application performs no currency conversion. For a rounded Session crossing midnight, rounded duration is distributed between local days in proportion to raw duration and the last day absorbs any rounding remainder.
 
 ### 6.11 Deferred Google Calendar integration
 
 Google Calendar is not part of the initial implementation. The architecture shall preserve a replaceable integration boundary so a later backend-free Calendar adapter can be added without changing the Session domain, local timeline, or primary data store. Backend-free Google Calendar access is technically feasible using Google's installed/desktop OAuth flow, although a later public OAuth application may require Google verification.
 
 - **FR-120:** No Google Calendar UI, OAuth client, scopes, tokens, cache, or API calls shall ship in the initial implementation.
-- **FR-121:** TimeTrek shall use an OAuth 2.0 client registered as a desktop application and shall complete authorization in the user's system browser.
-- **FR-122:** TimeTrek shall request the narrowest Google Calendar scope needed for the finalized behavior; write access shall not be requested for a read-only feature.
-- **FR-123:** OAuth tokens shall be stored locally using an appropriate Windows-protected credential mechanism, not as plain text in the application directory.
-- **FR-124:** TimeTrek shall not require or operate a TimeTrek backend for the Google Calendar connection.
-- **FR-125:** The user shall be able to disconnect the account and remove locally stored authorization tokens.
-- **FR-126:** Connection failure, token expiry, revoked consent, offline operation, or Google service unavailability shall not prevent local tracking, history, timeline, export, or backup.
-- **FR-127:** External calendar events and TimeTrek Sessions shall remain distinguishable in the timeline.
+- **FR-121:** If the future Calendar extension is implemented, it shall use an OAuth 2.0 client registered as a desktop application and complete authorization in the user's system browser.
+- **FR-122:** If implemented, the extension shall request the narrowest Google Calendar scope needed for the finalized behavior; write access shall not be requested for a read-only feature.
+- **FR-123:** If implemented, OAuth tokens shall be stored locally using an appropriate Windows-protected credential mechanism, not as plain text in the application directory.
+- **FR-124:** A future Google Calendar connection shall not require or operate a TimeTrek backend.
+- **FR-125:** If implemented, the user shall be able to disconnect the account and remove locally stored authorization tokens.
+- **FR-126:** If implemented, connection failure, token expiry, revoked consent, offline operation, or Google service unavailability shall not prevent local tracking, history, timeline, export, or backup.
+- **FR-127:** If implemented, external calendar events and TimeTrek Sessions shall remain distinguishable in the timeline.
 
 A possible later integration remains constrained to a read-only timeline overlay plus one-way conversion of an event into a manual Session, user-selected calendars, and a labelled offline cache. It may be implemented only while fully client-side and Google-hosted, with no TimeTrek backend or publisher-operated service. These requirements define an extension seam, not initial-release functionality.
 
@@ -309,15 +311,15 @@ A possible later integration remains constrained to a read-only timeline overlay
 - **FR-135:** Changing the global rounding setting shall not silently recalculate historical Sessions.
 - **FR-136:** History shall make it possible to distinguish a rounded duration from the raw tracked duration.
 
-Rounding offers 5, 10, 15, and 30-minute presets plus a custom 1–60-minute increment. Midpoints use banker's rounding. For a negative adjustment, the system rounds the absolute duration and restores its negative sign. Billing and Stats use rounded time; History and exports expose both raw and rounded values. The first-run wizard asks whether rounding is enabled and selects its default increment/rule.
+Rounding offers 5, 10, 15, and 30-minute presets plus a custom 1–60-minute increment. Midpoints use banker's rounding. For a negative adjustment, the system rounds the absolute duration and restores its negative sign. Billing uses rounded time; Stats defaults to raw actual time and provides an Effective/Rounded basis. History and exports expose both raw and rounded values. The first-run wizard asks whether rounding is enabled and selects its default increment/rule.
 
 ### 6.13 Optional foreground-application tracking
 
 - **FR-140:** Foreground-application tracking shall be off by default.
-- **FR-141:** TimeTrek shall begin collecting foreground-application data only after the user explicitly enables the feature in Settings.
+- **FR-141:** TimeTrek shall begin collecting foreground-application data only after the user explicitly enables the feature through its full disclosure in Settings or the optional Advanced wizard.
 - **FR-142:** Enabling the feature shall first explain what is collected, when it is collected, where it is stored, and how it can be deleted.
-- **FR-143:** TimeTrek shall request only permissions actually required by the chosen Windows APIs and only as part of this opt-in flow.
-- **FR-144:** TimeTrek shall not request administrator elevation merely as a precaution; elevation may be requested only if a finalized, documented capability cannot work without it.
+- **FR-143:** TimeTrek shall request only non-administrator permissions actually required by the chosen Windows APIs and only as part of this opt-in flow.
+- **FR-144:** The initial application shall not request or run with administrator elevation for foreground-application tracking. Intervals whose application identity is inaccessible shall be accumulated under a visible **Unknown elevated application** label.
 - **FR-145:** While enabled, application-focus data shall be collected only during an active Session.
 - **FR-146:** The baseline collection shall record application identity and accumulated foreground duration; it shall not collect keystrokes, screenshots, clipboard contents, document contents, or browser history.
 - **FR-147:** Foreground-application records shall remain local and shall be associated with the exact Session during which they were observed.
@@ -326,7 +328,7 @@ Rounding offers 5, 10, 15, and 30-minute presets plus a custom 1–60-minute inc
 
 Tracking stores only application display name and executable filename. It never stores full paths, window titles, or browser domains. The implementation may choose foreground-change events or sampling based on the simplest reliable Windows implementation. At Session completion, the application displays that Session's application-duration breakdown.
 
-Foreground-application tracking pauses during Session pauses and Pomodoro breaks. The first-run disclosure explicitly states that break applications are not collected. On the first inaccessible elevated application in a Session, TimeTrek offers elevation. Declining ignores inaccessible intervals for the rest of that Session. Accepting stores a revocable preference to attempt elevation for future Sessions without asking TimeTrek's own question again; Windows may still require a system UAC confirmation. Deleting a Session deletes its application records as part of the same Undo unit. Timestamp edits clip application intervals to the edited Session bounds, and Settings provides a purge-all activity-data action.
+Foreground-application tracking pauses during Session pauses and Pomodoro breaks. The first-run disclosure explicitly states that break applications are not collected. Inaccessible elevated applications never trigger elevation; their time is retained in the Session breakdown as **Unknown elevated application** so tracked application totals remain auditable. Deleting a Session deletes its application records as part of the same recovery unit. Timestamp edits clip application intervals to the edited Session bounds, and Settings provides a purge-all activity-data action.
 
 ### 6.14 Archiving
 
@@ -353,7 +355,7 @@ Archiving a Stream automatically archives its scoped Categories and Projects own
 - **FR-161:** When configured, the application shall compare the relevant tracked time with its time budget.
 - **FR-162:** A time budget shall not prevent tracking after it is reached.
 
-Time budgets are non-recurring by default with optional weekly or monthly reset. An associated Session counts toward both its Stream and Project budgets, including matching historical Sessions recorded before the budget was created. A recurring budget includes all matching records in its current local week or month; a non-recurring budget includes the object's matching lifetime records. Negative adjustments reduce progress, breaks never count, and weekly/monthly boundaries use the configured local week start and calendar month. Stats uses rounded time for budget progress. There are no budget alerts.
+Time budgets are non-recurring by default with optional weekly or monthly reset. An associated Session counts toward both its Stream and Project budgets, including matching historical Sessions recorded before the budget was created. A recurring budget includes all matching records in its current local week or month; a non-recurring budget includes the object's matching lifetime records. Negative adjustments reduce progress, breaks never count, and weekly/monthly boundaries use the configured local week start and calendar month. Time-budget progress uses raw actual duration, while billing continues to use rounded effective duration. There are no budget alerts.
 
 ### 6.16 CSV/JSON export, backup, and restore
 
@@ -365,14 +367,15 @@ Time budgets are non-recurring by default with optional weekly or monthly reset.
 - **FR-175:** The user shall be able to select and restore a local backup file.
 - **FR-176:** Restore shall validate format/version before mutation, explain whether data will be merged or replaced, require confirmation for replacement, and avoid leaving the live store partially restored.
 - **FR-177:** Backup and restore shall not require a network connection.
+- **FR-178:** Foreground-application data shall be excluded from CSV and JSON exports unless the user explicitly enables **Include application breakdown**, which is off by default. Full backups shall include it for complete restoration after disclosing that inclusion.
 
 CSV uses UTF-8, comma delimiters, RFC 4180 quoting, ISO 8601 timestamps, and quoted multiline descriptions. Its minimum columns are `schema_version`, `session_id`, `start_utc`, `end_utc`, `timezone`, `local_date`, `raw_seconds`, `rounded_seconds`, `rounding_increment`, `origin`, `timing_mode`, Stream ID/current name/original-name snapshot, Category IDs/current names/original-name snapshots/scopes, Project ID/current name/original-name snapshot, description, billable, wage, and currency. Multiple Category values are encoded as JSON arrays inside properly quoted CSV cells, so each Session or adjustment remains one row.
 
-A versioned schema also represents pauses, Pomodoro segments, negative adjustments, and foreground-application summaries. JSON uses nested application records. A CSV export with application data includes a companion applications CSV keyed by `session_id`; it does not place application arrays in the Session CSV. Export offers All and Current Filtered Results. JSON is a versioned document with metadata, lookup objects, and Session records matching CSV semantics. Both formats include a concise data dictionary identifying TimeTrek and explaining fields so an LLM or analyst can interpret the data.
+A versioned schema also represents pauses, Pomodoro segments, negative adjustments, and foreground-application summaries. JSON uses nested application records. **Include application breakdown** is off by default and requires an explicit choice for each export. When selected, CSV includes a companion applications CSV keyed by `session_id`; it does not place application arrays in the Session CSV. Export offers All and Current Filtered Results. JSON is a versioned document with metadata, lookup objects, and Session records matching CSV semantics. Both formats include a concise data dictionary identifying TimeTrek and explaining fields so an LLM or analyst can interpret the data.
 
 CSV export is delivered as a ZIP bundle containing `sessions.csv`, `applications.csv` when applicable, and a README/data dictionary describing TimeTrek, schema version, fields, units, time-zone conventions, and relationships. JSON export stores equivalent metadata and its data dictionary inside the versioned JSON document.
 
-A backup is a versioned ZIP containing structured JSON data, non-secret settings, custom palettes, foreground-application records, checksums, and a data dictionary; OAuth tokens are excluded and there is no application-level encryption. Before either Replace or Merge mutates live data, TimeTrek automatically creates a local rollback backup and reports its location. Restore offers Replace and Merge with a preview and defaults to Replace. During Merge, identical stable IDs with identical content are skipped. If the same ID has differing content, the incoming record receives a new ID and all incoming relationships are remapped consistently before the preview is confirmed.
+A backup is a versioned ZIP containing structured JSON data, non-secret settings, custom palettes, foreground-application records, checksums, and a data dictionary; OAuth tokens are excluded and there is no application-level encryption. Before creation, the backup workflow discloses that opted-in foreground-application data is included for complete restoration. Before either Replace or Merge mutates live data, TimeTrek automatically creates a local rollback backup and reports its location. Restore offers Replace and Merge with a preview and defaults to Replace. During Merge, identical stable IDs with identical content are skipped. If the same ID has differing content, the incoming record receives a new ID and all incoming relationships are remapped consistently before the preview is confirmed.
 
 ### 6.17 Appearance and color palettes
 
@@ -398,10 +401,10 @@ A backup is a versioned ZIP containing structured JSON data, non-secret settings
 - **FR-189:** The user shall be able to create a custom palette by entering three `#RRGGBB` hex colors for a light variant and three for a dark variant.
 - **FR-190:** The user shall be able to import and export a custom palette configuration file containing the palette name, format version, and validated light/dark color triplets.
 - **FR-191:** Invalid hex values, missing required colors, duplicate identifiers, or unsupported palette-file versions shall produce a clear error without changing the active palette.
-- **FR-192:** Settings shall provide a contrast adjustment with live preview and a warning when text/interactive contrast falls below the selected accessibility threshold.
+- **FR-192:** Settings shall provide a contrast adjustment with live preview and a warning when text/interactive contrast falls below the selected accessibility threshold. Saving a failing custom palette shall require explicit acknowledgement.
 - **FR-193:** Valid appearance changes shall preview, apply, and persist immediately; invalid edits shall not change the active palette.
 
-Official OpenAI documentation does not currently publish a Codex appearance-preset inventory. FR-188 is therefore based on inspection of the installed Codex package version `26.818.2872.0`, not an OpenAI compatibility promise. A later visual-design pass shall define exact preset triplets. Custom colors are configured as plain `#RRGGBB` text in Settings; saved/imported presets use versioned JSON. Low-contrast palettes warn but may be saved. Chart series derive accessible colors from the selected triplet. Scheduled mode defaults to light at 07:00 and dark at 19:00 and remains adjustable. Derivation details and behavior when a preset lacks a native counterpart remain visual-design work.
+Official OpenAI documentation does not currently publish a Codex appearance-preset inventory. FR-188 is therefore based on inspection of the installed Codex package version `26.818.2872.0`, not an OpenAI compatibility promise. A later visual-design pass shall define exact preset triplets. Custom colors are configured as plain `#RRGGBB` text in Settings; saved/imported presets use versioned JSON. Low-contrast custom palettes warn but may be saved after explicit acknowledgement. Default and built-in palettes target WCAG 2.2 AA; a user-acknowledged custom palette is an explicit conformance exception. Chart series derive accessible colors from the selected triplet where feasible. Scheduled mode defaults to light at 07:00 and dark at 19:00 and remains adjustable. Derivation details and behavior when a preset lacks a native counterpart remain visual-design work.
 
 ### 6.18 Local persistence
 
@@ -420,9 +423,10 @@ The storage engine and final schema remain open.
 - **FR-212:** The wizard shall include idle/display handling, inactivity behavior and threshold, stop-timestamp behavior, rounding defaults, local week start (Sunday or Monday), optional start with Windows (off by default), and every other default finalized through the dedicated wizard questionnaire.
 - **FR-213:** Optional privacy-sensitive features shall be off until their own disclosure and explicit consent step, even when introduced by the wizard.
 - **FR-214:** All wizard choices shall remain editable later in Settings.
-- **FR-215:** If TimeTrek closes before setup completion, the wizard shall restart at its first page on the next launch; settings already saved by completed pages remain valid and are prefilled.
+- **FR-215:** If TimeTrek closes before basic setup completion, the wizard shall restart at its first page on the next launch; settings already saved by completed pages remain valid and are prefilled. Closing after basic completion while optional Advanced setup is open shall not make setup incomplete.
+- **FR-216:** The Welcome page shall provide **Use recommended defaults**, which completes basic setup immediately with documented safe defaults, creates no sample organization, and opens Home. Optional advanced settings remain available later in Settings.
 
-The detailed screen flow, copy requirements, defaults, skip rules, and acceptance criteria are defined in `docs/FIRST_RUN_WIZARD.md`. The wizard uses required basic setup followed by optional advanced setup. It restarts from the beginning if abandoned, may be rerun later without data loss, offers backup restore first, and saves each completed page immediately. It does not ask the user's purpose. It offers optional MATH 100 and Work sample organization, defaults normal Sessions to an overwrite-on-type 25-minute duration, remembers the last timing mode, and exposes editable remembered Pomodoro defaults. It follows Windows time/accessibility conventions and asks for week start, appearance/custom colors, Windows startup, rounding, optional billing, per-event interruption behavior with a 10-minute inactivity default, and explicit foreground-tracking consent. Completion opens the main page and highlights Start Session. Subsequent onboarding uses hover/focus tooltips rather than a persistent tour.
+The detailed screen flow, copy requirements, defaults, skip rules, and acceptance criteria are defined in `docs/FIRST_RUN_WIZARD.md`. The wizard uses required basic setup followed by optional advanced setup. Basic setup becomes complete when its last required page is saved; optional Advanced may then be entered or skipped without blocking application use. If TimeTrek closes before basic setup completes, it restarts from the beginning with saved page choices prefilled. It may be rerun later without data loss, offers backup restore first, and saves each completed page immediately. It does not ask the user's purpose. It offers optional MATH 100 and Work sample organization, defaults normal Sessions to an overwrite-on-type 25-minute duration, remembers the last timing mode, and exposes editable remembered Pomodoro defaults. It follows Windows time/accessibility conventions and asks for week start, appearance/custom colors, Windows startup, rounding, optional billing, per-event interruption behavior with a 10-minute inactivity default, and explicit foreground-tracking consent. Completion opens the main page and highlights Start Session. Subsequent onboarding uses hover/focus tooltips rather than a persistent tour.
 
 ### 6.20 Installation, instances, and release policy
 
@@ -433,8 +437,9 @@ The detailed screen flow, copy requirements, defaults, skip rules, and acceptanc
 - **FR-224:** The intended software license is PolyForm Noncommercial 1.0.0, subject to adding the unmodified license text and the owner's required copyright notice before distribution. This is source-available, not OSI-approved open source. Until that is completed, all rights remain reserved and no distribution license is granted.
 - **FR-225:** TimeTrek shall support automatic application updates using authenticated, signed update artifacts published through GitHub Releases. Update checks shall be configurable, shall verify release authenticity and package integrity, and shall never replace an active-session binary unsafely. The exact updater and MSIX delivery mechanism shall be selected with the technology stack.
 - **FR-226:** The release pipeline shall build and sign x64 and ARM64 MSIX packages, attach the required update metadata/artifacts to a versioned GitHub Release, and support rollback/recovery from a failed update. Publishing a GitHub Release is an owner-authorized operation.
+- **FR-227:** Settings shall expose separate **Check automatically** and **Download automatically** controls. Disabling automatic checks also disables automatic downloads; **Check Now** remains available, and installation always requires confirmation.
 
-The initial application follows stable GitHub Releases only. On launch, it checks for an update when at least 24 hours have elapsed since the last check. On an unmetered connection it may download an authenticated update automatically, then asks the user to install it. Download and installation are deferred while a Session or completion workflow is active. Preview/prerelease GitHub Releases are ignored.
+The initial application follows stable GitHub Releases only. When **Check automatically** is enabled, launch triggers a check if at least 24 hours have elapsed since the last check. **Download automatically** is available only while automatic checking is enabled; on an unmetered connection it may download an authenticated update and then ask the user to install it. **Check Now** remains available when automatic checks are disabled. Download and installation are deferred while a Session or completion workflow is active. Preview/prerelease GitHub Releases are ignored.
 
 ### 6.21 Interface-design baseline
 
@@ -444,7 +449,7 @@ Home uses readable vertical mixer channels inspired structurally by the Studio O
 
 Starting from either the bottom transport or a Stream channel always prompts for duration with the remembered `25` selected; Enter accepts it and numeric typing replaces it. During an active normal Session, the requested total duration remains editable and recalculates the scheduled automatic end. Reducing it to at or below elapsed active time stops immediately and begins completion; increasing it extends the end without rewriting elapsed history.
 
-Stats uses the owner-approved activity-dashboard reference hierarchy: a compact full-width headline-metric strip, one dominant full-width activity visualization with a compact view switch, and two balanced lower insight/ranking columns. It adapts this structure to TimeTrek data rather than copying the reference application's labels. The visual treatment remains restrained and dense, avoids oversized KPI cards, stacks lower columns at narrow widths, and preserves the application-wide navigation, transport, and saved resizing behavior. Detailed metric mappings and timeline placement are defined in `docs/INTERFACE.md` as the Stats design round is completed.
+Stats uses the owner-approved activity-dashboard reference hierarchy: a compact full-width headline-metric strip, one dominant full-width activity visualization with a compact view switch, and two balanced lower insight/ranking columns. It adapts this structure to TimeTrek data rather than copying the reference application's labels. The visual treatment remains restrained and dense, avoids oversized KPI cards, stacks lower columns at narrow widths, and preserves the application-wide navigation, transport, and saved resizing behavior. Finalized metric mappings and timeline placement are defined in `docs/INTERFACE.md`.
 
 - **FR-230:** Practical horizontal regions, split panes, and data columns shall provide visible pointer-drag resize handles and a keyboard-accessible resizing equivalent.
 - **FR-231:** A width customization shall be persisted automatically when changed and restored on subsequent launches.
@@ -469,9 +474,9 @@ Stats uses the owner-approved activity-dashboard reference hierarchy: a compact 
 - **FR-252:** Rounding settings shall show live examples of how sample durations round.
 - **FR-253:** Billing shall show an overview and reveal detailed controls only while billing is enabled. Category wages remain edited with Categories; Settings shall explain this and provide a shortcut.
 - **FR-254:** Regional settings shall group the Windows-derived region, decimal behavior, currency behavior, and local week start.
-- **FR-255:** Activity & Privacy shall group its disclosure, foreground tracking, idle/display handling, elevation preference, approximate record count/storage size, and Purge All activity data.
+- **FR-255:** Activity & Privacy shall group its disclosure, foreground tracking, idle/display handling, inaccessible-application behavior, approximate record count/storage size, and Purge All activity data.
 - **FR-256:** Windows shall group start with Windows, notification-area behavior, notifications, sound, and window behavior.
-- **FR-257:** Updates shall show installed version, last-check status, stable-only policy, automatic-update control, and **Check Now**.
+- **FR-257:** Updates shall show installed version, last-check status, stable-only policy, separate automatic-check and automatic-download controls, and **Check Now**.
 - **FR-258:** Data shall separate Export, Backup, Restore, Recently Deleted, and Reset groups.
 - **FR-259:** Recently Deleted shall default to 30-day retention, offer 7/14/30/60/90-day presets plus a custom 1–365-day value, show each deletion deadline, and purge automatically after the deadline.
 - **FR-260:** Destructive Settings actions shall appear in danger sections and open focused confirmation dialogs.
@@ -490,7 +495,7 @@ The Settings dashboard begins at General and keeps all major sections visible as
 - **NFR-001 — Simplicity:** Core tracking must remain understandable without training or enabling advanced features.
 - **NFR-002 — Responsiveness:** Starting, stopping, continuing, filtering, and restoring the main window should feel immediate on supported hardware.
 - **NFR-003 — Reliability:** A running Session must not depend on the main window remaining visible.
-- **NFR-004 — Accessibility:** Controls, dialogs, charts, keyboard behavior, and palettes shall follow WCAG 2.2 Level AA principles where applicable to a Windows desktop application. The application shall provide complete keyboard operation, non-color state cues, Windows UI Automation names/roles/states, screen-reader labels, system text scaling, and readable contrast.
+- **NFR-004 — Accessibility:** Default and built-in controls, dialogs, charts, keyboard behavior, and palettes shall follow WCAG 2.2 Level AA principles where applicable to a Windows desktop application. The application shall provide complete keyboard operation, non-color state cues, Windows UI Automation names/roles/states, screen-reader labels, system text scaling, and readable contrast. A custom palette that the user explicitly saves after a failed-contrast warning is an acknowledged exception to palette contrast conformance; keyboard and assistive-technology requirements still apply.
 - **NFR-005 — Privacy:** No study record, activity record, or description may leave the device except through a user-requested export, backup, or explicitly authorized Google Calendar operation.
 - **NFR-006 — Least privilege:** TimeTrek must not request administrator elevation or external-account scopes beyond a feature's demonstrated need.
 - **NFR-007 — Recoverability:** The design must minimize lost or duplicated Sessions after crash, suspension, restore, or interrupted writes.
@@ -498,7 +503,7 @@ The Settings dashboard begins at General and keeps all major sections visible as
 - **NFR-009 — Offline operation:** All core tracking, history, statistics, export, backup, and restore features must work without network access.
 - **NFR-010 — Maintainability:** Timing, persistence, reporting, integration, and presentation responsibilities should remain separable and testable.
 
-TimeTrek supports Windows 10 and Windows 11 on x64 and ARM64 at launch. Specific response-time and dataset-size targets remain open.
+TimeTrek supports Windows 10 and Windows 11 on x64 and ARM64 from the first executable build intended for use; no architecture or supported Windows version is deferred to a later milestone. Specific response-time and dataset-size targets remain open.
 
 ## 8. Conceptual data model
 
@@ -633,8 +638,10 @@ Leading and trailing whitespace is ignored. Decimal hours accept `.` and the cur
 The eventual implementation must include automated or platform-appropriate checks for:
 
 - Duration parsing and invalid-input handling.
+- Pre-start Cancel creating no record and active Stop saving elapsed time.
 - Manual, automatic, continued, and recreated Sessions.
 - Pomodoro default and adjusted intervals.
+- Pomodoro total countdown freezing during manual pauses.
 - Completion-dialog `Enter`, `Shift+Enter`, empty description, and pending completion.
 - Valid and invalid Stream/Category/Project combinations.
 - Session date/time-zone handling, including Sessions crossing midnight or daylight-saving transitions.
@@ -642,13 +649,19 @@ The eventual implementation must include automated or platform-appropriate check
 - Raw versus rounded duration preservation.
 - Billing history across rate changes.
 - Timeline placement and weekly/monthly aggregation.
+- Raw-default versus Effective/Rounded Stats behavior and raw time-budget progress.
+- Additive Multiple Categories breakdown and non-additive Category involvement.
 - CSV/JSON escaping, time zones, multiline descriptions, and schema compatibility across versions.
 - Backup validation, interrupted restore, and version compatibility.
 - Archive/restore without historical mutation.
-- Optional activity tracking disabled by default, explicit opt-in, data deletion, and no capture outside active Sessions.
-- Google Calendar disconnect/offline/error behavior without affecting local features.
+- Optional activity tracking disabled by default, explicit opt-in, data deletion, no elevation, Unknown elevated application intervals, and no capture outside active Sessions.
+- Export exclusion of application breakdown by default and disclosed inclusion in full backups.
+- If a future Google Calendar adapter is implemented, disconnect/offline/error behavior without affecting local features.
 - Power/display events, wake-request cleanup, explicit user sleep, and resume notification.
 - Palette validation, schedule transitions, contrast warnings, import failure, and rollback.
+- Explicit acknowledgement before saving a low-contrast custom palette.
+- Recommended-default wizard fast path and optional-Advanced completion semantics.
+- Documented shortcut coverage and rejection of hidden global action shortcuts.
 - Persistence and recovery after abnormal termination.
 
 Windows lifecycle, notification-area, screen-saver, foreground-application, and display-scaling behavior require tests on every supported Windows version.
@@ -657,6 +670,8 @@ Windows lifecycle, notification-area, screen-saver, foreground-application, and 
 
 The functional product baseline is closed for interface-design purposes. Remaining work is intentionally separated by phase:
 
+All functional requirements other than the explicitly deferred Google Calendar extension belong to one initial-release baseline. The owner has declined a reduced MVP or staged product-requirement split; implementation sequencing may be incremental, but the requirements are not divided into separate product milestones. Windows 10/11 and x64/ARM64 support apply from the first executable build intended for use.
+
 1. **Interface design:** screen architecture, navigation, component placement, dialogs, responsive/overflow behavior, empty states, charts, exact copy, interaction states, and palette values.
 2. **Technical design:** stack, storage engine and physical schema, updater, signing, integration boundaries, and measurable performance/data-volume targets.
 3. **Release engineering:** GitHub Actions workflow, MSIX identity and signing credentials, release protection, update metadata, and rollback drills.
@@ -664,4 +679,4 @@ The functional product baseline is closed for interface-design purposes. Remaini
 
 ## 14. Change control
 
-This baseline records product context supplied through 2026-08-20. Confirmed decisions shall not be reopened silently. Remaining items in section 13 must be resolved before implementing the affected subsystem.
+This baseline records product context supplied through 2026-08-23. Confirmed decisions shall not be reopened silently. Remaining items in section 13 must be resolved before implementing the affected subsystem.
