@@ -98,7 +98,7 @@ Requirements use stable identifiers so later decisions, implementation work, and
 - **FR-005:** A Stream shall be able to include zero or more scoped Categories.
 - **FR-006:** A Project may stand alone or optionally belong to exactly one Stream.
 
-Each Stream strip shall show the active timer; start/stop, add-Session, and negative-time/Session controls; Category and Project defaults for the next Session; and today, current-week, and all-time totals. Stream creation/editing flow, ordering, width, horizontal overflow, and empty state remain open.
+Each Stream strip shall show the active timer; start/stop, add-Session, and negative-time/Session controls; Category and Project defaults for the next Session; and today, current-week, and all-time totals. Stream creation/editing uses the right inspector defined in `docs/INTERFACE.md`; Home ordering, shared draggable channel width, horizontal overflow, and empty states are also finalized there.
 
 ### 6.2 Organization hierarchy and Session associations
 
@@ -132,7 +132,7 @@ A Session may reference at most one Stream, multiple Categories, and at most one
 
 Changing a Category's scope after it has Sessions opens a preview and asks whether to archive the original and create a replacement or migrate all historical Sessions to the new scope. Moving a Project to another Stream after it has Sessions uses the same preview and replacement-or-migration choices. Neither action may rewrite history silently.
 
-Streams, Categories, and Projects may be permanently deleted even when they have Sessions. Permanent organization deletion is limited to one root object at a time; bulk permanent deletion is not supported. The application must preview affected object and Session counts, provide expandable cascade details, require confirmation, and require the root object's exact name when the cascade is classified as large. The complete cascade moves as one unit to the shared **Recently Deleted** area used by Sessions and organization data. One configurable retention period governs every Recently Deleted item. Restoring an organization deletion restores the complete cascade atomically; after retention purge, deletion is irreversible. Archiving remains the ordinary non-destructive removal path.
+Streams, Categories, and Projects may be permanently deleted even when they have Sessions. Permanent organization deletion is limited to one root object at a time; bulk permanent deletion is not supported. The application must preview affected object and Session counts, provide expandable cascade details, and require confirmation. A cascade is **large** when it affects at least five organization objects or at least 25 Sessions; a large cascade additionally requires the root object's exact name. The complete cascade moves as one unit to the shared **Recently Deleted** area used by Sessions and organization data. One configurable retention period governs every Recently Deleted item. Restoring an organization deletion restores the complete cascade atomically; after retention purge, deletion is irreversible. Archiving remains the ordinary non-destructive removal path.
 
 Renaming an organization object changes the name shown throughout current UI and History. Sessions retain stable organization IDs and an optional original-name snapshot so exports and audits can identify the name used when the Session was recorded.
 
@@ -399,7 +399,7 @@ A backup is a versioned ZIP containing structured JSON data, non-secret settings
 - **FR-190:** The user shall be able to import and export a custom palette configuration file containing the palette name, format version, and validated light/dark color triplets.
 - **FR-191:** Invalid hex values, missing required colors, duplicate identifiers, or unsupported palette-file versions shall produce a clear error without changing the active palette.
 - **FR-192:** Settings shall provide a contrast adjustment with live preview and a warning when text/interactive contrast falls below the selected accessibility threshold.
-- **FR-193:** Appearance changes shall preview immediately and be revertible before the settings view is closed.
+- **FR-193:** Valid appearance changes shall preview, apply, and persist immediately; invalid edits shall not change the active palette.
 
 Official OpenAI documentation does not currently publish a Codex appearance-preset inventory. FR-188 is therefore based on inspection of the installed Codex package version `26.818.2872.0`, not an OpenAI compatibility promise. A later visual-design pass shall define exact preset triplets. Custom colors are configured as plain `#RRGGBB` text in Settings; saved/imported presets use versioned JSON. Low-contrast palettes warn but may be saved. Chart series derive accessible colors from the selected triplet. Scheduled mode defaults to light at 07:00 and dark at 19:00 and remains adjustable. Derivation details and behavior when a preset lacks a native counterpart remain visual-design work.
 
@@ -452,12 +452,45 @@ Stats uses the owner-approved activity-dashboard reference hierarchy: a compact 
 - **FR-233:** `Ctrl++` and `Ctrl+-` shall increase or decrease application icon size without changing text size, and the selected icon size shall persist automatically.
 - **FR-234:** Settings shall provide a Reset Layout command that restores default region widths, data-column widths, shared Stream-channel width, and icon size.
 
+### 6.22 Settings
+
+- **FR-240:** Settings shall use a responsive card dashboard without an internal section sidebar. **General** shall be the first and default section.
+- **FR-241:** Settings cards shall appear in this order: General, Appearance, Timing, Pomodoro, Billing, Activity & Privacy, Windows, Data, Updates, and About.
+- **FR-242:** A persistent Settings search shall search every section and show each matching control with its section path.
+- **FR-243:** Ordinary valid setting changes shall apply and persist immediately and show a quiet inline **Saved** status.
+- **FR-244:** Uncommon controls shall appear in expandable **Advanced** groups whose expansion states persist automatically.
+- **FR-245:** At narrow widths, dashboard cards shall stack into one column. Settings shall never use routine horizontal scrolling.
+- **FR-246:** The global Session transport shall be absent throughout Settings, including while a Session is active.
+- **FR-247:** Appearance shall provide a persistent miniature application preview beside its controls, or stacked above them at narrow widths.
+- **FR-248:** Palette selection shall use a compact searchable list with light/dark swatches. Custom editing shall keep hex fields, native color pickers, live preview, and contrast results together.
+- **FR-249:** Saved custom palettes shall support Rename, Duplicate, Export JSON, and Delete. Scheduled appearance shall show its light/dark switching times inline.
+- **FR-250:** Layout settings shall group navigation width, icon size, shared channel width, saved panel/column widths, and Reset Layout. Reset Layout shall preview affected values and require confirmation.
+- **FR-251:** Timing shall group default duration, last-used mode, accepted formats, and completion behavior. Pomodoro shall have its own card for work, break, buffer, break-billing, and notification defaults.
+- **FR-252:** Rounding settings shall show live examples of how sample durations round.
+- **FR-253:** Billing shall show an overview and reveal detailed controls only while billing is enabled. Category wages remain edited with Categories; Settings shall explain this and provide a shortcut.
+- **FR-254:** Regional settings shall group the Windows-derived region, decimal behavior, currency behavior, and local week start.
+- **FR-255:** Activity & Privacy shall group its disclosure, foreground tracking, idle/display handling, elevation preference, approximate record count/storage size, and Purge All activity data.
+- **FR-256:** Windows shall group start with Windows, notification-area behavior, notifications, sound, and window behavior.
+- **FR-257:** Updates shall show installed version, last-check status, stable-only policy, automatic-update control, and **Check Now**.
+- **FR-258:** Data shall separate Export, Backup, Restore, Recently Deleted, and Reset groups.
+- **FR-259:** Recently Deleted shall default to 30-day retention, offer 7/14/30/60/90-day presets plus a custom 1–365-day value, show each deletion deadline, and purge automatically after the deadline.
+- **FR-260:** Destructive Settings actions shall appear in danger sections and open focused confirmation dialogs.
+- **FR-261:** Reset All Settings shall preview and reset preferences only; it shall preserve all user data.
+- **FR-262:** Settings shall allow the user to create either or both MATH 100 and Work samples and rerun the setup wizard while explicitly preserving existing data.
+- **FR-263:** No unfinished Google Calendar or Integrations placeholder shall appear in Settings until a supported integration ships.
+- **FR-264:** About shall show version, update state, license, repository, acknowledgements, and **Copy Diagnostics**.
+- **FR-265:** Copied diagnostics shall contain app version, Windows version, architecture, and a non-sensitive configuration summary. It shall exclude user paths, tracked applications, Session descriptions, secrets, and other user content.
+- **FR-266:** Settings shall provide hover/focus tooltips for icons and unfamiliar controls. Arrow keys shall navigate dashboard sections, `Tab` shall navigate controls, and `Ctrl+F` shall focus Settings search.
+- **FR-267:** Saved Settings layout state shall include applicable detail-panel widths and Advanced-group expansion state.
+
+The Settings dashboard begins at General and keeps all major sections visible as responsive cards rather than introducing a second navigation rail. Cards may span the available grid when their controls require additional width. Search temporarily emphasizes matching cards and reveals matching Advanced controls while retaining section paths. Destructive actions never inherit the ordinary immediate-save behavior.
+
 ## 7. Quality requirements
 
 - **NFR-001 — Simplicity:** Core tracking must remain understandable without training or enabling advanced features.
 - **NFR-002 — Responsiveness:** Starting, stopping, continuing, filtering, and restoring the main window should feel immediate on supported hardware.
 - **NFR-003 — Reliability:** A running Session must not depend on the main window remaining visible.
-- **NFR-004 — Accessibility:** Controls, dialogs, charts, keyboard behavior, and palettes must support keyboard access, readable contrast, non-color state cues, and Windows assistive technology.
+- **NFR-004 — Accessibility:** Controls, dialogs, charts, keyboard behavior, and palettes shall follow WCAG 2.2 Level AA principles where applicable to a Windows desktop application. The application shall provide complete keyboard operation, non-color state cues, Windows UI Automation names/roles/states, screen-reader labels, system text scaling, and readable contrast.
 - **NFR-005 — Privacy:** No study record, activity record, or description may leave the device except through a user-requested export, backup, or explicitly authorized Google Calendar operation.
 - **NFR-006 — Least privilege:** TimeTrek must not request administrator elevation or external-account scopes beyond a feature's demonstrated need.
 - **NFR-007 — Recoverability:** The design must minimize lost or duplicated Sessions after crash, suspension, restore, or interrupted writes.

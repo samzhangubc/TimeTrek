@@ -141,7 +141,7 @@ The requested total duration remains editable while a normal Session is active. 
 - Single-click selects a row and opens its details in the right inspector. Arrow keys move row selection and Enter opens/focuses details.
 - Hover or keyboard focus reveals compact quick actions and a More menu. Delete remains a visible row action.
 - Normal Delete requests confirmation and moves the Session to **Recently Deleted**. `Shift+Delete` skips the confirmation but still uses the recoverable Recently Deleted stage.
-- Recently Deleted is a dedicated History subview rather than a temporary Undo notification. It supports restoration until the existing delayed-purge boundary.
+- Recently Deleted is a dedicated History subview rather than a temporary Undo notification. It supports restoration until the configured purge deadline, which defaults to 30 days.
 - Editing takes place inside the inspector. Continue and quick manual recreation are primary inspector actions.
 - Foreground-application breakdown is an expandable inspector section.
 - Persistent checkboxes also serve the **Select exact Sessions** flow reached from a Stream adjustment action.
@@ -239,6 +239,46 @@ Archive is a searchable, compact organization-management page rather than a card
 - Narrow windows hide lower-priority columns and present the inspector as an overlay.
 - Arrow keys navigate rows, Enter opens/focuses the inspector, Space toggles the persistent checkbox, and Delete starts the normal confirmed deletion workflow.
 
-## 8. Current design phase
+## 8. Settings reference layout
 
-Home, History, Stats summary, Stats Timeline, and Archive are decision-complete for wireframing. Settings is the next primary destination requiring owner decisions, followed by remaining focused-dialog visual polish and final palette values.
+Settings uses a responsive card dashboard, not an internal section sidebar. The normal icon-only primary navigation remains visible with Settings selected, while the bottom Session transport is absent. A persistent header contains **Settings**, global Settings search, the quiet Saved state, and no global Apply button.
+
+Cards appear in this order: **General, Appearance, Timing, Pomodoro, Billing, Activity & Privacy, Windows, Data, Updates, About**. General is first and receives initial keyboard focus. Cards form a readable multi-column dashboard at wide widths and stack into one column narrowly; they never create routine horizontal scrolling. Longer cards may span the grid. Uncommon controls use Advanced disclosure groups, and their expansion state is saved.
+
+### Search, saving, and navigation
+
+- Search covers every control, displays its section path, and reveals matching controls inside collapsed Advanced groups.
+- Valid ordinary changes apply and save immediately. A quiet inline **Saved** status confirms persistence.
+- Destructive actions always use focused confirmation and never execute through immediate-save behavior.
+- Arrow keys move between dashboard cards, `Tab` navigates controls, and `Ctrl+F` focuses Settings search.
+- Hover/focus tooltips explain icons and unfamiliar controls.
+
+### Card contents
+
+- **General:** setup-wizard rerun with explicit data-preservation copy, sample-data creation with separate MATH 100 and Work choices, regional/decimal/currency summary, and week start.
+- **Appearance:** searchable palette list with light/dark swatches, a persistent miniature application preview, hex fields and color pickers, contrast results, scheduled switching times, and custom-preset actions.
+- **Timing:** default duration, last-used mode, accepted formats, completion behavior, rounding controls, and live rounding examples.
+- **Pomodoro:** work, break, five-minute buffer, break-billing, and notification defaults.
+- **Billing:** enablement overview and progressively revealed details. Category wage editing remains with Categories and is reached through a shortcut.
+- **Activity & Privacy:** disclosure, foreground tracking, idle/display handling, elevation preference, approximate records/storage, and Purge All.
+- **Windows:** startup, notification-area, notification, sound, and window behavior.
+- **Data:** distinct Export, Backup, Restore, Recently Deleted, and Reset groups. Reset All Settings previews preference changes and preserves data.
+- **Updates:** installed version, last check, stable-only policy, automatic-update control, and Check Now.
+- **About:** version, update state, license, repository, acknowledgements, and privacy-preserving Copy Diagnostics.
+
+### Recently Deleted and destructive thresholds
+
+- Retention defaults to 30 days and offers 7, 14, 30, 60, and 90 days plus a custom 1–365-day value.
+- Each deleted unit shows its purge deadline and purges automatically when that deadline passes.
+- A permanent organization cascade is large at five affected organization objects or 25 affected Sessions and then requires the root name.
+- No disabled Google Calendar or empty Integrations card appears before a supported integration exists.
+
+### Layout controls and accessibility
+
+- Layout groups navigation width, icon size, shared channel width, saved panels/columns, and Reset Layout. The reset action previews its scope and confirms.
+- Applicable detail-panel widths and Advanced expansion states save automatically.
+- The Settings design follows WCAG 2.2 AA principles where applicable, Windows UI Automation, system text scaling, complete keyboard operation, screen-reader labels, and non-color state cues.
+
+## 9. Current design phase
+
+Home, History, Stats summary, Stats Timeline, Archive, and Settings are decision-complete for wireframing. Remaining interface work is focused-dialog visual polish, exact copy, and final palette values.

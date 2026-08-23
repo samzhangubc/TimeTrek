@@ -41,4 +41,4 @@ Released builds will support authenticated automatic updates from signed artifac
 
 ## Contributing
 
-The intended license is PolyForm Noncommercial 1.0.0, pending addition and review of the final license/notice; until then all rights are reserved. Use feature branches and pull requests, keep changes focused, and update the context documents whenever a product decision changes.
+The intended license is PolyForm Noncommercial 1.0.0, pending addition and review of the final license/notice; until then all rights are reserved. This is a one-person project: commit focused changes directly to `main` unless a release is active, and keep the context documents synchronized whenever a product decision changes.

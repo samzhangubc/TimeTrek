@@ -172,6 +172,10 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Stream restore selects children archived with the parent but leaves independently archived children unselected; restoring an archived child includes its owner when required. Compatible bulk restore is supported. Active conflicts can queue Archive after Session stops, with a visible pending state and Cancel.
 - A Project is standalone or owned by exactly one Stream. When a Stream is archived, standalone Projects used across Streams are listed separately, remain unchecked by default, and warn that archiving affects active use everywhere.
 - Archive permanent deletion is one root at a time through a cascade preview and danger confirmation; large cascades require the root name. Organization and Session deletions share one configurable Recently Deleted retention period, and an organization cascade restores atomically.
+- Settings uses a responsive card dashboard with General first, no internal section sidebar, persistent global search, immediate ordinary saves with quiet status, Advanced disclosures, no bottom transport, and one-column narrow reflow. Cards follow General, Appearance, Timing, Pomodoro, Billing, Activity & Privacy, Windows, Data, Updates, and About.
+- Recently Deleted defaults to 30 days, supports 7/14/30/60/90-day presets and custom 1–365 days, shows purge deadlines, and purges automatically. A large organization cascade begins at five affected organization objects or 25 Sessions.
+- Settings provides live appearance/rounding previews, progressive billing controls, privacy/storage disclosure, update status, data tools, preference-only reset, sample-data creation, safe wizard rerun, and content-excluding diagnostics. Google Calendar has no placeholder UI before it ships.
+- Accessibility targets WCAG 2.2 AA principles where applicable, complete keyboard access, Windows UI Automation, screen-reader labeling, system text scaling, and non-color state cues.
 
 ## Technical guardrails
 
@@ -186,13 +190,13 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 
 ## Decisions still requiring owner input
 
-- Settings structure; remaining focused-dialog visual polish; exact copy; and final palette values.
-- Technology stack, physical schemas, performance targets, accessibility conformance target, contribution process, security policy, and release process.
+- Remaining focused-dialog visual polish, exact copy, and final palette values.
+- Technology stack, physical schemas, performance targets, contribution process, security policy, and release process.
 - MSIX signing identity, updater technology, release artifact/metadata format, and GitHub Actions release workflow.
 
 ## Repository conventions
 
-- Keep product changes traceable through pull requests.
+- This is a one-person project. Commit directly to `main` unless a release is active or the owner explicitly requests a branch.
 - Do not start implementation or select a stack until requested.
 - Update `README.md`, `docs/SDD.md`, this file, and `llm.txt` when a decision makes them inaccurate.
 - Label proposals and unresolved decisions explicitly.
