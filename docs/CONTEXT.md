@@ -187,18 +187,21 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Core features must remain usable offline.
 - Archive rather than delete when the user's intent is to remove completed organization objects from active use.
 - Never store secrets in exports, backups, the repository, or installed-program directories.
-- No technology stack is approved yet.
+- The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, stable Windows App SDK, Generic Host/MVVM, SQLite through EF Core, and packaged self-contained per-user MSIX artifacts. `docs/TECHNICAL_DESIGN.md` is the implementation-method authority.
+- Treat all input and imported data as untrusted. Prevent SQL/command/markup/path/regex and spreadsheet-formula injection, hostile ZIP/JSON allocation, overflow, and unbounded resource growth.
+- Durable committed state is the recovery authority after application failure, forced termination, Windows crash, or power loss. Never silently replace a corrupt store or show successful persistence that did not complete.
 
 ## Decisions still requiring owner input
 
 - Remaining focused-dialog visual polish, exact copy, and final palette values.
-- Technology stack, physical schemas, performance targets, contribution process, security policy, and release process.
-- MSIX signing identity, updater technology, release artifact/metadata format, and GitHub Actions release workflow.
+- Final MSIX identity/publisher identity and production signing certificate or managed service.
+- Stable update-metadata location if required by packaged validation, emergency rollback/revocation procedure, and final release protection.
+- Final license/copyright notice review before distribution.
 
 ## Repository conventions
 
 - This is a one-person project. Commit directly to `main` unless a release is active or the owner explicitly requests a branch.
-- Do not start implementation or select a stack until requested.
+- Implementation is authorized using `docs/TECHNICAL_DESIGN.md`; `IMPLEMENTATION_PROMPT.md` is the prepared kickoff for a separate project chat.
 - Update `README.md`, `docs/SDD.md`, this file, and `llm.txt` when a decision makes them inaccurate.
 - Label proposals and unresolved decisions explicitly.
 - Never commit secrets, local databases, build output, or machine-specific configuration.

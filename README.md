@@ -3,7 +3,7 @@
 TimeTrek is a planned local-first Windows desktop application that helps people understand how they spend their time. Its main workspace is inspired by a digital audio workstation (DAW) mixer: every top-level **Stream**—such as a course, job, client, research area, or hobby—occupies a simple vertical strip with its key information and time controls.
 
 > [!IMPORTANT]
-> TimeTrek is currently in the planning and documentation stage. No application implementation has been selected or started yet.
+> TimeTrek's product, interface, and technical baselines are approved. Application implementation has not started yet; use `IMPLEMENTATION_PROMPT.md` to begin it in a dedicated project chat.
 
 ## Product goals
 
@@ -30,14 +30,16 @@ While a timer or completion workflow is active or pending, closing the main wind
 - [Project Context](docs/CONTEXT.md) — product background, terminology, constraints, and open questions
 - [First-Run Wizard](docs/FIRST_RUN_WIZARD.md) — setup screens, defaults, optional sections, and acceptance criteria
 - [Interface Design](docs/INTERFACE.md) — application shell and mixer-style workspace decisions
+- [Technical Design](docs/TECHNICAL_DESIGN.md) — approved stack, modular architecture, persistence, resilience, security, and verification methods
 - [Release and Auto-Update Baseline](docs/RELEASE.md) — signed GitHub Release requirements and workflow prerequisites
 - [LLM Context](llm.txt) — concise repository context for coding assistants
+- [Implementation Kickoff Prompt](IMPLEMENTATION_PROMPT.md) — ready-to-use instructions for a separate implementation chat
 
 ## Repository status
 
-The functional product requirements are finalized as one initial-release baseline rather than a reduced MVP, with Google Calendar explicitly deferred. TimeTrek targets Windows 10/11 on x64 and ARM64 from its first executable build intended for use as a per-user MSIX. Technology choices, physical data schemas, final visual values, and release-process implementation remain undecided.
+The functional product requirements are finalized as one initial-release baseline rather than a reduced MVP, with Google Calendar explicitly deferred. The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, stable Windows App SDK, Generic Host, MVVM, SQLite/EF Core, and self-contained per-user MSIX builds for Windows 10 1809+ and Windows 11 on x64 and ARM64. Exact visual polish remains implementation work.
 
-Released builds will support authenticated automatic updates from signed artifacts published through GitHub Releases. The exact updater and GitHub Actions release workflow will be added after the application stack, MSIX identity, and code-signing approach are selected.
+Released builds will support authenticated automatic updates from signed artifacts published through GitHub Releases. The updater boundary and validation approach are approved; final MSIX/publisher identity, production signing method, stable update metadata location if needed, and emergency rollback/revocation procedure still require owner input before a signed release.
 
 ## Contributing
 

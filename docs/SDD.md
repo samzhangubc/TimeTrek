@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Document status | Working product specification; unresolved decisions are marked explicitly |
-| Product status | Planning; implementation not started |
+| Product status | Functional, interface, and technical baselines approved; implementation not started |
 | Target platform | Windows desktop |
 | Last updated | 2026-08-23 |
 
@@ -414,7 +414,7 @@ Official OpenAI documentation does not currently publish a Codex appearance-pres
 - **FR-203:** Writes shall be resilient to interruption and shall not knowingly leave the primary data store partially written.
 - **FR-204:** Schema changes shall use an explicit version and migration strategy before a release changes stored data.
 
-The storage engine and final schema remain open.
+The approved persistence method is SQLite through the stable .NET 10-compatible EF Core SQLite provider. Physical representation, migration, transaction, recovery, and dependency-boundary rules are defined in `docs/TECHNICAL_DESIGN.md`.
 
 ### 6.19 First-run setup wizard
 
@@ -433,9 +433,9 @@ The detailed screen flow, copy requirements, defaults, skip rules, and acceptanc
 - **FR-220:** TimeTrek shall be distributed initially as a per-user MSIX package with clean uninstall.
 - **FR-221:** Only one TimeTrek instance may run per Windows user at a time; a second launch shall activate the existing instance.
 - **FR-222:** Automatic start with Windows shall be available, off by default, and offered in the first-run wizard.
-- **FR-223:** Technology selection shall follow product finalization and a separate stack comparison.
+- **FR-223:** The application shall use the approved C# 14/.NET 10 LTS, WinUI 3/Windows App SDK, Generic Host, modular-monolith, SQLite/EF Core, and packaged self-contained MSIX baseline defined in `docs/TECHNICAL_DESIGN.md`.
 - **FR-224:** The intended software license is PolyForm Noncommercial 1.0.0, subject to adding the unmodified license text and the owner's required copyright notice before distribution. This is source-available, not OSI-approved open source. Until that is completed, all rights remain reserved and no distribution license is granted.
-- **FR-225:** TimeTrek shall support automatic application updates using authenticated, signed update artifacts published through GitHub Releases. Update checks shall be configurable, shall verify release authenticity and package integrity, and shall never replace an active-session binary unsafely. The exact updater and MSIX delivery mechanism shall be selected with the technology stack.
+- **FR-225:** TimeTrek shall support automatic application updates using authenticated, signed update artifacts published through GitHub Releases. Update checks shall be configurable, shall verify release authenticity and package integrity, and shall never replace an active-session binary unsafely. The application-owned update coordinator, replaceable `IUpdateService`, bounded download, checksum/publisher/signature validation, and Windows/MSIX installation handoff shall follow `docs/TECHNICAL_DESIGN.md`.
 - **FR-226:** The release pipeline shall build and sign x64 and ARM64 MSIX packages, attach the required update metadata/artifacts to a versioned GitHub Release, and support rollback/recovery from a failed update. Publishing a GitHub Release is an owner-authorized operation.
 - **FR-227:** Settings shall expose separate **Check automatically** and **Download automatically** controls. Disabling automatic checks also disables automatic downloads; **Check Now** remains available, and installation always requires confirmation.
 
@@ -490,6 +490,21 @@ Stats uses the owner-approved activity-dashboard reference hierarchy: a compact 
 
 The Settings dashboard begins at General and keeps all major sections visible as responsive cards rather than introducing a second navigation rail. Cards may span the available grid when their controls require additional width. Search temporarily emphasizes matching cards and reveals matching Advanced controls while retaining section paths. Destructive actions never inherit the ordinary immediate-save behavior.
 
+### 6.23 Defensive input, failure, and recovery behavior
+
+- **FR-270:** Every user-controlled string, imported/exported file, backup, palette, URI, update response, and future integration payload shall be treated as untrusted input and validated before use.
+- **FR-271:** User input shall never be concatenated into SQL, command shells, scripts, executable arguments, XAML/markup, paths, format strings, or regular expressions. SQL shall be parameterized; stored and imported text shall render as text rather than executable content; process launches shall use fixed structured APIs and allowlisted targets.
+- **FR-272:** CSV export shall prevent spreadsheet-formula execution from user-controlled text while preserving a reversible representation documented in the packaged data dictionary. JSON exports and backups shall retain the exact original strings.
+- **FR-273:** Import, backup, palette, and update inputs shall be checked for supported versions, type/Unicode validity, numeric overflow, lengths, counts, relationship validity, JSON depth, archive entry paths, duplicate/conflicting entries, checksums, expanded size, and compression ratio before mutation or unbounded allocation. Invalid input shall fail without changing live data.
+- **FR-274:** Starting or transitioning a timer shall not be reported as successful until the corresponding state is committed durably. Application, process, Windows, or whole-PC failure shall recover from the last committed transition rather than UI ticks or an assumed in-memory state.
+- **FR-275:** TimeTrek shall distinguish clean from unclean shutdown. After an unclean shutdown it shall validate the local store before ordinary mutation, reconstruct active/completion state according to the scheduled-end rules, and avoid duplicating or silently discarding Sessions.
+- **FR-276:** A corrupt, unreadable, partially migrated, or incompatible store shall never be silently replaced by a new empty store. TimeTrek shall preserve the affected store and offer an applicable rollback, restore, or read-only salvage/export path with a clear explanation.
+- **FR-277:** Disk-full, access-denied, failed flush/replace, unavailable-device, and similar persistence failures shall not display false success. The application shall preserve the last durable state, show a recoverable error, and support safe bounded retry or exit where possible.
+- **FR-278:** Repeated startup failure shall enter a safe recovery mode that suppresses optional adapters and custom appearance, avoids automatic destructive migration, and keeps diagnostics, backup, restore, and recovery access available without deleting user data.
+- **FR-279:** Long operations, collections, caches, event queues, network responses, imports, exports, backups, restores, and reports shall be streamed, paged, virtualized, cancellable, size-limited, or backpressured as applicable so user-controlled scale cannot cause unbounded memory growth. A true process-wide memory exhaustion or corrupt-process condition shall terminate for next-launch recovery rather than attempting unsafe continued operation.
+
+The exact defensive limits are versioned implementation constants sized above the supported dataset target and documented where a user may encounter them. Limits must be checked before large allocation. Resource-limit, validation, cancellation, or failure paths leave live data unchanged unless an earlier transaction was already committed. Every termination path releases Windows hooks, notification icons, wake requests, temporary files, database resources, and other acquired handles as far as the operating system permits.
+
 ## 7. Quality requirements
 
 - **NFR-001 — Simplicity:** Core tracking must remain understandable without training or enabling advanced features.
@@ -502,12 +517,17 @@ The Settings dashboard begins at General and keeps all major sections visible as
 - **NFR-008 — Auditability:** Raw timestamps and the rules used to derive rounded/billable values must remain inspectable.
 - **NFR-009 — Offline operation:** All core tracking, history, statistics, export, backup, and restore features must work without network access.
 - **NFR-010 — Maintainability:** Timing, persistence, reporting, integration, and presentation responsibilities should remain separable and testable.
+- **NFR-011 — Input security:** No untrusted value may change query, command, markup, path, formula, or control-flow meaning through injection. Parsing and transformation must be explicit, bounded, and testable.
+- **NFR-012 — Crash and power-loss integrity:** Application crashes, forced termination, Windows failure, and sudden power loss must recover from the last durable transition without silent store replacement, partially applied multi-object operations, or duplicate Session completion.
+- **NFR-013 — Resource safety:** Memory, file, database, handle, task, queue, network, and CPU use must remain bounded or cancellable for supported datasets and malformed inputs. The UI must remain responsive during long work.
+- **NFR-014 — Failure transparency:** Disk, permission, corruption, migration, import, export, backup, restore, and update failures must be reported accurately and must never show a successful state that was not made durable.
+- **NFR-015 — Supply-chain integrity:** Release dependencies, update metadata, checksums, packages, and signatures must be authenticated or verified through the approved build and update design; an untrusted artifact must never execute as an update.
 
-TimeTrek supports Windows 10 and Windows 11 on x64 and ARM64 from the first executable build intended for use; no architecture or supported Windows version is deferred to a later milestone. Specific response-time and dataset-size targets remain open.
+TimeTrek supports Windows 10 version 1809 or later and Windows 11 on x64 and ARM64 from the first executable build intended for use; no architecture or supported Windows version is deferred to a later milestone. Engineering targets are at least 100,000 Sessions/adjustments, 1,000 organization objects, and 1,000,000 accumulated foreground-application records, with ordinary durable commands completing within 200 ms, initial Home/History results within 300 ms, and common Stats/timeline views within one second on the representative SSD-based system defined by the technical test plan.
 
 ## 8. Conceptual data model
 
-This is a vocabulary-level model, not a selected database schema.
+This section remains the product vocabulary rather than a table-by-table physical schema. The approved physical representation and mapping rules are governed by `docs/TECHNICAL_DESIGN.md` and committed migrations.
 
 ### Stream
 
@@ -599,7 +619,7 @@ Derived totals and visualizations should be calculated from Sessions unless a la
 - **Persistence:** local store, migrations, backup, restore, and protected credentials.
 - **Appearance:** mode scheduling, palettes, contrast, import/export, and derived colors.
 
-No UI framework, programming language, database, packaging format, or installer has been selected.
+The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, the stable Windows App SDK, Generic Host, MVVM, SQLite through EF Core, and packaged self-contained per-user MSIX artifacts. `docs/TECHNICAL_DESIGN.md` defines module/dependency boundaries, timing and persistence methods, Windows adapters, defensive limits, updates, tests, and incremental implementation order.
 
 ## 10. External feasibility constraints
 
@@ -663,6 +683,12 @@ The eventual implementation must include automated or platform-appropriate check
 - Recommended-default wizard fast path and optional-Advanced completion semantics.
 - Documented shortcut coverage and rejection of hidden global action shortcuts.
 - Persistence and recovery after abnormal termination.
+- Parameterized input handling and rejection of SQL, command, markup, path, regular-expression, and spreadsheet-formula injection attempts.
+- Malformed/oversized JSON, ZIP traversal and decompression bombs, duplicate/conflicting import identifiers, numeric overflow, and unsupported schemas without live mutation.
+- Disk-full, write-denied, corrupted-store, migration-failure, and interrupted atomic-replacement behavior without false success or silent empty-store replacement.
+- Forced process termination at timing and data-mutation boundaries, followed by exactly-once recovery from the last committed state.
+- Simulated Windows/PC crash or power loss, unclean-shutdown detection, integrity validation, scheduled-end recovery, and safe recovery-mode entry.
+- Bounded-memory generated-scale behavior, streaming/paging/virtualization, cancellation, queue backpressure, cache eviction, and deterministic platform-resource cleanup.
 
 Windows lifecycle, notification-area, screen-saver, foreground-application, and display-scaling behavior require tests on every supported Windows version.
 
@@ -672,11 +698,11 @@ The functional product baseline is closed for interface-design purposes. Remaini
 
 All functional requirements other than the explicitly deferred Google Calendar extension belong to one initial-release baseline. The owner has declined a reduced MVP or staged product-requirement split; implementation sequencing may be incremental, but the requirements are not divided into separate product milestones. Windows 10/11 and x64/ARM64 support apply from the first executable build intended for use.
 
-1. **Interface design:** screen architecture, navigation, component placement, dialogs, responsive/overflow behavior, empty states, charts, exact copy, interaction states, and palette values.
-2. **Technical design:** stack, storage engine and physical schema, updater, signing, integration boundaries, and measurable performance/data-volume targets.
-3. **Release engineering:** GitHub Actions workflow, MSIX identity and signing credentials, release protection, update metadata, and rollback drills.
+1. **Implementation:** build the complete non-Calendar baseline using `docs/TECHNICAL_DESIGN.md`; exact remaining copy, icon glyphs, and palette triplets may be completed as visual implementation work without reopening confirmed behavior.
+2. **Release-owner inputs:** final MSIX identity/publisher, trusted signing certificate or managed service, stable update metadata location if required, and emergency revocation/rollback procedure.
+3. **Release engineering:** implement and validate the GitHub Actions workflow, signed x64/ARM64 artifacts, update metadata, protected release authorization, and rollback drills after the owner inputs exist.
 4. **Distribution readiness:** add and review the unmodified PolyForm Noncommercial 1.0.0 license and required copyright notice.
 
 ## 14. Change control
 
-This baseline records product context supplied through 2026-08-23. Confirmed decisions shall not be reopened silently. Remaining items in section 13 must be resolved before implementing the affected subsystem.
+This baseline records product context supplied through 2026-08-23. Confirmed decisions shall not be reopened silently. Core implementation is authorized under `docs/TECHNICAL_DESIGN.md`; only the release-owner inputs in section 13 remain external blockers for a signed distributable release.

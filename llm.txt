@@ -1,6 +1,6 @@
 # TimeTrek: context for coding assistants
 
-TimeTrek is a planning-stage source-available Windows desktop time tracker. Do not implement it or choose a stack until the owner asks. `docs/SDD.md` is the requirements authority; do not invent behavior for decisions it marks open.
+TimeTrek is a source-available Windows desktop time tracker with approved product, interface, and technical baselines. Implementation is authorized in a dedicated project chat. `docs/SDD.md` is the product authority, `docs/TECHNICAL_DESIGN.md` is the implementation-method authority, and `IMPLEMENTATION_PROMPT.md` is the prepared kickoff. Do not invent behavior for decisions marked open.
 
 Core product:
 - Local-first and offline-capable; students are primary, but work/research/personal use is supported.
@@ -59,17 +59,22 @@ Guardrails:
 - Keep optional features progressive and core tracking simple.
 - Do not add cloud sync, accounts, telemetry, teams, approvals, GPS, screenshots, targets, or extra shortcuts.
 - Keep data in per-user Windows app data and secrets in protected credential storage.
-- Keep README.md, docs/SDD.md, docs/CONTEXT.md, and this file synchronized.
+- Keep README.md, docs/SDD.md, docs/TECHNICAL_DESIGN.md, docs/CONTEXT.md, and this file synchronized.
+- Treat all strings, files, archives, JSON/CSV, URIs, update metadata, and future integration payloads as untrusted. Parameterize SQL and structured process calls; never interpolate input into SQL, shells, scripts, markup, paths, format strings, or unbounded regexes.
+- Defend imports/exports against spreadsheet-formula injection, ZIP traversal/decompression bombs, malformed or oversized JSON, overflow, invalid relationships, excessive nesting/counts, and unbounded allocation. JSON/backups retain exact original text; reversible CSV neutralization is documented.
+- Commit timing transitions before showing success. Recover after app/process/Windows/PC crash or power loss from the last committed state, detect unclean shutdown, validate integrity, and never replace a corrupt store silently.
+- Bound and stream/page/virtualize/cancel collections, caches, queues, reports, imports, exports, backups, and network responses. A true process-wide memory exhaustion terminates for next-launch recovery rather than continuing unsafely.
+- Add hostile-input, disk-full, corruption, forced-termination, power-loss, scale, bounded-memory, and deterministic-cleanup tests with the affected subsystem.
 
 Repository workflow:
 - TimeTrek is a one-person project. Commit directly to `main` by default rather than creating feature branches or pull requests.
 - Use a separate branch only while a release is active or when the owner explicitly requests one.
 
 Current state as of 2026-08-23:
-- Documentation only; implementation has not started.
-- Windows 10/11, x64/ARM64 from the first executable build intended for use; per-user MSIX, single instance. Stack selection is intentionally later.
+- Documentation only; implementation is authorized but has not started. Begin from `IMPLEMENTATION_PROMPT.md` in the separate implementation chat.
+- Approved stack: C# 14/.NET 10 LTS, WinUI 3/stable Windows App SDK, Generic Host, MVVM, SQLite/EF Core, modular monolith, self-contained per-user MSIX, and single instance. Target Windows 10 1809+ and Windows 11 on x64/ARM64 from the first executable build intended for use.
 - `docs/FIRST_RUN_WIZARD.md` defines the wizard baseline, including a one-action Use recommended defaults path. Basic completion makes optional Advanced setup non-blocking. Google Calendar is deferred and absent from the initial wizard. All choices remain editable.
-- Automatic updates must use authenticated, signed artifacts published through GitHub Releases; the MSIX updater, signing, and release workflow wait for the stack decision.
+- Automatic updates use the adapter/coordinator design in `docs/TECHNICAL_DESIGN.md` with stable GitHub Releases, checksum/publisher/signature verification, bounded downloads, confirmation, and active-state deferral. Production identity/signing and final metadata location remain owner release inputs.
 - Functional behavior is closed for interface-design purposes. All non-Calendar requirements form one initial-release baseline rather than a reduced MVP. Late confirmed decisions include previewed organization migration or replacement, cascading deletion with recoverable retention, scheduled-end crash recovery, signed negative adjustments, Pomodoro cycle-duration pauses that freeze the hard cap, no break application tracking, additive Multiple Categories with drill-down plus non-additive involvement reporting, per-Session currency-minor-unit earnings, raw-time budget counting, versioned ZIP backup with rollback snapshots/remapped merge conflicts, application data excluded from exports unless explicitly selected, packaged CSV documentation, and stable-only prompted updates.
 - Intended license is PolyForm Noncommercial 1.0.0, pending inclusion/review; until then all rights are reserved.
 - Interface phase: follow `docs/INTERFACE.md`. The shell uses a non-collapsible icon-only navigation column (64 px default, draggable) and Archive as a primary destination. Home targets about six visible low-alpha color-tinted Stream channels at 1280 px. A persistent Studio One-like bottom transport bar owns global Session selection/configuration and Start/Pause/Stop; channels show their own time and also expose direct Start Timer.

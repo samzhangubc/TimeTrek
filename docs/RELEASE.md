@@ -2,15 +2,15 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Requirements baseline; implementation awaits stack selection |
-| Last verified | 2026-08-20 |
+| Status | Stack/update architecture approved; production identity and signing pending |
+| Last verified | 2026-08-23 |
 | Repository | `samzhangubc/TimeTrek` |
 
 ## Current repository state
 
 The GitHub repository is public, its default branch is `main`, and GitHub Releases are available. At the verification date it had no published Releases and no GitHub Actions workflows. No GitHub repository feature must be enabled before planning automatic updates.
 
-An executable release workflow cannot be added responsibly until the application build command, MSIX package identity, updater mechanism, and signing method are selected. A placeholder workflow that cannot produce or sign the real application is prohibited.
+The implementation stack and updater boundary are approved in `docs/TECHNICAL_DESIGN.md`. A production release workflow cannot be finalized until the real build exists and the MSIX package identity, publisher identity, trusted signing method, and any stable update-metadata location are approved. A placeholder workflow that cannot build, validate, and sign the real application is prohibited.
 
 ## Required release design
 
@@ -26,7 +26,7 @@ An executable release workflow cannot be added responsibly until the application
 - Update metadata must support minimum-compatible versions and prevent accidental downgrade unless an explicit recovery procedure authorizes it.
 - Release notes shall be visible before or after installation and link to the corresponding GitHub Release.
 
-## GitHub Actions requirements after stack selection
+## GitHub Actions requirements
 
 The release workflow shall:
 
@@ -43,11 +43,11 @@ Every executable build intended for use must target Windows 10 and Windows 11 on
 
 Use a protected GitHub Environment for release authorization and signing credentials. Grant the workflow only the minimum repository permissions needed, normally read access to source and scoped write access to release contents during the publish job.
 
-## Decisions required before implementation
+## Decisions required before a signed release
 
-- Application framework and build system.
 - MSIX identity, publisher identity, and version mapping.
 - Code-signing certificate or managed signing service.
-- Auto-update mechanism compatible with the chosen MSIX distribution model.
-- Exact installation/restart copy and Windows notification treatment.
+- Stable public update metadata location if GitHub Release assets alone cannot provide the validated App Installer-compatible path.
 - Retention, rollback, and emergency revocation procedure.
+
+Core implementation and development-signed packaging may proceed before these values exist. The application update coordinator, `IUpdateService` boundary, stable-only GitHub Release checks, bounded download cache, SHA-256 verification, expected-publisher/signature checks, user-confirmed Windows/MSIX installation, and active-Session deferral follow `docs/TECHNICAL_DESIGN.md`. Production identity values must be supplied through protected release configuration rather than source code.
