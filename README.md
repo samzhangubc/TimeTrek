@@ -3,7 +3,7 @@
 TimeTrek is a planned local-first Windows desktop application that helps people understand how they spend their time. Its main workspace is inspired by a digital audio workstation (DAW) mixer: every top-level **Stream**—such as a course, job, client, research area, or hobby—occupies a simple vertical strip with its key information and time controls.
 
 > [!IMPORTANT]
-> TimeTrek's product, interface, and technical baselines are approved. Application implementation has not started yet; use `IMPLEMENTATION_PROMPT.md` to begin it in a dedicated project chat.
+> TimeTrek's modular application implementation is active. Use `IMPLEMENTATION_PROMPT.md` as the scope authority and `docs/CODE_MAP.md` as the feature-to-file index.
 
 ## Product goals
 
@@ -34,10 +34,12 @@ While a timer or completion workflow is active or pending, closing the main wind
 - [Release and Auto-Update Baseline](docs/RELEASE.md) — signed GitHub Release requirements and workflow prerequisites
 - [LLM Context](llm.txt) — concise repository context for coding assistants
 - [Implementation Kickoff Prompt](IMPLEMENTATION_PROMPT.md) — ready-to-use instructions for a separate implementation chat
+- [Code Map](docs/CODE_MAP.md) — feature-to-file ownership for maintainers and coding assistants
+- [Machine Feature Index](docs/feature-index.json) — compact paths for fast tool indexing
 
 ## Repository status
 
-The functional product requirements are finalized as one initial-release baseline rather than a reduced MVP, with Google Calendar explicitly deferred. The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, stable Windows App SDK, Generic Host, MVVM, SQLite/EF Core, and self-contained per-user MSIX builds for Windows 10 1809+ and Windows 11 on x64 and ARM64. Exact visual polish remains implementation work.
+The functional product requirements are finalized as one initial-release baseline rather than a reduced MVP, with Google Calendar explicitly deferred. The implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, stable Windows App SDK, Generic Host, MVVM, SQLite/EF Core, and self-contained per-user MSIX builds for Windows 10 1809+ and Windows 11 on x64 and ARM64. Release identity/signing and physical packaged-platform validation remain release gates.
 
 Released builds will support authenticated automatic updates from signed artifacts published through GitHub Releases. The updater boundary and validation approach are approved; final MSIX/publisher identity, production signing method, stable update metadata location if needed, and emergency rollback/revocation procedure still require owner input before a signed release.
 

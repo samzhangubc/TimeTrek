@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="TimeTrek.Presentation.WinUI.Home.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Padding="24" RowSpacing="16">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    <Grid ColumnSpacing="12">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="260" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <StackPanel>
+        <TextBlock Text="Home" Style="{StaticResource TitleTextBlockStyle}" />
+        <TextBlock Text="Compare Streams and start focused time from the transport." Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+      </StackPanel>
+      <TextBox Grid.Column="1" x:Name="NewStreamName" Header="New Stream" PlaceholderText="Course, job, hobby…" />
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Bottom"><Button Content="Add Stream" Click="OnAddStream" Style="{StaticResource AccentButtonStyle}" /><Button Content="Add Category" Click="OnAddCategory" /><Button Content="Add Project" Click="OnAddProject" /></StackPanel>
+    </Grid>
+    <InfoBar Grid.Row="1" x:Name="ErrorBar" Severity="Error" IsClosable="False" />
+    <ListView
+        Grid.Row="2"
+        ItemsSource="{x:Bind ViewModel.Streams}"
+        SelectionMode="None"
+        ScrollViewer.HorizontalScrollMode="Enabled"
+        ScrollViewer.HorizontalScrollBarVisibility="Visible"
+        ScrollViewer.VerticalScrollMode="Disabled">
+      <ListView.ItemsPanel>
+        <ItemsPanelTemplate>
+          <ItemsStackPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+      </ListView.ItemsPanel>
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <Border Width="{Binding ChannelWidth}" Margin="0,0,12,0" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+            <Grid RowSpacing="14">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <TextBlock Text="{Binding Name}" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
+              <TextBlock Grid.Row="1" Text="{Binding Total}" FontFamily="Consolas" FontSize="26" HorizontalAlignment="Center" AutomationProperties.Name="Stream total time" />
+              <Button Grid.Row="2" Content="Start Timer" HorizontalAlignment="Stretch" Tag="{Binding Id}" Click="OnStartTimer" ToolTipService.ToolTip="Choose a duration and start this Stream." />
+              <StackPanel Grid.Row="3" Spacing="6">
+                <TextBlock Text="Category defaults" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock Text="Project default" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+              </StackPanel>
+              <StackPanel Grid.Row="4" VerticalAlignment="Bottom" Spacing="8">
+                <Grid><TextBlock Text="Total" /><TextBlock Text="{Binding Total}" HorizontalAlignment="Right" /></Grid>
+                <Grid><TextBlock Text="Today" /><TextBlock Text="{Binding Today}" HorizontalAlignment="Right" /></Grid>
+                <Grid><TextBlock Text="This Week" /><TextBlock Text="{Binding ThisWeek}" HorizontalAlignment="Right" /></Grid>
+              </StackPanel>
+              <StackPanel Grid.Row="5" Orientation="Horizontal" Spacing="8">
+                <Button Content="Add Session" Tag="{Binding Id}" Click="OnAddSession" />
+                <Button Content="Adjust" Tag="{Binding Id}" Click="OnAdjust" />
+                <Button Content="Archive" Tag="{Binding Id}" Click="OnArchive" />
+              </StackPanel>
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </Grid>
+</UserControl>

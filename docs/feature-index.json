@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "authority": "docs/SDD.md",
+  "architecture": "docs/TECHNICAL_DESIGN.md",
+  "composition_root": "src/TimeTrek.App/App.xaml.cs",
+  "features": {
+    "organization": ["src/TimeTrek.Domain/Organization", "src/TimeTrek.Application/Organization", "src/TimeTrek.Infrastructure/Persistence/SqliteOrganizationStore.cs", "src/TimeTrek.Presentation.WinUI/Home"],
+    "timing": ["src/TimeTrek.Domain/Timing", "src/TimeTrek.Application/Timing", "src/TimeTrek.Infrastructure/Persistence/SqliteTimingStore.cs", "src/TimeTrek.Presentation.WinUI/Timing"],
+    "lifecycle": ["src/TimeTrek.Application/Lifecycle", "src/TimeTrek.Platform.Windows/Lifecycle", "src/TimeTrek.App/App.xaml.cs"],
+    "history": ["src/TimeTrek.Application/History", "src/TimeTrek.Infrastructure/Persistence/SqliteHistoryStore.cs", "src/TimeTrek.Presentation.WinUI/History"],
+    "reporting": ["src/TimeTrek.Application/Reporting", "src/TimeTrek.Infrastructure/Persistence/SqliteReportingStore.cs", "src/TimeTrek.Presentation.WinUI/Reporting"],
+    "archive": ["src/TimeTrek.Application/Archive", "src/TimeTrek.Infrastructure/Persistence/SqliteArchiveStore.cs", "src/TimeTrek.Presentation.WinUI/Archive"],
+    "data_portability": ["src/TimeTrek.Application/DataPortability", "src/TimeTrek.Infrastructure/DataPortability", "src/TimeTrek.Platform.Windows/DataPortability"],
+    "settings": ["src/TimeTrek.Application/Settings", "src/TimeTrek.Infrastructure/Settings", "src/TimeTrek.Presentation.WinUI/Settings"],
+    "schema": ["src/TimeTrek.Infrastructure/Persistence/PersistenceRows.cs", "src/TimeTrek.Infrastructure/Persistence/TimeTrekDbContext.cs", "src/TimeTrek.Infrastructure/Persistence/Migrations"]
+  }
+}

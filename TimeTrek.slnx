@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TimeTrek.App/TimeTrek.App.csproj" />
+    <Project Path="src/TimeTrek.Application/TimeTrek.Application.csproj" />
+    <Project Path="src/TimeTrek.Domain/TimeTrek.Domain.csproj" />
+    <Project Path="src/TimeTrek.Infrastructure/TimeTrek.Infrastructure.csproj" />
+    <Project Path="src/TimeTrek.Platform.Windows/TimeTrek.Platform.Windows.csproj" />
+    <Project Path="src/TimeTrek.Presentation.WinUI/TimeTrek.Presentation.WinUI.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TimeTrek.Application.Tests/TimeTrek.Application.Tests.csproj" />
+    <Project Path="tests/TimeTrek.Architecture.Tests/TimeTrek.Architecture.Tests.csproj" />
+    <Project Path="tests/TimeTrek.Domain.Tests/TimeTrek.Domain.Tests.csproj" />
+    <Project Path="tests/TimeTrek.Infrastructure.Tests/TimeTrek.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

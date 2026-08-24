@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TimeTrek.App (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "TimeTrek.App (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

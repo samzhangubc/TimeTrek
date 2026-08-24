@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore TimeTrek.slnx
+      - name: Build x64
+        run: dotnet build TimeTrek.slnx --configuration Release --no-restore
+      - name: Test
+        run: dotnet test TimeTrek.slnx --configuration Release --no-build
+      - name: Compile ARM64 app
+        run: dotnet build src/TimeTrek.App/TimeTrek.App.csproj --configuration Release -p:Platform=ARM64 -p:RuntimeIdentifier=win-arm64

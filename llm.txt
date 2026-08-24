@@ -1,6 +1,6 @@
 # TimeTrek: context for coding assistants
 
-TimeTrek is a source-available Windows desktop time tracker with approved product, interface, and technical baselines. Implementation is authorized in a dedicated project chat. `docs/SDD.md` is the product authority, `docs/TECHNICAL_DESIGN.md` is the implementation-method authority, and `IMPLEMENTATION_PROMPT.md` is the prepared kickoff. Do not invent behavior for decisions marked open.
+TimeTrek is a source-available Windows desktop time tracker with approved product, interface, and technical baselines and an active modular implementation. `docs/SDD.md` is the product authority, `docs/TECHNICAL_DESIGN.md` is the implementation-method authority, `IMPLEMENTATION_PROMPT.md` is the execution scope, and `docs/CODE_MAP.md` plus `docs/feature-index.json` map features to governing code. Do not invent behavior for decisions marked open.
 
 Core product:
 - Local-first and offline-capable; students are primary, but work/research/personal use is supported.
@@ -71,7 +71,7 @@ Repository workflow:
 - Use a separate branch only while a release is active or when the owner explicitly requests one.
 
 Current state as of 2026-08-23:
-- Documentation only; implementation is authorized but has not started. Begin from `IMPLEMENTATION_PROMPT.md` in the separate implementation chat.
+- The modular implementation is under `src/`, tests are under `tests/`, and CI is in `.github/workflows/ci.yml`. Read `docs/CODE_MAP.md` before editing and update its ownership mappings when files move.
 - Approved stack: C# 14/.NET 10 LTS, WinUI 3/stable Windows App SDK, Generic Host, MVVM, SQLite/EF Core, modular monolith, self-contained per-user MSIX, and single instance. Target Windows 10 1809+ and Windows 11 on x64/ARM64 from the first executable build intended for use.
 - `docs/FIRST_RUN_WIZARD.md` defines the wizard baseline, including a one-action Use recommended defaults path. Basic completion makes optional Advanced setup non-blocking. Google Calendar is deferred and absent from the initial wizard. All choices remain editable.
 - Automatic updates use the adapter/coordinator design in `docs/TECHNICAL_DESIGN.md` with stable GitHub Releases, checksum/publisher/signature verification, bounded downloads, confirmation, and active-state deferral. Production identity/signing and final metadata location remain owner release inputs.

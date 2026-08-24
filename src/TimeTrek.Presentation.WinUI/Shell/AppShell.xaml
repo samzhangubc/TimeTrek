@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="TimeTrek.Presentation.WinUI.Shell.AppShell"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="WizardRoot" Padding="48">
+      <Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+      <StackPanel Grid.Row="1" Width="620" Spacing="18" HorizontalAlignment="Center">
+        <TextBlock Text="Welcome to TimeTrek" Style="{StaticResource TitleTextBlockStyle}" />
+        <TextBlock Text="Your Sessions, organization, settings, exports, and backups stay on this device. No account or network connection is required." TextWrapping="Wrap" Style="{StaticResource BodyStrongTextBlockStyle}" />
+        <InfoBar x:Name="WizardError" IsClosable="False" IsOpen="False" Severity="Error" />
+        <StackPanel x:Name="WelcomeActions" Spacing="10">
+          <Button x:Name="RecommendedDefaultsButton" HorizontalAlignment="Stretch" Click="OnUseRecommendedDefaults" Content="Use recommended defaults" Style="{StaticResource AccentButtonStyle}" />
+          <Button HorizontalAlignment="Stretch" Click="OnBeginStepByStep" Content="Set up step by step" />
+          <Button HorizontalAlignment="Stretch" Content="Restore a backup" Click="OnRestoreBackup" />
+          <TextBlock Text="Recommended: 25-minute Normal Sessions, 25/5 Pomodoro, notifications on, sound/startup/rounding/billing/activity tracking off, Follow Windows appearance, and safe interruption handling." TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
+        <ScrollViewer x:Name="StepByStepPanel" Visibility="Collapsed" MaxHeight="560">
+          <StackPanel Spacing="14">
+            <TextBlock Text="Basic setup" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <TextBlock Text="Optional starter organization" FontWeight="SemiBold" />
+            <CheckBox Content="Create editable MATH 100 sample" IsChecked="{x:Bind ViewModel.Wizard.CreateMathSample, Mode=TwoWay}" />
+            <CheckBox Content="Create editable Work sample" IsChecked="{x:Bind ViewModel.Wizard.CreateWorkSample, Mode=TwoWay}" />
+            <TextBlock Text="Timing defaults" FontWeight="SemiBold" />
+            <TextBlock Text="Normal 25 minutes; remembered Pomodoro 25 work / 5 break; notifications on; sound off. Week start and regional display follow Windows and remain editable." TextWrapping="Wrap" />
+            <TextBlock Text="Appearance" FontWeight="SemiBold" />
+            <TextBlock Text="Follow Windows with the GitHub Default light/dark palette. Custom Canvas, Surface, and Accent colors remain available in Settings." TextWrapping="Wrap" />
+            <ToggleSwitch Header="Start with Windows" IsOn="{x:Bind ViewModel.Wizard.StartWithWindows, Mode=TwoWay}" />
+            <TextBlock Text="Optional advanced setup" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <ToggleSwitch Header="Enable nearest-minute rounding" IsOn="{x:Bind ViewModel.Wizard.EnableRounding, Mode=TwoWay}" />
+            <ToggleSwitch Header="Enable billing fields" IsOn="{x:Bind ViewModel.Wizard.EnableBilling, Mode=TwoWay}" />
+            <ToggleSwitch Header="Collect foreground application identity and duration only during active work" IsOn="{x:Bind ViewModel.Wizard.EnableForegroundTracking, Mode=TwoWay}" />
+            <TextBlock Text="Foreground tracking stores only display name, executable filename, and duration locally. It excludes titles, paths, browser domains, screenshots, clipboard, content, and keystrokes; pauses and breaks are not collected; inaccessible elevated apps are labelled Unknown elevated application." TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Button Content="Finish setup" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Click="OnCompleteStepByStep" />
+          </StackPanel>
+        </ScrollViewer>
+      </StackPanel>
+    </Grid>
+
+    <Grid x:Name="MainRoot" Visibility="Collapsed">
+      <Grid.ColumnDefinitions><ColumnDefinition x:Name="NavigationColumn" Width="64" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+      <Border Grid.Column="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+        <Grid Padding="8,12"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+          <Button Grid.Row="0" Tag="Home" Click="OnNavigate" AutomationProperties.Name="Home" ToolTipService.ToolTip="Home"><SymbolIcon Symbol="Home" /></Button>
+          <Button Grid.Row="1" Tag="History" Click="OnNavigate" AutomationProperties.Name="History" ToolTipService.ToolTip="History"><SymbolIcon Symbol="Clock" /></Button>
+          <Button Grid.Row="2" Tag="Stats" Click="OnNavigate" AutomationProperties.Name="Stats" ToolTipService.ToolTip="Stats"><SymbolIcon Symbol="FourBars" /></Button>
+          <Button Grid.Row="3" Tag="Archive" Click="OnNavigate" AutomationProperties.Name="Archive" ToolTipService.ToolTip="Archive"><SymbolIcon Symbol="Folder" /></Button>
+          <Button Grid.Row="5" Tag="Settings" Click="OnNavigate" AutomationProperties.Name="Settings" ToolTipService.ToolTip="Settings"><SymbolIcon Symbol="Setting" /></Button>
+        </Grid>
+      </Border>
+      <Grid Grid.Column="1"><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="92" /></Grid.RowDefinitions>
+        <ContentControl x:Name="PageHost" />
+        <ContentControl x:Name="TransportHost" Grid.Row="1" />
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>
