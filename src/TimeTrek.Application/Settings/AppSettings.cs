@@ -69,6 +69,20 @@ public sealed record AppSettings
 
     public double IconScale { get; init; } = 1;
 
+    public Dictionary<Guid, Guid[]> StreamCategoryDefaults { get; init; } = [];
+
+    public Dictionary<Guid, Guid?> StreamProjectDefaults { get; init; } = [];
+
+    public int? WindowX { get; init; }
+
+    public int? WindowY { get; init; }
+
+    public int WindowWidth { get; init; } = 1280;
+
+    public int WindowHeight { get; init; } = 800;
+
+    public bool WindowMaximized { get; init; }
+
     public int RecentlyDeletedRetentionDays { get; init; } = 30;
 
     public bool CheckForUpdatesAutomatically { get; init; } = true;

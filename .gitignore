@@ -26,3 +26,4 @@ TestResults/
 *.log
 src/TimeTrek.App/AppPackages/
 src/TimeTrek.App/BundleArtifacts/
+/release/

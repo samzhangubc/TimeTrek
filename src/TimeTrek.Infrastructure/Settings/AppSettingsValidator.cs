@@ -15,7 +15,12 @@ internal static class AppSettingsValidator
             settings.RecentlyDeletedRetentionDays is < 1 or > 365 ||
             settings.NavigationWidth is < 48 or > 160 ||
             settings.SharedChannelWidth is < 144 or > 360 ||
-            settings.IconScale is < 0.75 or > 2 ||
+            settings.IconScale is < 0.8 or > 1.5 ||
+            settings.WindowWidth is < 960 or > 16384 ||
+            settings.WindowHeight is < 640 or > 16384 ||
+            settings.StreamCategoryDefaults.Count > 1000 ||
+            settings.StreamProjectDefaults.Count > 1000 ||
+            settings.StreamCategoryDefaults.Values.Any(ids => ids.Length > 64) ||
             settings.SelectedPaletteId.Length is 0 or > 200)
         {
             throw new SettingsStoreException("The settings file contains an out-of-range value.");

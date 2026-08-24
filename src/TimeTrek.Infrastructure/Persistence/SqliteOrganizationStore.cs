@@ -110,6 +110,31 @@ public sealed class SqliteOrganizationStore(IDbContextFactory<TimeTrekDbContext>
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    public async ValueTask UpdateStreamAsync(StreamDefinition stream, CancellationToken cancellationToken = default)
+    {
+        await using TimeTrekDbContext context = await contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        StreamRow row = await context.Streams.SingleAsync(item => item.Id == stream.Id && !item.IsDeleted, cancellationToken).ConfigureAwait(false);
+        row.Name = stream.Name;
+        row.Color = stream.Color;
+        row.SortOrder = stream.SortOrder;
+        row.BudgetMilliseconds = stream.Budget?.DurationMilliseconds;
+        row.BudgetResetPeriod = (int)(stream.Budget?.ResetPeriod ?? BudgetResetPeriod.None);
+        row.UpdatedUtcMilliseconds = stream.UpdatedUtcMilliseconds;
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask UpdateProjectAsync(ProjectDefinition project, CancellationToken cancellationToken = default)
+    {
+        await using TimeTrekDbContext context = await contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        ProjectRow row = await context.Projects.SingleAsync(item => item.Id == project.Id && !item.IsDeleted, cancellationToken).ConfigureAwait(false);
+        row.Name = project.Name;
+        row.StreamId = project.StreamId;
+        row.BudgetMilliseconds = project.Budget?.DurationMilliseconds;
+        row.BudgetResetPeriod = (int)(project.Budget?.ResetPeriod ?? BudgetResetPeriod.None);
+        row.UpdatedUtcMilliseconds = project.UpdatedUtcMilliseconds;
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public ValueTask ArchiveAsync(
         OrganizationKind kind,
         Guid id,

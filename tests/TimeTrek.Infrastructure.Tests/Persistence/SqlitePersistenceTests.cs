@@ -94,6 +94,56 @@ public sealed class SqlitePersistenceTests
     }
 
     [Fact]
+    public async Task StopWithoutActiveSessionDoesNotCreateHistory()
+    {
+        await using SqliteTestDatabase database = new();
+        await database.InitializeAsync();
+        TimingCoordinator coordinator = new(
+            new SqliteTimingStore(database),
+            new SqliteOrganizationStore(database),
+            new FixedLocalTimeContext(),
+            new MutableTimeProvider(DateTimeOffset.Parse("2026-08-23T12:00:00Z", null)));
+
+        var result = await coordinator.StopAsync();
+        HistoryPage page = await new SqliteHistoryStore(database).QueryAsync(new HistoryQuery());
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("timing.inactive", result.Error?.Code);
+        Assert.Empty(page.Items);
+    }
+
+    [Fact]
+    public async Task StreamAndProjectBudgetsPersistThroughUpdates()
+    {
+        await using SqliteTestDatabase database = new();
+        await database.InitializeAsync();
+        MutableTimeProvider time = new(DateTimeOffset.Parse("2026-08-23T12:00:00Z", null));
+        SqliteOrganizationStore store = new(database);
+        OrganizationService organizations = new(store, time);
+        StreamDefinition stream = (await organizations.CreateStreamAsync("Research")).Value!;
+        ProjectDefinition project = (await organizations.CreateProjectAsync("Paper", stream.Id)).Value!;
+
+        time.Advance(TimeSpan.FromMinutes(1));
+        Assert.True((await organizations.UpdateStreamAsync(
+            stream.Id,
+            "Research and writing",
+            "#336699",
+            new TimeBudget(12 * 60 * 60_000, BudgetResetPeriod.Weekly))).IsSuccess);
+        Assert.True((await organizations.UpdateProjectAsync(
+            project.Id,
+            "Paper draft",
+            stream.Id,
+            new TimeBudget(20 * 60 * 60_000, BudgetResetPeriod.Monthly))).IsSuccess);
+
+        StreamDefinition savedStream = Assert.Single(await store.ListStreamsAsync(false));
+        ProjectDefinition savedProject = Assert.Single(await store.ListProjectsAsync(false));
+        Assert.Equal("Research and writing", savedStream.Name);
+        Assert.Equal(new TimeBudget(12 * 60 * 60_000, BudgetResetPeriod.Weekly), savedStream.Budget);
+        Assert.Equal("Paper draft", savedProject.Name);
+        Assert.Equal(new TimeBudget(20 * 60 * 60_000, BudgetResetPeriod.Monthly), savedProject.Budget);
+    }
+
+    [Fact]
     public async Task ExpiredTimingRootRecoversExactlyOnceIntoPendingCompletion()
     {
         await using SqliteTestDatabase database = new();

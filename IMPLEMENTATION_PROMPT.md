@@ -1,59 +1,95 @@
-# TimeTrek implementation kickoff prompt
+# TimeTrek implementation prompt
 
-Use the following as the first request in a separate Codex project chat opened at this repository root.
+Open a new Codex task at the TimeTrek repository root and paste everything below the divider as the first message.
 
 ---
 
-Implement TimeTrek from the approved repository specifications. This request authorizes creating and changing application code, tests, build configuration, development packaging, and CI needed to complete the initial-release baseline. Work autonomously through coherent verified increments until the complete non-Calendar baseline is implemented; do not reinterpret incremental sequencing as permission to reduce scope.
+You are implementing TimeTrek, a documentation-complete but code-empty local-first Windows desktop time tracker. Build the complete initial-release application described by this repository. This request authorizes in-scope local changes to source code, tests, build configuration, development packaging, and CI. It does not authorize publishing releases, pushing commits, creating pull requests, buying services, or inventing production identities or secrets.
 
-Before changing files, read these authorities completely in this order:
+## Goal
 
-1. `AGENTS.md`, if present, and `llm.txt`.
+Deliver the complete non-Google-Calendar TimeTrek baseline as a working, tested Windows application. Work through small, coherent vertical slices, but do not treat incremental delivery as permission to reduce or defer the documented initial-release scope. Keep a runnable application path after every slice and continue while safe, relevant work remains.
+
+## Read the repository before editing
+
+Read these files completely before making changes:
+
+1. `AGENTS.md`, if present, then `llm.txt`.
 2. `docs/SDD.md`.
-3. `docs/TECHNICAL_DESIGN.md`.
-4. `docs/INTERFACE.md`.
-5. `docs/FIRST_RUN_WIZARD.md`.
-6. `docs/CONTEXT.md` and `docs/RELEASE.md`.
-7. `README.md` and the current Git status/history.
+3. `docs/INTERFACE.md` and `docs/FIRST_RUN_WIZARD.md`.
+4. `docs/TECHNICAL_DESIGN.md`.
+5. `docs/CONTEXT.md`, `docs/RELEASE.md`, and `README.md`.
+6. The current Git status and recent history.
 
-Treat `docs/SDD.md` as the product-behavior authority and `docs/TECHNICAL_DESIGN.md` as the implementation-method authority. Preserve every confirmed decision. Google Calendar is deferred: create only the documented replaceable integration boundary, with no Calendar UI, OAuth dependency, or placeholder feature.
+Use this conflict order:
 
-Use the approved modular-monolith stack: C# 14, .NET 10 LTS, WinUI 3 on the stable Windows App SDK, Generic Host, MVVM, SQLite through EF Core, and packaged self-contained per-user MSIX builds for Windows 10 1809+ and Windows 11 on x64 and ARM64. Maintain the dependency rules and project boundaries in the technical design. Core domain and application code must be independent of WinUI, EF Core, and Windows APIs.
+1. `docs/SDD.md` for user-visible behavior, scope, and invariants.
+2. `docs/INTERFACE.md` and `docs/FIRST_RUN_WIZARD.md` for layout and interaction.
+3. `docs/TECHNICAL_DESIGN.md` for architecture and implementation methods.
+4. `docs/CONTEXT.md` and `llm.txt` for condensed rationale and guardrails.
 
-Start by inspecting the available Windows/.NET toolchain and repository state. Then create a short execution plan tied to the incremental order in `docs/TECHNICAL_DESIGN.md`. Implement the first coherent vertical slice immediately; do not stop after planning or scaffolding while safe, relevant work remains. Keep an executable path running after every increment.
+Do not silently resolve an open decision or weaken a confirmed requirement. If two authoritative statements genuinely conflict and the order above does not resolve them, record the exact conflict and ask for the smallest owner decision needed. Exact copy, icon glyphs, and palette values may be completed with restrained, accessible choices because the specifications identify them as implementation polish.
 
-Engineering requirements:
+Google Calendar is deferred. Create only the documented replaceable integration boundary. Do not add Calendar UI, OAuth packages, account connection, or placeholder controls.
 
-- Use timestamps and the explicit timing state machine as truth; never use UI timer ticks as truth.
-- Serialize timing commands and persist state transitions atomically.
-- Keep views thin. UI code must not query SQLite or call Win32/WinRT directly.
-- Put Windows behavior behind adapters and application ports.
-- Use real temporary SQLite databases for persistence tests and fake clocks/platform sources for domain/application tests.
-- Add migrations, architecture tests, analyzers, formatting, and targeted tests with the subsystem that needs them.
-- Pin stable dependencies centrally and avoid unnecessary packages or abstractions.
-- Preserve local-first/offline behavior, privacy defaults, raw history, accessibility, and crash recovery.
-- Treat all text, files, backups, ZIP/JSON/CSV content, URIs, release metadata, and future integration data as untrusted. Use parameterized SQL and structured APIs; never interpolate input into SQL, shells, scripts, XAML/markup, paths, format strings, or unbounded regular expressions.
-- Prevent spreadsheet-formula injection in exported CSV text without losing the exact source value in JSON/backups, and document the reversible CSV neutralization.
-- Validate types, Unicode, lengths, ranges, JSON depth, archive paths, counts, checksums, relationships, redirects, and expanded sizes before mutation or large allocation. Defend against ZIP traversal, decompression bombs, integer overflow, malformed imports, and hostile update metadata.
-- Make writes transactional and commit timing transitions before displaying success. Handle disk-full, access-denied, corruption, interrupted replace, and migration failure without reporting false success or replacing the user's store with an empty database.
-- Add centralized exception observation but rely on durable state for recovery. After application crash, forced termination, Windows crash, or power loss, detect the unclean shutdown, validate the store, and recover exactly once from the last committed state. Do not attempt to continue after process-wide memory exhaustion or corrupted process state.
-- Stream, page, virtualize, cancel, and bound long-running operations, collections, caches, event queues, network responses, and imports. Add backpressure/coalescing where events can outpace persistence; never accumulate unbounded foreground-app or report data in memory.
-- Add hostile-input, fault-injection, forced-termination, corruption, scale, and bounded-memory tests alongside the affected subsystem. Verify deterministic cleanup of hooks, wake requests, notification icons, files, and database resources.
-- Do not add a backend, accounts, telemetry, cloud sync, a Windows service, microservices, or a general plugin framework.
-- Never request elevation or commit credentials, signing material, user data, databases, local paths, or build output.
-- Do not publish a GitHub Release or invent a production publisher/signing identity. Development test signing is allowed; record the release-owner blocker clearly.
+## Approved implementation baseline
 
-Repository workflow:
+Use:
 
-- This is a one-person project. Work directly on `main` unless a release is active or I explicitly request a branch.
-- Preserve unrelated user changes.
-- Make focused commits after coherent, verified increments and push them to `origin/main` when the worktree is clean and no release branch is active.
-- Keep `README.md`, `docs/SDD.md`, `docs/TECHNICAL_DESIGN.md`, `docs/CONTEXT.md`, and `llm.txt` synchronized when implementation facts change.
-- Do not create a pull request unless I explicitly ask.
+- C# 14 and .NET 10 LTS;
+- WinUI 3 on a compatible stable Windows App SDK, never a preview SDK for release builds;
+- .NET Generic Host, built-in dependency injection/configuration/logging, and MVVM;
+- SQLite through the stable .NET 10-compatible EF Core provider;
+- a modular monolith with the projects and dependency directions defined in `docs/TECHNICAL_DESIGN.md`;
+- packaged, self-contained, per-user MSIX output for Windows 10 1809+ and Windows 11, on both x64 and ARM64;
+- one application instance per user.
 
-Verification is part of implementation. Run the most targeted unit, integration, architecture, formatting, build, and packaging checks available after each increment. Inspect the diff for regressions, privacy leaks, dependency-direction violations, and scope creep before committing. If a platform behavior cannot be exercised in the current environment, build its adapter and contract tests, document the exact unverified check, and continue with other safe work rather than silently assuming success.
+Keep Domain and Application independent of WinUI, EF Core, filesystem/network implementations, and Windows APIs. Keep views thin: they must not query SQLite or call Win32/WinRT directly. Put persistence and Windows behavior behind the specified application ports and adapters. Pin stable dependency versions centrally and avoid unnecessary packages, interfaces, frameworks, services, or abstractions.
 
-Use the complete initial-release definition of done in the SDD and technical design. The only accepted pre-release external blockers are the owner's final MSIX identity, trusted production signing method, update metadata location if needed, emergency rollback/revocation procedure, and final license/copyright review.
+Do not add a backend, accounts, cloud sync, telemetry, a Windows service, microservices, a general plugin system, invoicing, productivity targets, surveillance features, elevation requests, or undocumented global action shortcuts.
+
+## Execution
+
+First inspect the installed Windows/.NET toolchain, repository state, and any relevant stable platform/package compatibility. Report real environment gaps without changing the approved stack. Then make a short plan using the eight-step incremental order in `docs/TECHNICAL_DESIGN.md` section 16, and begin the first executable vertical slice immediately. Do not stop after analysis, planning, or empty scaffolding.
+
+For every slice:
+
+1. State the user-visible capability and the affected project boundaries.
+2. Implement the smallest complete end-to-end behavior, including migrations and adapters where the slice requires them.
+3. Add tests with the behavior, including failure and hostile-input cases applicable to that subsystem.
+4. Run the most relevant formatting, analyzer, architecture, unit, SQLite integration, build, packaging, or smoke checks available.
+5. Inspect the diff for regressions, privacy leaks, dependency violations, unbounded work, and scope creep.
+6. Update repository documentation only when an implementation fact or approved decision has changed.
+7. Continue to the next coherent slice while the task is unblocked.
+
+Preserve unrelated user changes. Local commits may be made only when they are focused and verified; ask before pushing, opening a pull request, publishing a package or release, or changing external repository state.
+
+## Non-negotiable engineering rules
+
+- Use the explicit timing state machine and durable timestamps as truth; UI refresh ticks are display-only.
+- Serialize timing commands. Commit Start, Pause, Resume, Stop, automatic completion, Pomodoro transitions, and active-duration edits atomically before reporting success.
+- Preserve raw timestamps/durations separately from rounded/effective values. Use signed 64-bit milliseconds for durations and integer minor units plus ISO 4217 codes for money.
+- Enforce exactly one active or pending timing root with application serialization and a database constraint.
+- Use `TimeProvider`/fake clocks for deterministic domain and application tests. Use real temporary SQLite databases for persistence and migration tests. Mock only external boundaries.
+- Treat all strings, files, ZIP/JSON/CSV data, URIs, update metadata, and future integration payloads as untrusted. Use parameterized SQL and structured APIs; never interpolate user input into SQL, shells, scripts, XAML/markup, paths, format strings, or unbounded regular expressions.
+- Bound and validate lengths, counts, numeric ranges, JSON depth, archive paths, expanded sizes, compression ratios, redirects, response sizes, collections, caches, queues, reports, imports, and exports before large allocation or mutation.
+- Prevent ZIP traversal/decompression bombs and spreadsheet-formula execution. Keep CSV neutralization reversible and documented; retain exact original text in JSON and backups.
+- Make multi-object operations transactional. Validate restore/import data before mutation and create the required rollback snapshot. Never replace a corrupt or partially migrated store with an empty database.
+- Do not show false success after disk-full, access-denied, failed flush/replace, corruption, migration, or interrupted-write failures.
+- Recover exactly once from the last committed state after application/process/Windows/PC failure. Detect unclean shutdown and validate store integrity before ordinary writes. Do not try to continue after true process-wide memory exhaustion or corrupted process state.
+- Stream, page, virtualize, cancel, coalesce, or backpressure work that can grow with user data. Deterministically release hooks, wake requests, notification icons, database/file resources, and temporary files on every exit or failure path.
+- Keep core tracking, history, Stats, export, backup, and restore fully usable offline. Keep optional monitoring off by default, explicit, least-privilege, local, visible, and deletable.
+- Meet the documented accessibility contract: keyboard operation, Windows UI Automation metadata, screen-reader labels, system text scaling, non-color cues, and built-in/default presentation targeting WCAG 2.2 AA principles.
+
+## Required verification and completion bar
+
+Implement and verify every non-Calendar requirement in the SDD, including organization and mixer Home; normal and Pomodoro timing; completion and Windows notification-area lifecycle; manual, continued, recreated, and negative-adjustment records; History and Recently Deleted; Stats and Timeline; billing, rounding, budgets, archiving, cascade deletion/restore; CSV/JSON export; backup/restore; appearance; first-run wizard; Settings; optional foreground-app tracking; updates; accessibility; recovery; and x64/ARM64 packaging.
+
+Use the exact quality gates, scale targets, hostile-input tests, fault-injection tests, forced-termination checks, platform adapter tests, and definition of done in `docs/SDD.md` and `docs/TECHNICAL_DESIGN.md`. If the current environment cannot exercise a Windows/package behavior, implement its boundary and contract tests, record the exact unverified command or manual check, and continue with other safe work. Never claim a check passed when it did not run.
+
+The only acceptable owner-controlled blockers to a signed public release are the documented final MSIX identity/publisher, trusted production signing method, stable update-metadata location if required, emergency rollback/revocation procedure, and final license/copyright review. Use non-secret development/test signing where needed, but do not invent production values or publish a release.
+
+In progress updates, report completed behavior, validation results, current risks, and the next slice. In the final handoff, list completed capabilities, changed files/projects, commands and outcomes, remaining owner blockers, and any platform checks that still require supported physical or hosted Windows machines.
 
 Begin implementation now.
 

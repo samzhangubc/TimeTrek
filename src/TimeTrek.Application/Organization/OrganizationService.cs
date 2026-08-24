@@ -11,6 +11,16 @@ public sealed class OrganizationService(IOrganizationStore store, TimeProvider t
         CancellationToken cancellationToken = default) =>
         store.ListStreamsAsync(includeArchived, cancellationToken);
 
+    public ValueTask<IReadOnlyList<CategoryDefinition>> ListCategoriesAsync(
+        bool includeArchived = false,
+        CancellationToken cancellationToken = default) =>
+        store.ListCategoriesAsync(includeArchived, cancellationToken);
+
+    public ValueTask<IReadOnlyList<ProjectDefinition>> ListProjectsAsync(
+        bool includeArchived = false,
+        CancellationToken cancellationToken = default) =>
+        store.ListProjectsAsync(includeArchived, cancellationToken);
+
     public async ValueTask<OperationResult<StreamDefinition>> CreateStreamAsync(
         string name,
         string? color = null,
@@ -70,6 +80,60 @@ public sealed class OrganizationService(IOrganizationStore store, TimeProvider t
             return OperationResult.Success(project);
         }
         catch (DomainValidationException exception)
+        {
+            return OperationResult.Failure<ProjectDefinition>("organization.invalid", exception.Message);
+        }
+    }
+
+    public async ValueTask<OperationResult<StreamDefinition>> UpdateStreamAsync(
+        Guid id,
+        string name,
+        string? color,
+        TimeBudget? budget,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            StreamDefinition current = (await store.ListStreamsAsync(true, cancellationToken).ConfigureAwait(false))
+                .Single(item => item.Id == id);
+            StreamDefinition updated = current with
+            {
+                Name = DomainText.RequiredName(name, nameof(name)),
+                Color = ColorValue.NormalizeOptional(color),
+                Budget = budget?.Validate(),
+                UpdatedUtcMilliseconds = timeProvider.GetUtcNow().ToUnixTimeMilliseconds(),
+            };
+            await store.UpdateStreamAsync(updated, cancellationToken).ConfigureAwait(false);
+            return OperationResult.Success(updated);
+        }
+        catch (Exception exception) when (exception is DomainValidationException or InvalidOperationException)
+        {
+            return OperationResult.Failure<StreamDefinition>("organization.invalid", exception.Message);
+        }
+    }
+
+    public async ValueTask<OperationResult<ProjectDefinition>> UpdateProjectAsync(
+        Guid id,
+        string name,
+        Guid? streamId,
+        TimeBudget? budget,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            ProjectDefinition current = (await store.ListProjectsAsync(true, cancellationToken).ConfigureAwait(false))
+                .Single(item => item.Id == id);
+            ProjectDefinition updated = current with
+            {
+                Name = DomainText.RequiredName(name, nameof(name)),
+                StreamId = streamId,
+                Budget = budget?.Validate(),
+                UpdatedUtcMilliseconds = timeProvider.GetUtcNow().ToUnixTimeMilliseconds(),
+            };
+            await store.UpdateProjectAsync(updated, cancellationToken).ConfigureAwait(false);
+            return OperationResult.Success(updated);
+        }
+        catch (Exception exception) when (exception is DomainValidationException or InvalidOperationException)
         {
             return OperationResult.Failure<ProjectDefinition>("organization.invalid", exception.Message);
         }

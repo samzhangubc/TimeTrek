@@ -7,10 +7,15 @@ namespace TimeTrek.Presentation.WinUI.Timing;
 
 public sealed partial class TransportControl : UserControl
 {
+    private bool completionWasVisible;
+    private bool savingCompletion;
+
     public TransportControl(TransportViewModel viewModel)
     {
         ViewModel = viewModel;
         InitializeComponent();
+        PomodoroWork.Value = ViewModel.PomodoroWorkMinutes;
+        PomodoroBreak.Value = ViewModel.PomodoroBreakMinutes;
     }
 
     public TransportViewModel ViewModel { get; }
@@ -20,12 +25,33 @@ public sealed partial class TransportControl : UserControl
         await ViewModel.RefreshAsync();
         ErrorBar.IsOpen = !string.IsNullOrWhiteSpace(ViewModel.ErrorMessage);
         ErrorBar.Title = ViewModel.ErrorMessage ?? string.Empty;
-        CompletionPanel.Visibility = ViewModel.IsCompletionPending ? Visibility.Visible : Visibility.Collapsed;
+        bool completionVisible = ViewModel.IsCompletionPending;
+        CompletionPanel.Visibility = completionVisible ? Visibility.Visible : Visibility.Collapsed;
         ConfirmTransitionButton.Visibility = ViewModel.IsTransitionPending ? Visibility.Visible : Visibility.Collapsed;
         SkipTransitionButton.Visibility = ViewModel.CanSkipInterval ? Visibility.Visible : Visibility.Collapsed;
+        StartButton.IsEnabled = ViewModel.CanStart;
+        PauseButton.IsEnabled = ViewModel.CanPause;
+        ResumeButton.IsEnabled = ViewModel.CanResume;
+        StopButton.IsEnabled = ViewModel.CanStop;
+        ApplyDurationButton.IsEnabled = ViewModel.CanApplyDuration;
+        StreamPicker.IsEnabled = ViewModel.CanStart;
+        SaveCompletionButton.IsEnabled = !savingCompletion;
+        if (completionVisible && !completionWasVisible)
+        {
+            CompletionText.Focus(FocusState.Programmatic);
+            CompletionText.SelectAll();
+        }
+
+        completionWasVisible = completionVisible;
     }
 
-    private async void OnStart(object sender, RoutedEventArgs e) { await ViewModel.StartAsync(); await RefreshAsync(); }
+    private async void OnStart(object sender, RoutedEventArgs e)
+    {
+        ViewModel.PomodoroWorkMinutes = checked((int)PomodoroWork.Value);
+        ViewModel.PomodoroBreakMinutes = checked((int)PomodoroBreak.Value);
+        await ViewModel.StartAsync();
+        await RefreshAsync();
+    }
 
     private async void OnPause(object sender, RoutedEventArgs e) { await ViewModel.PauseAsync(); await RefreshAsync(); }
 
@@ -41,10 +67,27 @@ public sealed partial class TransportControl : UserControl
 
     private async void OnSaveCompletion(object sender, RoutedEventArgs e)
     {
+        if (savingCompletion)
+        {
+            return;
+        }
+
+        savingCompletion = true;
+        SaveCompletionButton.IsEnabled = false;
         ViewModel.CompletionDescription = CompletionText.Text;
-        await ViewModel.SaveCompletionAsync();
-        CompletionText.Text = string.Empty;
-        await RefreshAsync();
+        try
+        {
+            await ViewModel.SaveCompletionAsync();
+            if (string.IsNullOrWhiteSpace(ViewModel.ErrorMessage))
+            {
+                CompletionText.Text = string.Empty;
+            }
+        }
+        finally
+        {
+            savingCompletion = false;
+            await RefreshAsync();
+        }
     }
 
     private void OnCompletionKeyDown(object sender, KeyRoutedEventArgs e)
@@ -54,5 +97,81 @@ public sealed partial class TransportControl : UserControl
             e.Handled = true;
             OnSaveCompletion(sender, new RoutedEventArgs());
         }
+    }
+
+    private void OnDurationGotFocus(object sender, RoutedEventArgs e) => DurationTextBox.SelectAll();
+
+    private async void OnChooseCategories(object sender, RoutedEventArgs e)
+    {
+        ListView list = new()
+        {
+            ItemsSource = ViewModel.Categories,
+            DisplayMemberPath = nameof(AssociationOption.Name),
+            SelectionMode = ListViewSelectionMode.Multiple,
+            MaxHeight = 320,
+        };
+        list.Loaded += (_, _) =>
+        {
+            foreach (AssociationOption option in ViewModel.Categories.Where(item => ViewModel.SelectedCategoryIds.Contains(item.Id)))
+            {
+                list.SelectedItems.Add(option);
+            }
+        };
+        ContentDialog dialog = new()
+        {
+            XamlRoot = XamlRoot,
+            Title = "Categories for this Session",
+            Content = list,
+            PrimaryButtonText = "Use selected",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+        };
+        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+        {
+            ViewModel.SelectedCategoryIds.Clear();
+            ViewModel.SelectedCategoryIds.UnionWith(list.SelectedItems.OfType<AssociationOption>().Select(item => item.Id));
+            ViewModel.RefreshCategorySummary();
+        }
+    }
+
+    private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        bool narrow = e.NewSize.Width < 1120;
+        if (!narrow)
+        {
+            double[] widths = [150, 160, 180, 130, 170, 0];
+            for (int index = 0; index < TransportGrid.ColumnDefinitions.Count; index++)
+            {
+                TransportGrid.ColumnDefinitions[index].Width = index switch
+                {
+                    5 => GridLength.Auto,
+                    _ => new GridLength(widths[index]),
+                };
+            }
+
+            Place(TimerArea, 0, 0); Place(StreamPicker, 0, 1); Place(AssociationArea, 0, 2);
+            Place(DurationArea, 0, 3); Place(PomodoroArea, 0, 4); Place(ButtonsArea, 0, 5);
+            Place(ErrorBar, 1, 0); Grid.SetColumnSpan(ErrorBar, 6);
+            return;
+        }
+
+        TransportGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
+        TransportGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+        for (int index = 2; index < TransportGrid.ColumnDefinitions.Count; index++)
+        {
+            TransportGrid.ColumnDefinitions[index].Width = new GridLength(0);
+        }
+
+        Place(TimerArea, 0, 0); Place(ButtonsArea, 0, 1);
+        Place(StreamPicker, 1, 0); Place(AssociationArea, 1, 1);
+        Place(DurationArea, 2, 0); Place(PomodoroArea, 2, 1);
+        Place(ErrorBar, 3, 0); Grid.SetColumnSpan(ErrorBar, 2);
+    }
+
+    private static void Place(FrameworkElement element, int row, int column)
+    {
+        Grid.SetRow(element, row);
+        Grid.SetColumn(element, column);
+        Grid.SetColumnSpan(element, 1);
     }
 }

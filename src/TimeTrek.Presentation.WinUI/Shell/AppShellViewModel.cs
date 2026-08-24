@@ -58,6 +58,7 @@ public sealed partial class AppShellViewModel(
     {
         AppSettings appSettings = await bootstrapService.LoadAsync(cancellationToken);
         await Settings.LoadAsync(cancellationToken);
+        await Wizard.LoadAsync(cancellationToken);
         IsSetupComplete = appSettings.BasicSetupCompleted;
         if (IsSetupComplete)
         {

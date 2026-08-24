@@ -16,6 +16,10 @@ public interface IOrganizationStore
 
     ValueTask AddProjectAsync(ProjectDefinition project, CancellationToken cancellationToken = default);
 
+    ValueTask UpdateStreamAsync(StreamDefinition stream, CancellationToken cancellationToken = default);
+
+    ValueTask UpdateProjectAsync(ProjectDefinition project, CancellationToken cancellationToken = default);
+
     ValueTask ArchiveAsync(OrganizationKind kind, Guid id, long archivedUtcMilliseconds, CancellationToken cancellationToken = default);
 
     ValueTask RestoreAsync(OrganizationKind kind, Guid id, long restoredUtcMilliseconds, CancellationToken cancellationToken = default);

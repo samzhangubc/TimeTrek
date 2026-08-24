@@ -163,7 +163,8 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Intended licensing is PolyForm Noncommercial 1.0.0 (source-available, not open source), pending inclusion of its unmodified terms and required notice; until then, all rights are reserved.
 - Product decisions precede a separate technology-stack comparison.
 - Interface design is active. `docs/INTERFACE.md` defines the non-collapsible icon-only navigation column (64 px default), dedicated Archive destination, remembered 1280×800 initial shell with 960×640 minimum, approximately six visible Studio One-inspired Stream channels, and a persistent bottom Session transport bar.
-- Practical region and column widths are draggable, saved immediately, and restored automatically. Stream channels share one width, so dragging any channel edge resizes every channel. `Ctrl++` and `Ctrl+-` change only icon size and persist the choice; Settings can reset layout defaults.
+- Practical region and column widths are draggable, saved immediately, and restored automatically. Stream channels share one width, so dragging any channel edge resizes every channel. `Ctrl++`, `Ctrl+-`, `Ctrl+0`, `Ctrl+wheel`, and pinch scale the whole interface from 80–150%, persist the choice, and re-layout content within the viewport; Settings can reset layout defaults.
+- Currency input uses a searchable named-currency list with CAD and USD pinned first and all other currencies alphabetized; the persistence model remains ISO code plus banker's-rounded minor units.
 - History is a virtualized continuous table with sticky date groups, one dense header row, removable filter chips, persistent checkboxes, and an optional draggable right inspector. It defaults to All time/newest first. Column order is Time, Duration, Stream, Category, Project, Description, Origin, actions; widths save but columns do not reorder, and lower-priority columns hide at narrow widths.
 - History uses one-line descriptions, first Category plus `+N`, effective duration in-table with raw/rounding details in the inspector, signed warning-styled adjustments, conditional billing fields, an optional earnings column, and origin icons. Normal Delete confirms; `Shift+Delete` skips confirmation but still moves the Session into the dedicated recoverable Recently Deleted view.
 - Stats follows the owner-provided activity-dashboard hierarchy with slightly larger spacing: five exact-time headline metrics, a fixed-height four-month daily heatmap with Daily/Weekly/Cumulative/Timeline views, then equal fixed-width Time insights and ranking/breakdown columns that stack narrowly. Selecting a heatmap day opens a right inspector with Sessions and a Stream pie. Rankings show both Top Streams and Top Projects; conditional billing, per-currency earnings, and budget progress remain below the headline strip.
@@ -207,6 +208,12 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Never commit secrets, local databases, build output, or machine-specific configuration.
 
 ## Context history
+
+### 2026-08-24 — Responsive usability implementation
+
+- Implemented a viewport-aware first-run wizard and responsive Home, transport, History, Stats, Archive, and Settings layouts with a 960×640 minimum window and remembered bounds.
+- Added whole-interface scaling, safe state-dependent transport actions, Enter-to-complete behavior, per-Stream association defaults, configurable Stream budgets, named currency selection, Stats range/view controls, and a live timer tray icon.
+- Expanded `docs/CODE_MAP.md` and `docs/feature-index.json` with direct ownership routes for these capabilities.
 
 ### 2026-08-23 — First-principles consistency audit
 

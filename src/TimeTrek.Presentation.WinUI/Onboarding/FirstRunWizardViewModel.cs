@@ -39,6 +39,53 @@ public sealed partial class FirstRunWizardViewModel(
     [ObservableProperty]
     public partial bool EnableForegroundTracking { get; set; }
 
+    [ObservableProperty]
+    public partial int DefaultSessionMinutes { get; set; } = 25;
+
+    [ObservableProperty]
+    public partial int PomodoroWorkMinutes { get; set; } = 25;
+
+    [ObservableProperty]
+    public partial int PomodoroBreakMinutes { get; set; } = 5;
+
+    [ObservableProperty]
+    public partial bool NotificationsEnabled { get; set; } = true;
+
+    [ObservableProperty]
+    public partial WeekStartDay WeekStart { get; set; } = WeekStartDay.WindowsDefault;
+
+    [ObservableProperty]
+    public partial AppearanceMode AppearanceMode { get; set; } = AppearanceMode.FollowWindows;
+
+    [ObservableProperty]
+    public partial bool InterruptionHandlingEnabled { get; set; } = true;
+
+    [ObservableProperty]
+    public partial int InactivityThresholdMinutes { get; set; } = 10;
+
+    public async ValueTask LoadAsync(CancellationToken cancellationToken = default)
+    {
+        AppSettings settings = await settingsStore.LoadAsync(cancellationToken);
+        StartWithWindows = settings.StartWithWindows;
+        EnableRounding = settings.RoundingEnabled;
+        EnableBilling = settings.BillingEnabled;
+        EnableForegroundTracking = settings.ForegroundTrackingEnabled;
+        DefaultSessionMinutes = settings.DefaultSessionMinutes;
+        PomodoroWorkMinutes = settings.PomodoroWorkMinutes;
+        PomodoroBreakMinutes = settings.PomodoroBreakMinutes;
+        NotificationsEnabled = settings.NotificationsEnabled;
+        WeekStart = settings.WeekStart;
+        AppearanceMode = settings.AppearanceMode;
+        InterruptionHandlingEnabled = settings.InterruptionHandlingEnabled;
+        InactivityThresholdMinutes = settings.InactivityThresholdMinutes;
+    }
+
+    public async ValueTask SaveProgressAsync(CancellationToken cancellationToken = default)
+    {
+        AppSettings current = await settingsStore.LoadAsync(cancellationToken);
+        await settingsStore.SaveAsync(BuildSettings(current, basicSetupCompleted: false), cancellationToken);
+    }
+
     public async ValueTask<AppSettings> UseRecommendedAsync(CancellationToken cancellationToken = default) =>
         await bootstrapService.UseRecommendedDefaultsAsync(cancellationToken);
 
@@ -49,14 +96,7 @@ public sealed partial class FirstRunWizardViewModel(
         try
         {
             AppSettings current = await settingsStore.LoadAsync(cancellationToken);
-            AppSettings settings = current with
-            {
-                BasicSetupCompleted = true,
-                StartWithWindows = StartWithWindows,
-                RoundingEnabled = EnableRounding,
-                BillingEnabled = EnableBilling,
-                ForegroundTrackingEnabled = EnableForegroundTracking,
-            };
+            AppSettings settings = BuildSettings(current, basicSetupCompleted: true);
             await settingsStore.SaveAsync(settings, cancellationToken);
             await startupRegistration.SetEnabledAsync(settings.StartWithWindows, cancellationToken);
             if (CreateMathSample)
@@ -105,6 +145,23 @@ public sealed partial class FirstRunWizardViewModel(
         Share = FileShare.Read,
         Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
     });
+
+    private AppSettings BuildSettings(AppSettings current, bool basicSetupCompleted) => current with
+    {
+        BasicSetupCompleted = basicSetupCompleted,
+        StartWithWindows = StartWithWindows,
+        RoundingEnabled = EnableRounding,
+        BillingEnabled = EnableBilling,
+        ForegroundTrackingEnabled = EnableForegroundTracking,
+        DefaultSessionMinutes = DefaultSessionMinutes,
+        PomodoroWorkMinutes = PomodoroWorkMinutes,
+        PomodoroBreakMinutes = PomodoroBreakMinutes,
+        NotificationsEnabled = NotificationsEnabled,
+        WeekStart = WeekStart,
+        AppearanceMode = AppearanceMode,
+        InterruptionHandlingEnabled = InterruptionHandlingEnabled,
+        InactivityThresholdMinutes = InactivityThresholdMinutes,
+    };
 
     private async Task CreateMathSampleAsync(CancellationToken cancellationToken)
     {

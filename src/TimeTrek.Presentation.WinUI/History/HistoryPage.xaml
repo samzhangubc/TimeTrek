@@ -13,14 +13,12 @@
     </Grid>
     <ToggleSwitch Grid.Row="1" Header="Recently Deleted" IsOn="{x:Bind ViewModel.ShowRecentlyDeleted, Mode=TwoWay}" Toggled="OnSearch" />
     <CommandBar Grid.Row="2"><AppBarButton Label="Add Session" Icon="Add" Click="OnAddSession" /><AppBarButton Label="Subtract time" Icon="Remove" Click="OnAddAdjustment" /><AppBarSeparator /><AppBarButton Label="Continue" Icon="Play" Click="OnContinue" /><AppBarButton Label="Edit description" Icon="Edit" Click="OnEditDescription" /><AppBarButton Label="Delete or restore" Icon="Delete" Click="OnDeleteOrRestore" /></CommandBar>
-    <ListView Grid.Row="3" x:Name="HistoryList" ItemsSource="{x:Bind ViewModel.Items}" SelectionMode="Extended">
+    <ListView Grid.Row="3" x:Name="HistoryList" ItemsSource="{x:Bind ViewModel.Items}" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
       <ListView.Header>
-        <Grid Padding="12,8" ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="90" /><ColumnDefinition Width="80" /><ColumnDefinition Width="90" /><ColumnDefinition Width="140" /><ColumnDefinition Width="140" /><ColumnDefinition Width="140" /><ColumnDefinition Width="*" /><ColumnDefinition Width="90" /></Grid.ColumnDefinitions>
-        <TextBlock Text="Date" /><TextBlock Grid.Column="1" Text="Time" /><TextBlock Grid.Column="2" Text="Duration" /><TextBlock Grid.Column="3" Text="Stream" /><TextBlock Grid.Column="4" Text="Categories" /><TextBlock Grid.Column="5" Text="Project" /><TextBlock Grid.Column="6" Text="Description" /><TextBlock Grid.Column="7" Text="Origin" />
-        </Grid>
+        <TextBlock Padding="12,8" Text="Sessions" FontWeight="SemiBold" />
       </ListView.Header>
-      <ListView.ItemTemplate><DataTemplate><Grid Padding="4" ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="90" /><ColumnDefinition Width="80" /><ColumnDefinition Width="90" /><ColumnDefinition Width="140" /><ColumnDefinition Width="140" /><ColumnDefinition Width="140" /><ColumnDefinition Width="*" /><ColumnDefinition Width="90" /></Grid.ColumnDefinitions>
-        <TextBlock Text="{Binding Date}" /><TextBlock Grid.Column="1" Text="{Binding Time}" /><TextBlock Grid.Column="2" Text="{Binding Duration}" /><TextBlock Grid.Column="3" Text="{Binding Stream}" /><TextBlock Grid.Column="4" Text="{Binding Categories}" TextTrimming="CharacterEllipsis" /><TextBlock Grid.Column="5" Text="{Binding Project}" /><TextBlock Grid.Column="6" Text="{Binding Description}" TextTrimming="CharacterEllipsis" /><StackPanel Grid.Column="7"><TextBlock Text="{Binding Origin}" /><TextBlock Text="{Binding DeletionDeadline}" FontSize="10" TextTrimming="CharacterEllipsis" /></StackPanel>
+      <ListView.ItemTemplate><DataTemplate><Grid Padding="8,6" ColumnSpacing="12" RowSpacing="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <TextBlock Text="{Binding Date}" /><TextBlock Grid.Column="1" Text="{Binding Time}" /><TextBlock Grid.Column="2" Text="{Binding Duration}" FontFamily="Consolas" /><TextBlock Grid.Column="3" Text="{Binding Description}" TextTrimming="CharacterEllipsis" /><TextBlock Grid.Row="1" Grid.ColumnSpan="4" Text="{Binding Details}" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource TextFillColorSecondaryBrush}" /><TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding DeletionDeadline}" FontSize="10" HorizontalAlignment="Right" />
       </Grid></DataTemplate></ListView.ItemTemplate>
     </ListView>
   </Grid>

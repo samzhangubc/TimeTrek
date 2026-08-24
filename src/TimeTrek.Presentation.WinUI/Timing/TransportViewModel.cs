@@ -11,6 +11,7 @@ using TimeTrek.Domain.Timing;
 namespace TimeTrek.Presentation.WinUI.Timing;
 
 public sealed record StreamOption(Guid Id, string Name);
+public sealed record AssociationOption(Guid Id, string Name);
 
 public sealed partial class TransportViewModel(
     TimingCoordinator timingCoordinator,
@@ -19,9 +20,21 @@ public sealed partial class TransportViewModel(
     TimeProvider timeProvider) : ObservableObject
 {
     public ObservableCollection<StreamOption> Streams { get; } = [];
+    public ObservableCollection<AssociationOption> Categories { get; } = [];
+    public ObservableCollection<AssociationOption> Projects { get; } = [];
+    private IReadOnlyList<CategoryDefinition> allCategories = [];
+    private IReadOnlyList<ProjectDefinition> allProjects = [];
 
     [ObservableProperty]
     public partial Guid? SelectedStreamId { get; set; }
+
+    public HashSet<Guid> SelectedCategoryIds { get; } = [];
+
+    [ObservableProperty]
+    public partial Guid? SelectedProjectId { get; set; }
+
+    [ObservableProperty]
+    public partial string CategorySummary { get; set; } = "Choose categories";
 
     [ObservableProperty]
     public partial string DurationText { get; set; } = "25";
@@ -58,6 +71,21 @@ public sealed partial class TransportViewModel(
 
     [ObservableProperty]
     public partial bool CanSkipInterval { get; set; }
+
+    [ObservableProperty]
+    public partial bool CanStart { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool CanPause { get; set; }
+
+    [ObservableProperty]
+    public partial bool CanResume { get; set; }
+
+    [ObservableProperty]
+    public partial bool CanStop { get; set; }
+
+    [ObservableProperty]
+    public partial bool CanApplyDuration { get; set; }
 
     [ObservableProperty]
     public partial string CompletionDescription { get; set; } = string.Empty;
@@ -108,7 +136,7 @@ public sealed partial class TransportViewModel(
         StartTimingRequest request = new(
             DurationText,
             IsPomodoro ? TimingMode.Pomodoro : TimingMode.Normal,
-            SessionAssociations.Create(SelectedStreamId, null, null),
+            SessionAssociations.Create(SelectedStreamId, SelectedCategoryIds, SelectedProjectId),
             false,
             null,
             null,
@@ -150,6 +178,9 @@ public sealed partial class TransportViewModel(
         }
 
         SelectedStreamId = source.Associations.StreamId;
+        SelectedCategoryIds.Clear();
+        SelectedCategoryIds.UnionWith(source.Associations.CategoryIds);
+        SelectedProjectId = source.Associations.ProjectId;
         DurationText = duration;
         ErrorMessage = null;
         snapshot = result.Value!.Snapshot;
@@ -178,11 +209,13 @@ public sealed partial class TransportViewModel(
         }
 
         pendingSessionId = result.Value!.Id;
+        ErrorMessage = null;
         snapshot = null;
         IsActive = false;
         IsPaused = false;
         IsCompletionPending = true;
         StateText = "Describe what you completed";
+        UpdateCommandStates();
         RefreshElapsed();
     }
 
@@ -279,9 +312,19 @@ public sealed partial class TransportViewModel(
     {
         IsActive = value is not null && value.Status != TimingStatus.Paused;
         IsPaused = value?.Status == TimingStatus.Paused;
-        StateText = value?.Status.ToString() ?? "Ready";
+        StateText = value?.Status switch
+        {
+            TimingStatus.ActiveWork => "Working",
+            TimingStatus.Paused => "Paused",
+            TimingStatus.ActiveBreak => "On a break",
+            TimingStatus.BreakPending => "Ready for a break",
+            TimingStatus.WorkStartPending => "Ready to focus",
+            TimingStatus.CompletionPending => "Describe what you completed",
+            _ => "Ready to start",
+        };
         IsTransitionPending = value?.Status is TimingStatus.BreakPending or TimingStatus.WorkStartPending;
         CanSkipInterval = value?.Mode == TimingMode.Pomodoro && value.Status is TimingStatus.ActiveWork or TimingStatus.ActiveBreak;
+        UpdateCommandStates();
         RefreshElapsed();
     }
 
@@ -296,7 +339,69 @@ public sealed partial class TransportViewModel(
         }
         else if (snapshot is null)
         {
-            StateText = "Ready";
+            StateText = "Ready to start";
         }
+
+        allCategories = await organizationStore.ListCategoriesAsync(false, cancellationToken);
+        allProjects = await organizationStore.ListProjectsAsync(false, cancellationToken);
+        RefreshAssociationOptions();
+
+        UpdateCommandStates();
+    }
+
+    public void SelectAssociations(Guid? streamId, IEnumerable<Guid> categoryIds, Guid? projectId)
+    {
+        SelectedStreamId = streamId;
+        SelectedCategoryIds.Clear();
+        SelectedCategoryIds.UnionWith(categoryIds);
+        SelectedProjectId = projectId;
+        RefreshAssociationOptions();
+        RefreshCategorySummary();
+    }
+
+    public void RefreshCategorySummary()
+    {
+        string[] names = Categories.Where(item => SelectedCategoryIds.Contains(item.Id)).Select(item => item.Name).ToArray();
+        CategorySummary = names.Length switch
+        {
+            0 => "Choose categories",
+            1 => names[0],
+            _ => $"{names[0]} +{names.Length - 1}",
+        };
+    }
+
+    partial void OnSelectedStreamIdChanged(Guid? value) => RefreshAssociationOptions();
+
+    private void RefreshAssociationOptions()
+    {
+        Categories.Clear();
+        foreach (CategoryDefinition category in allCategories.Where(item => item.StreamId is null || item.StreamId == SelectedStreamId))
+        {
+            Categories.Add(new AssociationOption(category.Id, category.Name));
+        }
+
+        Projects.Clear();
+        foreach (ProjectDefinition project in allProjects.Where(item => item.StreamId is null || item.StreamId == SelectedStreamId))
+        {
+            Projects.Add(new AssociationOption(project.Id, project.Name));
+        }
+
+        SelectedCategoryIds.RemoveWhere(id => Categories.All(item => item.Id != id));
+        if (SelectedProjectId.HasValue && Projects.All(item => item.Id != SelectedProjectId))
+        {
+            SelectedProjectId = null;
+        }
+
+        RefreshCategorySummary();
+    }
+
+    private void UpdateCommandStates()
+    {
+        CanStart = snapshot is null && !IsCompletionPending;
+        CanPause = snapshot?.Status is TimingStatus.ActiveWork or TimingStatus.ActiveBreak or TimingStatus.BreakPending;
+        CanResume = snapshot?.Status == TimingStatus.Paused;
+        CanStop = snapshot is not null;
+        CanApplyDuration = snapshot?.Mode == TimingMode.Normal &&
+            snapshot.Status is TimingStatus.ActiveWork or TimingStatus.Paused;
     }
 }

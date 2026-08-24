@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Status | Active interface-design specification |
-| Last updated | 2026-08-23 |
+| Last updated | 2026-08-24 |
 | Authority | Supplements `docs/SDD.md`; functional behavior remains defined by the SDD |
 
 ## 1. Design direction
@@ -23,8 +23,8 @@ Reference: [PreSonus Studio One Console documentation](https://s1manual.presonus
 - Archive is a dedicated primary navigation destination.
 - Home, History, Stats, Archive, and Settings are the finalized primary destinations in that order, with Settings anchored at the bottom. Exact icon glyph and palette treatment remain visual-polish work.
 - Practical horizontal regions, split panes, and data columns expose pointer-drag resize handles plus keyboard-accessible resizing. Every customized width is saved immediately and restored automatically.
-- `Ctrl++` and `Ctrl+-` increase or decrease application icon size without changing text size. The chosen icon scale is saved automatically.
-- Settings provides a Reset Layout action for restoring default widths and icon size.
+- `Ctrl++`, `Ctrl+-`, `Ctrl+0`, `Ctrl+wheel`, and supported pinch gestures adjust or reset the entire interface between 80% and 150%. Text, controls, icons, and spacing scale together; the layout is recomputed for the viewport so scaling does not crop the window.
+- Settings provides a Reset Layout action for restoring default widths and interface scale.
 
 ## 3. Mixer principles
 
@@ -276,7 +276,7 @@ Cards appear in this order: **General, Appearance, Timing, Pomodoro, Billing, Ac
 
 ### Layout controls and accessibility
 
-- Layout groups navigation width, icon size, shared channel width, saved panels/columns, and Reset Layout. The reset action previews its scope and confirms.
+- Layout groups navigation width, interface scale, shared channel width, saved panels/columns, and Reset Layout. The reset action previews its scope and confirms.
 - Applicable detail-panel widths and Advanced expansion states save automatically.
 - Default and built-in Settings presentation follows WCAG 2.2 AA principles where applicable, Windows UI Automation, system text scaling, complete keyboard operation, screen-reader labels, and non-color state cues. A low-contrast custom palette may be saved only after an explicit warning acknowledgement and is treated as a user-selected palette-contrast exception.
 

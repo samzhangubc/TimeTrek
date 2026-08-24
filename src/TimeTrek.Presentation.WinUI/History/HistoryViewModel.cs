@@ -20,7 +20,11 @@ public sealed record HistoryRow(
     string Description,
     string Origin,
     bool IsDeleted,
-    string DeletionDeadline);
+    string DeletionDeadline)
+{
+    public string Details => string.Join(" · ", new[] { Stream, Categories, Project, Origin }
+        .Where(value => !string.IsNullOrWhiteSpace(value)));
+}
 
 public sealed partial class HistoryViewModel(
     IHistoryStore historyStore,

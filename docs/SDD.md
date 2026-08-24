@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Document status | Working product specification; unresolved decisions are marked explicitly |
-| Product status | Functional, interface, and technical baselines approved; implementation not started |
+| Product status | Functional, interface, and technical baselines approved; modular implementation active |
 | Target platform | Windows desktop |
-| Last updated | 2026-08-23 |
+| Last updated | 2026-08-24 |
 
 ## 1. Purpose
 
@@ -454,8 +454,8 @@ Stats uses the owner-approved activity-dashboard reference hierarchy: a compact 
 - **FR-230:** Practical horizontal regions, split panes, and data columns shall provide visible pointer-drag resize handles and a keyboard-accessible resizing equivalent.
 - **FR-231:** A width customization shall be persisted automatically when changed and restored on subsequent launches.
 - **FR-232:** Dragging any Stream-channel width handle shall change one shared channel width applied to all existing and future Stream channels rather than creating independent per-channel widths.
-- **FR-233:** `Ctrl++` and `Ctrl+-` shall increase or decrease application icon size without changing text size, and the selected icon size shall persist automatically.
-- **FR-234:** Settings shall provide a Reset Layout command that restores default region widths, data-column widths, shared Stream-channel width, and icon size.
+- **FR-233:** `Ctrl++`, `Ctrl+-`, `Ctrl+0`, `Ctrl+wheel`, and supported pinch gestures shall adjust or reset the whole TimeTrek interface scale, including text, controls, icons, spacing, and content. Scale shall persist automatically, stay within 80–150%, and re-layout to the current viewport rather than cropping the application.
+- **FR-234:** Settings shall provide a Reset Layout command that restores default region widths, data-column widths, shared Stream-channel width, and interface scale.
 
 ### 6.22 Settings
 
@@ -484,6 +484,8 @@ Stats uses the owner-approved activity-dashboard reference hierarchy: a compact 
 - **FR-262:** Settings shall allow the user to create either or both MATH 100 and Work samples and rerun the setup wizard while explicitly preserving existing data.
 - **FR-263:** No unfinished Google Calendar or Integrations placeholder shall appear in Settings until a supported integration ships.
 - **FR-264:** About shall show version, update state, license, repository, acknowledgements, and **Copy Diagnostics**.
+
+Currency entry shall use a searchable named-currency picker rather than asking users to type an ISO code. Canadian dollars and US dollars appear first, with remaining currencies alphabetical by English name. Money remains stored in ISO currency minor units and uses banker's rounding.
 - **FR-265:** Copied diagnostics shall contain app version, Windows version, architecture, and a non-sensitive configuration summary. It shall exclude user paths, tracked applications, Session descriptions, secrets, and other user content.
 - **FR-266:** Settings shall provide hover/focus tooltips for icons and unfamiliar controls. Arrow keys shall navigate dashboard sections, `Tab` shall navigate controls, and `Ctrl+F` shall focus Settings search.
 - **FR-267:** Saved Settings layout state shall include applicable detail-panel widths and Advanced-group expansion state.

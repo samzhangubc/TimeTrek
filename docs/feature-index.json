@@ -5,13 +5,18 @@
   "composition_root": "src/TimeTrek.App/App.xaml.cs",
   "features": {
     "organization": ["src/TimeTrek.Domain/Organization", "src/TimeTrek.Application/Organization", "src/TimeTrek.Infrastructure/Persistence/SqliteOrganizationStore.cs", "src/TimeTrek.Presentation.WinUI/Home"],
+    "budgets": ["src/TimeTrek.Domain/Organization/OrganizationModels.cs", "src/TimeTrek.Application/Organization/OrganizationService.cs", "src/TimeTrek.Infrastructure/Persistence/SqliteOrganizationStore.cs", "src/TimeTrek.Presentation.WinUI/Home/HomeViewModel.cs"],
     "timing": ["src/TimeTrek.Domain/Timing", "src/TimeTrek.Application/Timing", "src/TimeTrek.Infrastructure/Persistence/SqliteTimingStore.cs", "src/TimeTrek.Presentation.WinUI/Timing"],
     "lifecycle": ["src/TimeTrek.Application/Lifecycle", "src/TimeTrek.Platform.Windows/Lifecycle", "src/TimeTrek.App/App.xaml.cs"],
+    "window_and_scale": ["src/TimeTrek.App/MainWindow.xaml.cs", "src/TimeTrek.Application/Settings/AppSettings.cs", "src/TimeTrek.Presentation.WinUI/Shell/AppShell.xaml", "src/TimeTrek.Presentation.WinUI/Shell/AppShell.xaml.cs"],
+    "tray_timer": ["src/TimeTrek.Platform.Windows/Lifecycle/WindowsTrayService.cs"],
     "history": ["src/TimeTrek.Application/History", "src/TimeTrek.Infrastructure/Persistence/SqliteHistoryStore.cs", "src/TimeTrek.Presentation.WinUI/History"],
     "reporting": ["src/TimeTrek.Application/Reporting", "src/TimeTrek.Infrastructure/Persistence/SqliteReportingStore.cs", "src/TimeTrek.Presentation.WinUI/Reporting"],
+    "currency": ["src/TimeTrek.Domain/Billing/BillingPolicy.cs", "src/TimeTrek.Presentation.WinUI/Common/CurrencyCatalog.cs", "src/TimeTrek.Presentation.WinUI/Home/HomePage.xaml.cs"],
     "archive": ["src/TimeTrek.Application/Archive", "src/TimeTrek.Infrastructure/Persistence/SqliteArchiveStore.cs", "src/TimeTrek.Presentation.WinUI/Archive"],
     "data_portability": ["src/TimeTrek.Application/DataPortability", "src/TimeTrek.Infrastructure/DataPortability", "src/TimeTrek.Platform.Windows/DataPortability"],
     "settings": ["src/TimeTrek.Application/Settings", "src/TimeTrek.Infrastructure/Settings", "src/TimeTrek.Presentation.WinUI/Settings"],
+    "onboarding": ["src/TimeTrek.Presentation.WinUI/Onboarding/FirstRunWizardView.xaml", "src/TimeTrek.Presentation.WinUI/Onboarding/FirstRunWizardView.xaml.cs", "src/TimeTrek.Presentation.WinUI/Onboarding/FirstRunWizardViewModel.cs"],
     "schema": ["src/TimeTrek.Infrastructure/Persistence/PersistenceRows.cs", "src/TimeTrek.Infrastructure/Persistence/TimeTrekDbContext.cs", "src/TimeTrek.Infrastructure/Persistence/Migrations"]
   }
 }

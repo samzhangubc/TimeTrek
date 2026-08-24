@@ -29,12 +29,36 @@ public sealed class JsonAppSettingsStoreTests : IDisposable
         {
             NavigationWidth = 72,
             SharedChannelWidth = 200,
+            IconScale = 1.25,
+            WindowX = 120,
+            WindowY = 80,
+            WindowWidth = 1440,
+            WindowHeight = 900,
+            WindowMaximized = true,
+            StreamCategoryDefaults = new Dictionary<Guid, Guid[]>
+            {
+                [Guid.Parse("01992ef0-36c4-7582-8e50-b55c2dbf8121")] =
+                [Guid.Parse("01992ef0-36c4-7582-8e50-b55c2dbf8122")],
+            },
+            StreamProjectDefaults = new Dictionary<Guid, Guid?>
+            {
+                [Guid.Parse("01992ef0-36c4-7582-8e50-b55c2dbf8121")] =
+                    Guid.Parse("01992ef0-36c4-7582-8e50-b55c2dbf8123"),
+            },
         };
 
         await store.SaveAsync(expected);
         AppSettings actual = await store.LoadAsync();
 
-        Assert.Equal(expected, actual);
+        Assert.Equal(expected with
+        {
+            StreamCategoryDefaults = actual.StreamCategoryDefaults,
+            StreamProjectDefaults = actual.StreamProjectDefaults,
+        }, actual);
+        KeyValuePair<Guid, Guid[]> categoryDefault = Assert.Single(actual.StreamCategoryDefaults);
+        Assert.Equal(Assert.Single(expected.StreamCategoryDefaults).Value, categoryDefault.Value);
+        Assert.Equal(expected.StreamCategoryDefaults.Keys, actual.StreamCategoryDefaults.Keys);
+        Assert.Equal(Assert.Single(expected.StreamProjectDefaults), Assert.Single(actual.StreamProjectDefaults));
     }
 
     [Fact]

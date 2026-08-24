@@ -180,4 +180,18 @@ public sealed partial class SettingsPage : UserControl
                 : Visibility.Collapsed;
         }
     }
+
+    private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        bool narrow = e.NewSize.Width < 860;
+        SettingsGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
+        SettingsGrid.ColumnDefinitions[1].Width = narrow ? new GridLength(0) : new GridLength(1, GridUnitType.Star);
+        int index = 0;
+        foreach (FrameworkElement card in SettingsGrid.Children.OfType<FrameworkElement>())
+        {
+            Grid.SetColumn(card, narrow ? 0 : index % 2);
+            Grid.SetRow(card, narrow ? index : index / 2);
+            index++;
+        }
+    }
 }

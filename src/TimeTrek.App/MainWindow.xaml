@@ -24,6 +24,10 @@
             </TitleBar.IconSource>
         </TitleBar>
 
-        <ContentControl x:Name="ShellHost" Grid.Row="1" />
+        <ContentControl
+            x:Name="ShellHost"
+            Grid.Row="1"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch" />
     </Grid>
 </Window>

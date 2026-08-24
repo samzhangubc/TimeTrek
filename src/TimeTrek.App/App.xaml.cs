@@ -65,7 +65,10 @@ public partial class App : Microsoft.UI.Xaml.Application
             await viewModel.InitializeAsync();
 
             trayService = host.Services.GetRequiredService<ITrayService>();
-            window = new MainWindow(viewModel, OnCloseRequestedAsync);
+            window = new MainWindow(
+                viewModel,
+                host.Services.GetRequiredService<TimeTrek.Application.Settings.IAppSettingsStore>(),
+                OnCloseRequestedAsync);
             window.Closed += OnWindowClosed;
             window.Activate();
             nint handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
