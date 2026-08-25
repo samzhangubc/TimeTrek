@@ -65,7 +65,7 @@ jobs:
         run: dotnet format TimeTrek.slnx --verify-no-changes --no-restore
 
       - name: Build Release
-        run: dotnet build TimeTrek.slnx --configuration Release --no-restore -p:Platform=x64 -p:RuntimeIdentifier=win-x64
+        run: dotnet build TimeTrek.slnx --configuration Release --no-restore
 
       - name: Test Release
         run: dotnet test TimeTrek.slnx --configuration Release --no-build

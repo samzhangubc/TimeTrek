@@ -23,4 +23,4 @@ jobs:
       - name: Test
         run: dotnet test TimeTrek.slnx --configuration Release --no-build
       - name: Compile self-contained x64 app
-        run: dotnet build src/TimeTrek.App/TimeTrek.App.csproj --configuration Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64 -p:SelfContained=true -p:WindowsAppSDKSelfContained=true
+        run: dotnet build src/TimeTrek.App/TimeTrek.App.csproj --configuration Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64
