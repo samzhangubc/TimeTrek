@@ -35,9 +35,9 @@
             <Button Grid.Row="5" Tag="Settings" Click="OnNavigate" AutomationProperties.Name="Settings" ToolTipService.ToolTip="Settings"><SymbolIcon Symbol="Setting" /></Button>
           </Grid>
         </Border>
-        <Grid Grid.Column="1"><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <Grid Grid.Column="1" Margin="0"><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
           <ContentControl x:Name="PageHost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
-          <ContentControl x:Name="TransportHost" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+          <ContentControl x:Name="TransportHost" Grid.Row="1" Margin="0" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </Grid>
       </Grid>
     </Grid>

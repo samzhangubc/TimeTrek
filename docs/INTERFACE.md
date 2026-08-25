@@ -64,6 +64,7 @@ A thin vertical progress rail beside the Timer zone shows bounded-Session progre
 
 The Studio One-inspired bottom transport bar is the authoritative global Session control surface. It remains visible across the primary application pages unless a focused modal workflow explicitly covers it.
 
+- The transport is a structural shell panel, never a floating card: it has square corners and no exterior margin, begins exactly at the navigation-column boundary, and reaches the right and bottom window edges. The navigation column continues independently to the bottom-left corner, so the transport never extends beneath it. A straight top divider separates transport from page content.
 - At ordinary width it is a single 88–96 px row. At the 960 px minimum it reflows into two rows rather than hiding or horizontally scrolling controls.
 - Its left area shows the `hh:mm:ss` selected/active timer. Its center contains Stream, searchable multi-select Category chips, searchable single-select Project, Normal/Pomodoro segmented mode, and timing configuration. Its right area contains transport controls.
 - Before timing starts, Cancel dismisses the start workflow without creating a Session. Once active, the transport provides Pause/Resume and a visually dominant Stop action that saves elapsed time; unavailable actions remain visible but disabled.
