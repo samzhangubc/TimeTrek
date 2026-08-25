@@ -1,48 +1,117 @@
 # TimeTrek
 
-TimeTrek is a planned local-first Windows desktop application that helps people understand how they spend their time. Its main workspace is inspired by a digital audio workstation (DAW) mixer: every top-level **Stream**—such as a course, job, client, research area, or hobby—occupies a simple vertical strip with its key information and time controls.
+TimeTrek is a local-first time tracker for Windows. Organize work into Streams,
+start a focused Session in seconds, and see where your time went without sending
+your activity to a TimeTrek server.
 
-> [!IMPORTANT]
-> TimeTrek's modular application implementation is active. Use `IMPLEMENTATION_PROMPT.md` as the scope authority and `docs/CODE_MAP.md` as the feature-to-file index.
+[Download the latest release](https://github.com/samzhangubc/TimeTrek/releases/latest)
 
-## Product goals
+> [!WARNING]
+> TimeTrek 1.0.1 is intentionally unsigned. Windows may show **Unknown publisher**
+> or a Microsoft Defender SmartScreen warning. Download only from this repository's
+> Releases page, verify the published SHA-256 checksum or GitHub attestation, and
+> do not run a copy from an untrusted source.
 
-- Make starting, stopping, continuing, and manually adding time quick and unobtrusive.
-- Show Streams side by side so their time data is easy to compare.
-- Support manually adding and deleting recorded time.
-- Make history browsable through filters, sorting, a calendar timeline, and weekly/monthly summaries.
-- Keep an active timer available from the Windows notification area when the main window is closed.
-- Store application data locally like a conventional desktop program.
+## What you can do
 
-## Planned experience
+- Track one active Session at a time with normal or Pomodoro timing.
+- Pause, resume, stop, continue, and manually add or correct recorded time.
+- Organize Sessions with Streams, Categories, Projects, colors, and time budgets.
+- Review searchable History and recover recently deleted records.
+- Explore daily, weekly, monthly, cumulative, and timeline statistics.
+- Keep the timer available in the Windows notification area.
+- Export JSON or CSV and create restorable local backup archives.
+- Optionally record foreground-application names only while a Session is active.
+- Adjust the complete interface from 80% to 150% with `Ctrl++`, `Ctrl+-`, or
+  `Ctrl+0`.
 
-The home screen will use one vertical channel per Stream. Sessions can also use Stream-scoped or global Categories, Projects, valid combinations, or no organizational association.
+TimeTrek stores its working data locally in your Windows application-data area.
+It does not include telemetry, advertising, accounts, or cloud sync in version
+1.0.1. Use **Settings → Data → Create backup** before moving computers or making
+major changes.
 
-Starting a Session will open an in-app dialog rather than another operating-system window. Exactly one Session runs at once and requires a duration. The duration field accepts minutes, hours, mixed units, and `HH:MM`. Optional Pomodoro starts at 25 minutes of work and 5 minutes of break, repeats to a chosen total duration, and remembers adjusted defaults.
+## Install and run
 
-History, Stats, CSV/JSON export, local backup/restore, archiving, billable time, rounding, time budgets, appearance palettes, and privacy-preserving optional features are specified in the SDD. Google Calendar is deferred, with an architectural extension boundary retained for possible later implementation.
+TimeTrek 1.0.1 supports Windows 11 on x64 PCs without a support SLA. Windows 10
+22H2 x64 is compatibility-only. ARM64, x86, macOS, and Linux builds are not
+provided.
 
-While a timer or completion workflow is active or pending, closing the main window leaves TimeTrek available in the Windows notification area. The icon communicates elapsed Session time as far as Windows platform constraints allow. If neither timing nor completion work is active or pending, closing the window exits the application.
+1. Open [GitHub Releases](https://github.com/samzhangubc/TimeTrek/releases) and
+   download `TimeTrek-1.0.1-win-x64-portable.zip` plus `SHA256SUMS.txt`.
+2. Extract the entire ZIP to a writable folder. Do not run the executable from
+   inside the compressed archive.
+3. Open the extracted folder and run `TimeTrek.App.exe`.
+4. If SmartScreen appears, confirm that the file came from this repository. Select
+   **More info → Run anyway** only after you are satisfied with its source and
+   checksum.
+5. Complete the short setup wizard or choose the recommended defaults.
 
-## Documentation
+The archive is self-contained: it keeps .NET, Windows App SDK, and supporting
+libraries beside TimeTrek. It does not require Developer Mode, administrator
+access, a certificate installation, or a system-wide .NET installation.
 
-- [Software Development Document](docs/SDD.md) — current functional and technical baseline
-- [Project Context](docs/CONTEXT.md) — product background, terminology, constraints, and open questions
-- [First-Run Wizard](docs/FIRST_RUN_WIZARD.md) — setup screens, defaults, optional sections, and acceptance criteria
-- [Interface Design](docs/INTERFACE.md) — application shell and mixer-style workspace decisions
-- [Technical Design](docs/TECHNICAL_DESIGN.md) — approved stack, modular architecture, persistence, resilience, security, and verification methods
-- [Release and Auto-Update Baseline](docs/RELEASE.md) — signed GitHub Release requirements and workflow prerequisites
-- [LLM Context](llm.txt) — concise repository context for coding assistants
-- [Implementation Kickoff Prompt](IMPLEMENTATION_PROMPT.md) — ready-to-use instructions for a separate implementation chat
-- [Code Map](docs/CODE_MAP.md) — feature-to-file ownership for maintainers and coding assistants
-- [Machine Feature Index](docs/feature-index.json) — compact paths for fast tool indexing
+To uninstall, close TimeTrek from its notification-area menu and delete the
+extracted program folder. Export or back up your data first; deleting the program
+folder does not automatically remove TimeTrek's separate local application data.
 
-## Repository status
+## Verify a download
 
-The functional product requirements are finalized as one initial-release baseline rather than a reduced MVP, with Google Calendar explicitly deferred. The implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, stable Windows App SDK, Generic Host, MVVM, SQLite/EF Core, and self-contained per-user MSIX builds for Windows 10 1809+ and Windows 11 on x64 and ARM64. Release identity/signing and physical packaged-platform validation remain release gates.
+From PowerShell in the folder containing the download:
 
-Released builds will support authenticated automatic updates from signed artifacts published through GitHub Releases. The updater boundary and validation approach are approved; final MSIX/publisher identity, production signing method, stable update metadata location if needed, and emergency rollback/revocation procedure still require owner input before a signed release.
+```powershell
+Get-FileHash .\TimeTrek-1.0.1-win-x64-portable.zip -Algorithm SHA256
+```
 
-## Contributing
+Compare the result with `SHA256SUMS.txt` on the same GitHub Release. If you use the
+GitHub CLI, you can also verify which repository and workflow produced the archive:
 
-The intended license is PolyForm Noncommercial 1.0.0, pending addition and review of the final license/notice; until then all rights are reserved. This is a one-person project: commit focused changes directly to `main` unless a release is active, and keep the context documents synchronized whenever a product decision changes.
+```powershell
+gh attestation verify .\TimeTrek-1.0.1-win-x64-portable.zip --repo samzhangubc/TimeTrek
+```
+
+An attestation proves build provenance; it is not a malware guarantee or a Windows
+publisher signature.
+
+## First Session
+
+1. On Home, create or choose a Stream such as a course, job, or hobby.
+2. Choose a duration and optional Categories or Project in the bottom transport.
+3. Select **Start**. The transport and notification-area icon show active timing.
+4. Pause or resume as needed, then select **Stop**.
+5. Enter what you completed and press Enter to save it to History.
+
+If the computer or app stops unexpectedly, reopen TimeTrek and follow the recovery
+prompt. Durable local data is treated as the recovery authority.
+
+## Updates and support
+
+Version 1.0.1 uses manual updates. Check the
+[Releases page](https://github.com/samzhangubc/TimeTrek/releases) for newer stable
+versions; the in-app automatic updater is not configured yet.
+
+For reproducible problems, open a
+[GitHub issue](https://github.com/samzhangubc/TimeTrek/issues) with the TimeTrek
+version, Windows version, steps to reproduce, and diagnostics copied from
+**Settings → About**. Do not attach a database, backup, or export unless you have
+reviewed it for private information. See [support policy](SUPPORT.md).
+
+## Planned: user-owned cloud backup and sync
+
+A future version may offer optional Google Drive backup or synchronization using
+the user's own Google account and storage quota. The intended experience is
+explicit opt-in, a standard Google consent screen, clear last-sync/error status,
+manual disconnect, encrypted transport, bounded retries, and conflict-safe local
+recovery—without a TimeTrek-hosted account or paid TimeTrek server. This feature is
+only a development plan: version 1.0.1 contains no Google login or cloud-sync code.
+
+## License and notices
+
+TimeTrek is source-available, not OSI-approved open-source software. Official
+binaries are free for permitted personal, educational, and internal noncommercial
+use. Redistribution, use in another product, commercial use, and derivative
+products require prior written permission. Read [LICENSE](LICENSE), [NOTICE](NOTICE),
+and [third-party notices](THIRD_PARTY_NOTICES.md) before redistributing or modifying
+the software.
+
+Developer and maintainer documentation is under [`docs/`](docs), beginning with
+the [code map](docs/CODE_MAP.md) and [technical design](docs/TECHNICAL_DESIGN.md).
