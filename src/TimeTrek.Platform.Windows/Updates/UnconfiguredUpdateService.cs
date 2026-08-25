@@ -7,7 +7,8 @@ public sealed class UnconfiguredUpdateService : IUpdateService
     public ValueTask<UpdateInfo?> CheckAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return ValueTask.FromResult<UpdateInfo?>(null);
+        return ValueTask.FromException<UpdateInfo?>(new InvalidOperationException(
+            "Automatic updates are not configured in this build. Download verified releases from the TimeTrek GitHub repository."));
     }
 
     public ValueTask<string> DownloadAndVerifyAsync(

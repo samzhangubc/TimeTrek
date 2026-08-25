@@ -24,9 +24,9 @@ Implementation may proceed in verified increments, but every non-Calendar requir
 
 - **Language/runtime:** C# 14 on .NET 10 LTS, using the latest supported .NET 10 servicing release available to the build.
 - **Desktop UI:** WinUI 3 on the latest compatible stable Windows App SDK. Preview or experimental SDK channels are prohibited in release builds.
-- **Application model:** packaged desktop application with full package identity.
-- **Distribution:** per-user, self-contained MSIX artifacts for x64 and ARM64. Release automation may additionally create one architecture-aware bundle if validated on both targets.
-- **Minimum target:** Windows 10 version 1809, build 17763, while also testing supported Windows 11 versions. TimeTrek does not use APIs newer than the declared minimum without capability checks and a working fallback.
+- **Application model:** WinUI desktop application that can run unpackaged; MSIX project support remains for development and a future signed installer.
+- **Distribution:** an intentionally unsigned, self-contained x64 portable ZIP distributed through GitHub Releases. ARM64 and x86 packages are not part of the 1.0.1 release.
+- **Minimum target:** the package remains technically installable from Windows 10 version 1809, build 17763, so Windows 10 22H2 can be compatibility-tested. Windows 11 x64 is the supported platform without an SLA. TimeTrek does not use APIs newer than the declared minimum without capability checks and a working fallback.
 - **Hosting/composition:** .NET Generic Host and the built-in dependency-injection, configuration, and logging abstractions.
 - **Presentation pattern:** MVVM. `CommunityToolkit.Mvvm` may provide observable-property and command plumbing; it must not contain domain behavior.
 - **Persistence:** SQLite through the stable .NET 10-compatible EF Core SQLite provider.
@@ -183,14 +183,13 @@ Exact remaining copy, icon glyphs, and palette triplets are visual assets/polish
 Update behavior is exposed through an `IUpdateService`; no page or view model calls GitHub or package-deployment APIs directly.
 
 - Git tags and stable GitHub Releases remain the release authority.
-- The update adapter checks public release metadata over HTTPS, ignores prereleases, compares semantic versions, and selects the matching signed architecture artifact.
-- Automatic-check and automatic-download settings are enforced by the application update coordinator.
-- Download to a dedicated app cache, verify the published SHA-256 checksum and expected package publisher/signature, then hand installation to Windows/MSIX only after the required user confirmation.
-- Never replace executable files in process. Installation is deferred while timing or completion state is active/pending.
-- Use an App Installer-compatible MSIX path where it satisfies the required controls; validate redirected GitHub asset URLs and install/update behavior in an early packaged spike on Windows 10 and 11.
-- The update subsystem may be implemented late, but its interface and inactive implementation are established during scaffolding so UI and lifecycle code do not bind to a particular delivery mechanism.
+- Version 1.0.1 uses manual updates. The inactive update adapter reports that automatic updating is not configured instead of claiming the current version is up to date.
+- The release archive is intentionally unsigned. The workflow publishes a SHA-256 checksum, SPDX SBOM, and GitHub/Sigstore provenance and SBOM attestations; the user-facing release plainly warns about Unknown publisher and SmartScreen.
+- A future update adapter may check public release metadata over HTTPS, ignore prereleases, compare semantic versions, and select the matching x64 portable artifact.
+- Before any future automatic download or replacement, verify the published SHA-256 checksum and GitHub artifact attestation. Never replace executable files in process, and defer update actions while timing or completion state is active/pending.
+- The update subsystem remains behind its application interface so a later signed installer or portable updater can replace the inactive implementation without changing presentation or domain code.
 
-The package identity, publisher string, trusted signing certificate/service, emergency revocation procedure, and final update metadata URL remain release-owner inputs. Development packages use non-secret local test signing only. No production key, certificate password, or token enters source control.
+No private signing key, certificate password, production secret, or hidden ownership fingerprint enters source control. A future signed installer requires a separately approved package identity, trusted signing method, and update design.
 
 ## 12. Diagnostics, privacy, and security
 
@@ -207,7 +206,7 @@ The package identity, publisher string, trusted signing certificate/service, eme
 - Validate import/backup size, paths, ZIP entry names, checksums, schema versions, record counts, and relationships before mutation.
 - Prevent ZIP path traversal, duplicate/conflicting entries, absolute/device paths, symbolic-link surprises, and decompression bombs with entry-count, expanded-size, nesting, and compression-ratio limits.
 - Spreadsheet-facing CSV text cells that could execute as formulas must be reversibly neutralized. The packaged data dictionary identifies the encoding, and JSON/backup representations retain the exact original string.
-- Network responses use HTTPS, bounded timeouts, bounded redirects, response-size limits, and an expected-host allowlist. Update assets additionally require checksum and package-signature verification.
+- Network responses use HTTPS, bounded timeouts, bounded redirects, response-size limits, and an expected-host allowlist. Future update assets additionally require checksum and GitHub-attestation verification.
 - Dependencies are centrally pinned, reviewed for license/security compatibility, and scanned in CI.
 - Never request administrator elevation.
 
@@ -263,7 +262,7 @@ Every merge-quality commit must keep the solution buildable and run the most rel
 - Hostile-input tests for SQL/command/markup injection, CSV formula injection, malformed and oversized JSON, ZIP traversal/decompression bombs, integer overflow, duplicate IDs, unsupported versions, and untrusted update metadata.
 - Fault-injection tests for disk full, write denial, corrupted databases, interrupted atomic replacement, task/UI exceptions, forced process termination, and simulated unclean system shutdown.
 - Generated-scale and bounded-memory tests that verify paging/streaming, cancellation, cache limits, and queue backpressure.
-- x64 and ARM64 compile/package validation; platform behavior is exercised on physical or hosted machines for both architectures before release.
+- x64 compile/package validation; platform behavior is exercised on clean Windows 11 x64 and Windows 10 22H2 x64 machines before making the corresponding support or compatibility claim.
 - Accessibility review using keyboard-only operation, Windows UI Automation inspection, screen reader checks, text scaling, high contrast, and reduced motion.
 
 Mocks should be limited to external boundaries. Prefer fakes for clocks, filesystem, update metadata, and platform event sources, and use a real temporary SQLite database for persistence behavior.
@@ -279,19 +278,13 @@ Keep one executable path working after each increment:
 5. Manual/continued/recreated Sessions, History, filtering/editing, and Recently Deleted.
 6. Stats, timeline, reporting, rounding, billing, budgets, and application summaries.
 7. Archive/restore/cascade deletion, export, backup/restore, palettes, full Settings, and remaining wizard paths.
-8. Update adapter, MSIX release artifacts, accessibility completion, generated-scale performance work, and release hardening.
+8. Update adapter, portable release artifacts, accessibility completion, generated-scale performance work, and release hardening.
 
 This order controls engineering risk only. It does not redefine product milestones or remove any non-Calendar requirement from the first release.
 
 ## 17. Remaining owner-controlled release inputs
 
-Core implementation may begin. Before a distributable release can be signed and published, the owner must supply or approve:
-
-- Final MSIX package identity and publisher identity.
-- Trusted signing certificate or managed signing service.
-- Public update metadata location if GitHub Release assets alone cannot provide a stable validated App Installer path.
-- Emergency revocation and rollback procedure.
-- Final PolyForm Noncommercial license text and copyright notice review.
+Before publishing an intentionally unsigned portable release, the owner must approve the Unknown publisher/SmartScreen disclosure, custom license, release notes, and rollback procedure. The workflow must pass build, test, formatting, package-content, SBOM, checksum, and GitHub-attestation gates. Clean Windows 11 launch/rendering validation remains required before claiming broad compatibility. Professional legal review of the custom license is recommended but is not represented as having occurred.
 
 No other implementation-method decision is currently blocking application scaffolding.
 

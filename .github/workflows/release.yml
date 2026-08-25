@@ -1,0 +1,180 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version without the v prefix, matching an existing tag
+        required: true
+        default: 1.0.1
+
+permissions:
+  attestations: write
+  contents: write
+  id-token: write
+
+concurrency:
+  group: production-release
+  cancel-in-progress: false
+
+jobs:
+  build-attest-publish:
+    runs-on: windows-latest
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+    steps:
+      - name: Validate release version
+        shell: pwsh
+        run: |
+          if ($env:RELEASE_VERSION -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Release version must use MAJOR.MINOR.PATCH."
+          }
+
+      - name: Check out tagged source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: v${{ inputs.version }}
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Validate tag and source version
+        shell: pwsh
+        run: |
+          [xml]$props = Get-Content -Raw -LiteralPath 'Directory.Build.props'
+          if ($props.Project.PropertyGroup.Version -ne $env:RELEASE_VERSION) {
+            throw "Directory.Build.props version does not match the requested release."
+          }
+          $tag = "v$($env:RELEASE_VERSION)"
+          $tagCommit = git rev-list -n 1 $tag
+          $headCommit = git rev-parse HEAD
+          if ($tagCommit -ne $headCommit) {
+            throw "Checked-out source does not match tag '$tag'."
+          }
+
+      - name: Restore tools and dependencies
+        shell: pwsh
+        run: |
+          dotnet tool restore
+          dotnet restore TimeTrek.slnx -r win-x64
+
+      - name: Verify formatting
+        run: dotnet format TimeTrek.slnx --verify-no-changes --no-restore
+
+      - name: Build Release
+        run: dotnet build TimeTrek.slnx --configuration Release --no-restore -p:Platform=x64 -p:RuntimeIdentifier=win-x64
+
+      - name: Test Release
+        run: dotnet test TimeTrek.slnx --configuration Release --no-build
+
+      - name: Publish self-contained portable x64 application
+        id: package
+        shell: pwsh
+        run: |
+          $publishDirectory = Join-Path $env:RUNNER_TEMP 'TimeTrek-portable'
+          $releaseDirectory = Join-Path $env:RUNNER_TEMP 'TimeTrek-release'
+          New-Item -ItemType Directory -Path $publishDirectory,$releaseDirectory -Force | Out-Null
+          dotnet publish src/TimeTrek.App/TimeTrek.App.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --no-restore `
+            --output $publishDirectory `
+            -p:Platform=x64 `
+            -p:WindowsPackageType=None
+          $requiredFiles = @(
+            'TimeTrek.App.exe',
+            'LICENSE.txt',
+            'NOTICE.txt',
+            'PROVENANCE.json',
+            'THIRD_PARTY_NOTICES.md'
+          )
+          foreach ($file in $requiredFiles) {
+            if (-not (Test-Path -LiteralPath (Join-Path $publishDirectory $file) -PathType Leaf)) {
+              throw "Portable release is missing '$file'."
+            }
+          }
+          $runtimeEvidence = Get-ChildItem -LiteralPath $publishDirectory -File |
+            Where-Object Name -Match '^(coreclr|hostfxr|Microsoft\.WindowsAppRuntime|Microsoft\.UI\.Xaml).*\.dll$'
+          if (-not $runtimeEvidence) {
+            throw "Portable release is not self-contained."
+          }
+          $signature = Get-AuthenticodeSignature -LiteralPath (Join-Path $publishDirectory 'TimeTrek.App.exe')
+          @(
+            'This TimeTrek release is intentionally unsigned.'
+            "Authenticode status: $($signature.Status)"
+            'Windows may show an Unknown publisher or SmartScreen warning.'
+            'Verify SHA256SUMS.txt and the GitHub artifact attestation before running it.'
+          ) | Set-Content -Encoding utf8 -LiteralPath (Join-Path $releaseDirectory 'UNSIGNED_RELEASE.txt')
+          dotnet tool run sbom-tool generate `
+            -b $publishDirectory `
+            -bc $env:GITHUB_WORKSPACE `
+            -pn TimeTrek `
+            -pv $env:RELEASE_VERSION `
+            -ps 'Sam Zhang' `
+            -nsb 'https://github.com/samzhangubc/TimeTrek'
+          $sbom = Get-ChildItem -LiteralPath (Join-Path $publishDirectory '_manifest') -Recurse -File -Filter 'manifest.spdx.json' | Select-Object -First 1
+          if (-not $sbom) {
+            throw "SBOM generation did not produce an SPDX manifest."
+          }
+          $releaseSbom = Join-Path $releaseDirectory "TimeTrek-$($env:RELEASE_VERSION)-sbom.spdx.json"
+          Copy-Item -LiteralPath $sbom.FullName -Destination $releaseSbom
+          $releaseArchive = Join-Path $releaseDirectory "TimeTrek-$($env:RELEASE_VERSION)-win-x64-portable.zip"
+          Compress-Archive -Path (Join-Path $publishDirectory '*') -DestinationPath $releaseArchive -CompressionLevel Optimal
+          Copy-Item LICENSE,NOTICE,PROVENANCE.json,THIRD_PARTY_NOTICES.md -Destination $releaseDirectory
+          $hashTargets = @($releaseArchive, $releaseSbom)
+          $checksumLines = foreach ($target in $hashTargets) {
+            $hash = Get-FileHash -Algorithm SHA256 -LiteralPath $target
+            "$($hash.Hash.ToLowerInvariant())  $([IO.Path]::GetFileName($hash.Path))"
+          }
+          $checksumLines | Set-Content -Encoding utf8 -LiteralPath (Join-Path $releaseDirectory 'SHA256SUMS.txt')
+          "archive=$releaseArchive" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "directory=$releaseDirectory" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "sbom=$releaseSbom" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Attest portable archive provenance
+        id: provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: ${{ steps.package.outputs.archive }}
+
+      - name: Attest portable archive SBOM
+        id: sbom-attestation
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: ${{ steps.package.outputs.archive }}
+          sbom-path: ${{ steps.package.outputs.sbom }}
+
+      - name: Add attestation bundles to release evidence
+        shell: pwsh
+        run: |
+          Copy-Item -LiteralPath '${{ steps.provenance.outputs.bundle-path }}' `
+            -Destination (Join-Path '${{ steps.package.outputs.directory }}' "TimeTrek-$($env:RELEASE_VERSION)-provenance.jsonl")
+          Copy-Item -LiteralPath '${{ steps.sbom-attestation.outputs.bundle-path }}' `
+            -Destination (Join-Path '${{ steps.package.outputs.directory }}' "TimeTrek-$($env:RELEASE_VERSION)-sbom-attestation.jsonl")
+
+      - name: Upload release evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: TimeTrek-${{ inputs.version }}-unsigned-release
+          path: ${{ steps.package.outputs.directory }}
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "v$($env:RELEASE_VERSION)"
+          if (gh release view $tag 2>$null) {
+            throw "GitHub Release '$tag' already exists. Refusing to overwrite it."
+          }
+          $assets = Get-ChildItem -LiteralPath '${{ steps.package.outputs.directory }}' -File | Select-Object -ExpandProperty FullName
+          gh release create $tag @assets `
+            --verify-tag `
+            --title "TimeTrek $($env:RELEASE_VERSION)" `
+            --notes-file "docs/releases/$tag.md" `
+            --latest

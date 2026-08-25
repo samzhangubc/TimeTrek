@@ -430,14 +430,14 @@ The detailed screen flow, copy requirements, defaults, skip rules, and acceptanc
 
 ### 6.20 Installation, instances, and release policy
 
-- **FR-220:** TimeTrek shall be distributed initially as a per-user MSIX package with clean uninstall.
+- **FR-220:** TimeTrek 1.0.1 shall be distributed as an intentionally unsigned, self-contained x64 portable ZIP through GitHub Releases. Users extract it to a writable folder and may uninstall it by closing the app and deleting that folder; local application data is removed separately through the documented data controls.
 - **FR-221:** Only one TimeTrek instance may run per Windows user at a time; a second launch shall activate the existing instance.
 - **FR-222:** Automatic start with Windows shall be available, off by default, and offered in the first-run wizard.
-- **FR-223:** The application shall use the approved C# 14/.NET 10 LTS, WinUI 3/Windows App SDK, Generic Host, modular-monolith, SQLite/EF Core, and packaged self-contained MSIX baseline defined in `docs/TECHNICAL_DESIGN.md`.
-- **FR-224:** The intended software license is PolyForm Noncommercial 1.0.0, subject to adding the unmodified license text and the owner's required copyright notice before distribution. This is source-available, not OSI-approved open source. Until that is completed, all rights remain reserved and no distribution license is granted.
-- **FR-225:** TimeTrek shall support automatic application updates using authenticated, signed update artifacts published through GitHub Releases. Update checks shall be configurable, shall verify release authenticity and package integrity, and shall never replace an active-session binary unsafely. The application-owned update coordinator, replaceable `IUpdateService`, bounded download, checksum/publisher/signature validation, and Windows/MSIX installation handoff shall follow `docs/TECHNICAL_DESIGN.md`.
-- **FR-226:** The release pipeline shall build and sign x64 and ARM64 MSIX packages, attach the required update metadata/artifacts to a versioned GitHub Release, and support rollback/recovery from a failed update. Publishing a GitHub Release is an owner-authorized operation.
-- **FR-227:** Settings shall expose separate **Check automatically** and **Download automatically** controls. Disabling automatic checks also disables automatic downloads; **Check Now** remains available, and installation always requires confirmation.
+- **FR-223:** The application shall use the approved C# 14/.NET 10 LTS, WinUI 3/Windows App SDK, Generic Host, modular-monolith, SQLite/EF Core, and self-contained portable x64 baseline defined in `docs/TECHNICAL_DESIGN.md`. MSIX tooling remains available for development and a future signed installer.
+- **FR-224:** TimeTrek first-party code shall use the custom TimeTrek Source-Available License 1.0. Official binaries are free of charge for permitted personal, educational, and internal noncommercial use. Redistribution, product incorporation, commercial use, and derivative products require prior written permission. The license is source-available and not OSI-approved open source. Third-party components retain their own terms.
+- **FR-225:** TimeTrek 1.0.1 shall use manual updates from stable GitHub Releases. The inactive `IUpdateService` shall report that automatic updates are not configured. A future updater shall verify release authenticity and integrity and shall never replace an active-session binary unsafely.
+- **FR-226:** The release pipeline shall build an intentionally unsigned, self-contained x64 portable archive, attach SHA-256 checksums, GitHub artifact attestations, notices, provenance, and an SPDX SBOM to a versioned GitHub Release, and disclose that Windows may show Unknown publisher or SmartScreen. Publishing a GitHub Release is an owner-authorized operation.
+- **FR-227:** Settings may retain automatic-update controls for the replaceable future adapter, but 1.0.1 shall not imply that automatic checking or downloading works. Manual **Check Now** shall return an explicit not-configured status.
 
 The initial application follows stable GitHub Releases only. When **Check automatically** is enabled, launch triggers a check if at least 24 hours have elapsed since the last check. **Download automatically** is available only while automatic checking is enabled; on an unmetered connection it may download an authenticated update and then ask the user to install it. **Check Now** remains available when automatic checks are disabled. Download and installation are deferred while a Session or completion workflow is active. Preview/prerelease GitHub Releases are ignored.
 
@@ -525,9 +525,9 @@ The exact defensive limits are versioned implementation constants sized above th
 - **NFR-012 — Crash and power-loss integrity:** Application crashes, forced termination, Windows failure, and sudden power loss must recover from the last durable transition without silent store replacement, partially applied multi-object operations, or duplicate Session completion.
 - **NFR-013 — Resource safety:** Memory, file, database, handle, task, queue, network, and CPU use must remain bounded or cancellable for supported datasets and malformed inputs. The UI must remain responsive during long work.
 - **NFR-014 — Failure transparency:** Disk, permission, corruption, migration, import, export, backup, restore, and update failures must be reported accurately and must never show a successful state that was not made durable.
-- **NFR-015 — Supply-chain integrity:** Release dependencies, update metadata, checksums, packages, and signatures must be authenticated or verified through the approved build and update design; an untrusted artifact must never execute as an update.
+- **NFR-015 — Supply-chain integrity:** Release dependencies, update metadata, checksums, archives, SBOMs, and GitHub attestations must be generated or verified through the approved build and release design; an untrusted artifact must never execute as an automatic update. Artifact attestation establishes provenance, not malware safety or a verified Windows publisher.
 
-TimeTrek supports Windows 10 version 1809 or later and Windows 11 on x64 and ARM64 from the first executable build intended for use; no architecture or supported Windows version is deferred to a later milestone. Engineering targets are at least 100,000 Sessions/adjustments, 1,000 organization objects, and 1,000,000 accumulated foreground-application records, with ordinary durable commands completing within 200 ms, initial Home/History results within 300 ms, and common Stats/timeline views within one second on the representative SSD-based system defined by the technical test plan.
+TimeTrek 1.x supports currently serviced Windows 11 releases on x64 without an SLA or guaranteed response time. Windows 10 22H2 x64 is a technical-compatibility target only and receives no promise of Windows 10-specific fixes. The 1.0.1 release does not publish ARM64 or x86 packages. Engineering targets are at least 100,000 Sessions/adjustments, 1,000 organization objects, and 1,000,000 accumulated foreground-application records, with ordinary durable commands completing within 200 ms, initial Home/History results within 300 ms, and common Stats/timeline views within one second on the representative SSD-based system defined by the technical test plan.
 
 ## 8. Conceptual data model
 
@@ -623,7 +623,7 @@ Derived totals and visualizations should be calculated from Sessions unless a la
 - **Persistence:** local store, migrations, backup, restore, and protected credentials.
 - **Appearance:** mode scheduling, palettes, contrast, import/export, and derived colors.
 
-The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, the stable Windows App SDK, Generic Host, MVVM, SQLite through EF Core, and packaged self-contained per-user MSIX artifacts. `docs/TECHNICAL_DESIGN.md` defines module/dependency boundaries, timing and persistence methods, Windows adapters, defensive limits, updates, tests, and incremental implementation order.
+The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, the stable Windows App SDK, Generic Host, MVVM, SQLite through EF Core, and self-contained x64 portable release artifacts. `docs/TECHNICAL_DESIGN.md` defines module/dependency boundaries, timing and persistence methods, Windows adapters, defensive limits, updates, tests, and incremental implementation order.
 
 ## 10. External feasibility constraints
 
@@ -700,13 +700,13 @@ Windows lifecycle, notification-area, screen-saver, foreground-application, and 
 
 The functional product baseline is closed for interface-design purposes. Remaining work is intentionally separated by phase:
 
-All functional requirements other than the explicitly deferred Google Calendar extension belong to one initial-release baseline. The owner has declined a reduced MVP or staged product-requirement split; implementation sequencing may be incremental, but the requirements are not divided into separate product milestones. Windows 10/11 and x64/ARM64 support apply from the first executable build intended for use.
+All functional requirements other than the explicitly deferred Google Calendar extension belong to one initial-release baseline. The owner has declined a reduced MVP or staged product-requirement split; implementation sequencing may be incremental, but the requirements are not divided into separate product milestones. Windows 11 x64 is the supported release platform; Windows 10 22H2 x64 is compatibility-tested only.
 
 1. **Implementation:** build the complete non-Calendar baseline using `docs/TECHNICAL_DESIGN.md`; exact remaining copy, icon glyphs, and palette triplets may be completed as visual implementation work without reopening confirmed behavior.
-2. **Release-owner inputs:** final MSIX identity/publisher, trusted signing certificate or managed service, stable update metadata location if required, and emergency revocation/rollback procedure.
-3. **Release engineering:** implement and validate the GitHub Actions workflow, signed x64/ARM64 artifacts, update metadata, protected release authorization, and rollback drills after the owner inputs exist.
-4. **Distribution readiness:** add and review the unmodified PolyForm Noncommercial 1.0.0 license and required copyright notice.
+2. **Release-owner inputs:** approve the unsigned-release/SmartScreen disclosure, source-available license, release notes, and emergency rollback procedure.
+3. **Release engineering:** validate the GitHub Actions workflow, unsigned self-contained x64 portable artifact, SHA-256 checksums, GitHub attestations, SBOM, and clean Windows 11 launch/rendering behavior.
+4. **Distribution readiness:** review the custom TimeTrek Source-Available License 1.0, required copyright notice, third-party notices, provenance manifest, and SBOM.
 
 ## 14. Change control
 
-This baseline records product context supplied through 2026-08-23. Confirmed decisions shall not be reopened silently. Core implementation is authorized under `docs/TECHNICAL_DESIGN.md`; only the release-owner inputs in section 13 remain external blockers for a signed distributable release.
+This baseline records product context supplied through 2026-08-25. Confirmed decisions shall not be reopened silently. The 2026-08-25 owner decision explicitly supersedes the earlier signed-MSIX requirement for version 1.0.1 with an unsigned, attested portable GitHub Release. A future signed installer remains permitted but is not represented as part of 1.0.1.

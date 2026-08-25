@@ -41,7 +41,7 @@ Use:
 - .NET Generic Host, built-in dependency injection/configuration/logging, and MVVM;
 - SQLite through the stable .NET 10-compatible EF Core provider;
 - a modular monolith with the projects and dependency directions defined in `docs/TECHNICAL_DESIGN.md`;
-- packaged, self-contained, per-user MSIX output for Windows 10 1809+ and Windows 11, on both x64 and ARM64;
+- self-contained x64 portable GitHub Release output; Windows 11 x64 is supported without an SLA and Windows 10 22H2 x64 is compatibility-tested only; MSIX remains a future signed-installer option;
 - one application instance per user.
 
 Keep Domain and Application independent of WinUI, EF Core, filesystem/network implementations, and Windows APIs. Keep views thin: they must not query SQLite or call Win32/WinRT directly. Put persistence and Windows behavior behind the specified application ports and adapters. Pin stable dependency versions centrally and avoid unnecessary packages, interfaces, frameworks, services, or abstractions.
@@ -83,11 +83,11 @@ Preserve unrelated user changes. Local commits may be made only when they are fo
 
 ## Required verification and completion bar
 
-Implement and verify every non-Calendar requirement in the SDD, including organization and mixer Home; normal and Pomodoro timing; completion and Windows notification-area lifecycle; manual, continued, recreated, and negative-adjustment records; History and Recently Deleted; Stats and Timeline; billing, rounding, budgets, archiving, cascade deletion/restore; CSV/JSON export; backup/restore; appearance; first-run wizard; Settings; optional foreground-app tracking; updates; accessibility; recovery; and x64/ARM64 packaging.
+Implement and verify every non-Calendar requirement in the SDD, including organization and mixer Home; normal and Pomodoro timing; completion and Windows notification-area lifecycle; manual, continued, recreated, and negative-adjustment records; History and Recently Deleted; Stats and Timeline; billing, rounding, budgets, archiving, cascade deletion/restore; CSV/JSON export; backup/restore; appearance; first-run wizard; Settings; optional foreground-app tracking; updates; accessibility; recovery; and self-contained x64 packaging.
 
 Use the exact quality gates, scale targets, hostile-input tests, fault-injection tests, forced-termination checks, platform adapter tests, and definition of done in `docs/SDD.md` and `docs/TECHNICAL_DESIGN.md`. If the current environment cannot exercise a Windows/package behavior, implement its boundary and contract tests, record the exact unverified command or manual check, and continue with other safe work. Never claim a check passed when it did not run.
 
-The only acceptable owner-controlled blockers to a signed public release are the documented final MSIX identity/publisher, trusted production signing method, stable update-metadata location if required, emergency rollback/revocation procedure, and final license/copyright review. Use non-secret development/test signing where needed, but do not invent production values or publish a release.
+For version 1.0.1, build an intentionally unsigned self-contained portable x64 archive through the tag-bound GitHub workflow. Publish SHA-256 checksums, SPDX SBOM, GitHub provenance/SBOM attestations, legal notices, and a conspicuous Unknown publisher/SmartScreen disclosure. Do not publish an unsigned MSIX or claim a verified Windows publisher. A future signed installer requires separate approval and signing inputs.
 
 In progress updates, report completed behavior, validation results, current risks, and the next slice. In the final handoff, list completed capabilities, changed files/projects, commands and outcomes, remaining owner blockers, and any platform checks that still require supported physical or hosted Windows machines.
 

@@ -17,6 +17,7 @@
     "data_portability": ["src/TimeTrek.Application/DataPortability", "src/TimeTrek.Infrastructure/DataPortability", "src/TimeTrek.Platform.Windows/DataPortability"],
     "settings": ["src/TimeTrek.Application/Settings", "src/TimeTrek.Infrastructure/Settings", "src/TimeTrek.Presentation.WinUI/Settings"],
     "onboarding": ["src/TimeTrek.Presentation.WinUI/Onboarding/FirstRunWizardView.xaml", "src/TimeTrek.Presentation.WinUI/Onboarding/FirstRunWizardView.xaml.cs", "src/TimeTrek.Presentation.WinUI/Onboarding/FirstRunWizardViewModel.cs"],
+    "release_and_provenance": [".github/workflows/release.yml", "src/TimeTrek.App/TimeTrek.App.csproj", "src/TimeTrek.App/Package.appxmanifest", "Directory.Build.props", "LICENSE", "NOTICE", "PROVENANCE.json", "THIRD_PARTY_NOTICES.md"],
     "schema": ["src/TimeTrek.Infrastructure/Persistence/PersistenceRows.cs", "src/TimeTrek.Infrastructure/Persistence/TimeTrekDbContext.cs", "src/TimeTrek.Infrastructure/Persistence/Migrations"]
   }
 }

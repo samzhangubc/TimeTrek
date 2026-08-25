@@ -1,0 +1,106 @@
+TimeTrek Source-Available License 1.0
+
+Copyright (c) 2026 Sam Zhang. All rights reserved except as expressly granted below.
+
+This license applies to the TimeTrek first-party source code and official compiled
+releases identified by the copyright holder. It is a source-available license. It
+is not an open-source license approved by the Open Source Initiative.
+
+1. Definitions
+
+"Official Release" means an unmodified TimeTrek binary published by Sam Zhang
+through https://github.com/samzhangubc/TimeTrek/releases.
+
+"Software" means TimeTrek first-party source code, documentation, artwork, and
+Official Releases. Third-party components are excluded and remain governed by
+their own license terms.
+
+"Product" means software, a service, or another deliverable intended for use by
+anyone other than the person who made it, whether or not money is charged.
+
+2. Official Release permission
+
+You may download, install, and use Official Releases without charge for personal,
+educational, or internal noncommercial purposes. You may make reasonable backup
+copies for that permitted use. You may not redistribute an Official Release.
+
+3. Source inspection and private evaluation
+
+You may view and clone the Software for inspection, security review, education,
+and private evaluation. You may make private modifications solely to evaluate or
+study the Software. You may not use a modified copy in production, distribute it,
+make it available to another person, or incorporate it into a Product.
+
+4. Prior written permission required
+
+Unless the copyright holder gives you prior written permission, you may not:
+
+a. reproduce or redistribute the Software except as expressly permitted above;
+b. publish, host, sublicense, sell, lease, or transfer the Software or a modified
+   version;
+c. incorporate any substantial portion of the Software into another Product;
+d. use the Software or a derivative for commercial purposes;
+e. create or distribute a competing Product based substantially on the Software;
+f. remove, conceal, or misrepresent copyright, license, attribution, or provenance
+   notices; or
+g. use the TimeTrek name, logo, or branding in a way that suggests endorsement or
+   that a modified build is an Official Release.
+
+Giving notice after use begins does not satisfy this section. Permission must be
+obtained first. Permission requests may be sent through the contact method listed
+at https://github.com/samzhangubc/TimeTrek.
+
+5. Contributions
+
+Submitting a contribution does not grant permission to redistribute the Software.
+Contribution terms are stated in CONTRIBUTING.md. No contribution is accepted
+unless the copyright holder expressly merges or otherwise accepts it.
+
+6. Required notices
+
+Any copy permitted by this license must retain this license, NOTICE, and all
+applicable third-party notices. You may not claim authorship of code you did not
+write.
+
+7. No trademark license
+
+This license grants no trademark, trade-name, logo, or branding rights.
+
+8. Third-party material
+
+Third-party components are governed solely by their respective licenses. Those
+licenses may grant rights that this license does not. See THIRD_PARTY_NOTICES.md.
+
+9. Termination and cure
+
+Your rights under this license terminate automatically when you violate it. For a
+first non-willful violation, your rights may be reinstated if you stop the
+violation, remove unauthorized distributions, and otherwise cure the violation
+within 30 days after receiving written notice. Willful violations and repeated
+violations are not subject to automatic reinstatement.
+
+10. Mandatory legal rights
+
+This license does not restrict rights that applicable law does not permit the
+copyright holder to restrict, including applicable fair-use or fair-dealing rights.
+
+11. No warranty
+
+THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, TITLE, AND NON-INFRINGEMENT. YOU USE THE SOFTWARE AT YOUR OWN RISK.
+
+12. Limitation of liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER WILL NOT BE LIABLE
+FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE
+DAMAGES, OR FOR LOSS OF DATA, PROFITS, OR BUSINESS, ARISING FROM THE SOFTWARE OR
+THIS LICENSE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+13. Severability and complete terms
+
+If a provision is unenforceable, it will be limited only as much as necessary and
+the remaining provisions will continue in effect. This license and any separate
+written permission from the copyright holder are the complete copyright terms for
+the Software.
+

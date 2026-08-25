@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "product": "TimeTrek",
+  "owner": "Sam Zhang",
+  "repository": "https://github.com/samzhangubc/TimeTrek",
+  "provenanceId": "414f593a-ec03-44df-923f-7b961768a20f",
+  "license": "LicenseRef-TimeTrek-Source-Available-1.0",
+  "firstPartyModules": [
+    "src/TimeTrek.Domain",
+    "src/TimeTrek.Application",
+    "src/TimeTrek.Infrastructure",
+    "src/TimeTrek.Platform.Windows",
+    "src/TimeTrek.Presentation.WinUI",
+    "src/TimeTrek.App"
+  ],
+  "runtimeBehavior": {
+    "networkAccess": false,
+    "telemetry": false,
+    "selfReplication": false
+  },
+  "buildEvidence": [
+    "assembly informational version",
+    "source revision",
+    "release tag",
+    "SHA-256 checksums",
+    "release SBOM",
+    "GitHub artifact attestation"
+  ]
+}

@@ -2,12 +2,11 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "dotnet-ef": {
-      "version": "10.0.11",
+    "microsoft.sbom.dotnettool": {
+      "version": "4.1.5",
       "commands": [
-        "dotnet-ef"
-      ],
-      "rollForward": false
+        "sbom-tool"
+      ]
     }
   }
 }

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TimeTrek.Application.ActivityTracking;
@@ -17,7 +18,26 @@ public sealed partial class SettingsViewModel(
     IActivityStore activityStore,
     IClipboardService clipboard) : ObservableObject
 {
+    private static readonly Assembly PresentationAssembly = typeof(SettingsViewModel).Assembly;
+    private readonly string displayVersion = ResolveDisplayVersion();
+    private readonly string provenanceId = ResolveProvenanceId();
     private string? pendingRestorePath;
+
+    public string DisplayVersion => displayVersion;
+
+    public string AboutSummary => $"TimeTrek {DisplayVersion} · local-first · source available";
+
+    public string ProvenanceId => provenanceId;
+
+    private static string ResolveDisplayVersion() =>
+        PresentationAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            .Split('+', 2)[0]
+        ?? PresentationAssembly.GetName().Version?.ToString(3)
+        ?? "unknown";
+
+    private static string ResolveProvenanceId() => PresentationAssembly.GetCustomAttributes<AssemblyMetadataAttribute>()
+        .FirstOrDefault(item => string.Equals(item.Key, "TimeTrek.ProvenanceId", StringComparison.Ordinal))
+        ?.Value ?? "unavailable";
 
     [ObservableProperty]
     public partial AppSettings Current { get; set; } = new();
@@ -117,7 +137,8 @@ public sealed partial class SettingsViewModel(
     {
         string diagnostics = string.Join(Environment.NewLine,
         [
-            $"TimeTrek version: {typeof(SettingsViewModel).Assembly.GetName().Version}",
+            $"TimeTrek version: {DisplayVersion}",
+            $"TimeTrek provenance: {ProvenanceId}",
             $"Windows: {RuntimeInformation.OSDescription}",
             $"Architecture: {RuntimeInformation.ProcessArchitecture}",
             $"Setup complete: {Current.BasicSetupCompleted}",

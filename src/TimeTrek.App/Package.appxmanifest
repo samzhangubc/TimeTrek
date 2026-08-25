@@ -17,7 +17,7 @@
 
   <Properties>
     <DisplayName>TimeTrek</DisplayName>
-    <PublisherDisplayName>TimeTrek Development</PublisherDisplayName>
+    <PublisherDisplayName>Sam Zhang</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

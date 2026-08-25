@@ -26,6 +26,7 @@ Read this after `IMPLEMENTATION_PROMPT.md`. Product behavior remains governed by
 | Currency selection/conversion | `Domain/Billing/BillingPolicy.cs` | ISO code/minor-unit fields in persistence | `Presentation.WinUI/Common/CurrencyCatalog.cs`, `Home/HomePage.xaml.cs`; currency tests |
 | Appearance | `Domain/Appearance/*` | settings and Palette rows | Settings and `Shell/AppShell.xaml.cs`; contrast tests |
 | Updates | `Application/Updates/UpdateContracts.cs` | `Platform.Windows/Updates/*` | Settings Updates; owner configuration required |
+| Release identity, provenance, license | `LICENSE`, `NOTICE`, `PROVENANCE.json`, `Directory.Build.props` | `.github/workflows/release.yml`, `src/TimeTrek.App/Package.appxmanifest` | `Settings/SettingsViewModel.cs`, `SettingsPage.xaml`, release evidence |
 | Calendar seam | `ICalendarIntegration` | `DeferredCalendarIntegration` | deliberately no UI |
 | Schema/migrations | Domain/Application models | `PersistenceRows.cs`, `TimeTrekDbContext.cs`, `Migrations/` | migration/SQLite tests |
 

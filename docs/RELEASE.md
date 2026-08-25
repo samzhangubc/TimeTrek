@@ -1,53 +1,76 @@
-# TimeTrek Release and Automatic-Update Baseline
+# Release and update baseline
 
-| Field | Value |
+| Item | Verified state |
 | --- | --- |
-| Status | Stack/update architecture approved; production identity and signing pending |
-| Last verified | 2026-08-23 |
+| Status | Unsigned x64 portable-release workflow implemented; GitHub-hosted validation pending |
+| Last verified | 2026-08-25 |
 | Repository | `samzhangubc/TimeTrek` |
+| Default branch | `main` |
+| Public channel | GitHub Releases |
 
-## Current repository state
+## Release design
 
-The GitHub repository is public, its default branch is `main`, and GitHub Releases are available. At the verification date it had no published Releases and no GitHub Actions workflows. No GitHub repository feature must be enabled before planning automatic updates.
+TimeTrek 1.0.1 is distributed as a self-contained Windows x64 portable ZIP from
+GitHub Releases. It contains `TimeTrek.App.exe`, the .NET runtime, Windows App SDK
+runtime files, legal notices, and provenance metadata. It does not install a
+system-wide runtime or require Developer Mode. Users extract the complete archive
+to a writable folder and launch the executable in place.
 
-The implementation stack and updater boundary are approved in `docs/TECHNICAL_DESIGN.md`. A production release workflow cannot be finalized until the real build exists and the MSIX package identity, publisher identity, trusted signing method, and any stable update-metadata location are approved. A placeholder workflow that cannot build, validate, and sign the real application is prohibited.
+The executable is intentionally unsigned. Windows may show **Unknown publisher**
+or a Microsoft Defender SmartScreen warning. This limitation must be stated on
+the release and in the user README; it must never be described as a verified
+publisher build. An unsigned MSIX is not used for public distribution because an
+ordinary Windows user cannot install it without separately trusting a certificate.
 
-## Required release design
+`.github/workflows/release.yml` is a manual, tag-bound workflow. It restores pinned
+dependencies, verifies formatting, builds, runs the test suite, publishes the
+self-contained portable folder, generates an SPDX SBOM and SHA-256 checksums,
+creates GitHub/Sigstore build-provenance and SBOM attestations, then creates the
+GitHub Release only after every gate succeeds. No cloud signing account, private
+key, certificate, or production secret is required.
 
-- Git version tags and GitHub Releases are the authoritative public version channel.
-- Release artifacts include signed Windows x64 and ARM64 MSIX packages, cryptographic checksums, and any updater-specific signed metadata.
-- The application exposes separate **Check automatically** and **Download automatically** settings. Disabling automatic checks also disables automatic downloads; manual **Check Now** remains available.
-- The initial channel includes stable GitHub Releases only; prereleases are ignored.
-- On launch, TimeTrek checks when automatic checking is enabled and at least 24 hours have elapsed since its last update check.
-- When automatic downloading is enabled, an authenticated update may download on unmetered networks. Installation always requires a user prompt and is deferred while a Session or completion workflow is active.
-- Downloaded packages and metadata must be authenticated before installation. An unsigned or invalidly signed update must be rejected with a clear error.
-- An update must not terminate or replace TimeTrek while a Session or completion workflow is active. It may download safely and defer installation.
-- Failed or interrupted update attempts must leave the installed version usable and preserve the local data store.
-- Update metadata must support minimum-compatible versions and prevent accidental downgrade unless an explicit recovery procedure authorizes it.
-- Release notes shall be visible before or after installation and link to the corresponding GitHub Release.
+## Public artifacts
 
-## GitHub Actions requirements
+- `TimeTrek-<version>-win-x64-portable.zip`
+- `SHA256SUMS.txt`
+- `TimeTrek-<version>-sbom.spdx.json`
+- GitHub artifact-attestation bundles
+- `UNSIGNED_RELEASE.txt`
+- `LICENSE`, `NOTICE`, `PROVENANCE.json`, and `THIRD_PARTY_NOTICES.md`
 
-The release workflow shall:
+The GitHub attestation establishes which repository, commit, and workflow produced
+the archive. It is not a malware audit or a substitute for code signing. Users can
+verify it with:
 
-1. Trigger only from an owner-authorized version tag or protected manual release action.
-2. Check out the exact tagged commit and run required tests, lint, types, and build validation.
-3. Build deterministic x64 and ARM64 packages using the finalized stack.
-4. Sign packages using a protected signing service or repository/environment secret. No private signing key may be committed to the repository or embedded in ordinary build artifacts.
-5. Generate checksums and updater metadata from the signed artifacts.
-6. Create a draft GitHub Release and attach all required artifacts.
-7. Publish only after all architecture builds and verification checks succeed and the owner authorizes publication.
-8. Retain enough provenance to identify the source commit, workflow run, package versions, and signing identity.
+```powershell
+gh attestation verify TimeTrek-1.0.1-win-x64-portable.zip --repo samzhangubc/TimeTrek
+```
 
-Every executable build intended for use must target Windows 10 and Windows 11 on both x64 and ARM64. Architecture builds may run in parallel, but none is deferred to a later product milestone.
+## Platform policy
 
-Use a protected GitHub Environment for release authorization and signing credentials. Grant the workflow only the minimum repository permissions needed, normally read access to source and scoped write access to release contents during the publish job.
+Windows 11 x64 is supported without an SLA. Windows 10 22H2 x64 is a
+technical-compatibility target only, with no promise of Windows 10-specific fixes.
+ARM64 and x86 artifacts are not published for 1.0.1. A compatibility claim requires
+a clean-machine launch and rendering smoke test; compilation alone is insufficient.
 
-## Decisions required before a signed release
+## Updates
 
-- MSIX identity, publisher identity, and version mapping.
-- Code-signing certificate or managed signing service.
-- Stable public update metadata location if GitHub Release assets alone cannot provide the validated App Installer-compatible path.
-- Retention, rollback, and emergency revocation procedure.
+Version 1.0.1 uses manual updates from GitHub Releases. The application must not
+claim that automatic updating is configured. A future updater may check stable
+GitHub Releases and verify the archive checksum and GitHub attestation, but it must
+not replace running files or interrupt an active Session. Public-trust code signing
+and an installer may be added later without changing the application update
+boundary.
 
-Core implementation and development-signed packaging may proceed before these values exist. The application update coordinator, `IUpdateService` boundary, stable-only GitHub Release checks, bounded download cache, SHA-256 verification, expected-publisher/signature checks, user-confirmed Windows/MSIX installation, and active-Session deferral follow `docs/TECHNICAL_DESIGN.md`. Production identity values must be supplied through protected release configuration rather than source code.
+## Release procedure
+
+1. Set the source and package version and update `docs/releases/v<version>.md`.
+2. Run Release build, tests, formatting verification, and a local portable publish.
+3. Commit the exact source to `main` and create the annotated `v<version>` tag.
+4. Run the `release` workflow with the matching version input.
+5. Confirm the workflow attestation and SHA-256 checksum match the attached archive.
+6. On a clean Windows 11 x64 machine, extract the archive, launch TimeTrek, complete
+   setup, start/pause/resume/stop a Session, reopen the app, and verify persistence.
+7. Record Windows 10 results separately; failure there does not expand support.
+8. If a release is bad, remove it from Latest, publish a corrected higher version,
+   and retain the previous source/tag and incident notes for provenance.

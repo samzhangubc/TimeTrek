@@ -132,7 +132,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 
 ## Confirmed decision baseline — 2026-08-20
 
-- Windows 10/11, x64 and ARM64 from the first executable build intended for use; per-user MSIX; one instance per user.
+- Self-contained x64 portable GitHub Release; one instance per user. Windows 11 x64 is supported without an SLA. Windows 10 22H2 x64 is a technical-compatibility target only, with no promise of Windows 10-specific fixes.
 - One active Session globally. A duration is required; supported formats include bare minutes, hours, mixed units, minute suffixes, and `HH:MM`. Warn at 24 hours but continue. Pre-start Cancel creates no Session; after start, Stop saves elapsed time.
 - A Session supports at most one Stream, multiple Categories, and one Project. Category scope changes prompt for the desired valid historical behavior.
 - Stream strips show active timing, start/stop, manual add, negative/delete time, next-Session Category/Project defaults, and today/week/total. Negative/delete time asks between selecting exact Sessions and making a negative adjustment.
@@ -158,9 +158,9 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Appearance warns but permits low-contrast custom palettes after explicit acknowledgement. Built-in/default palettes target WCAG 2.2 AA; acknowledged custom palettes are a contrast exception. Scheduled mode defaults light at 07:00 and dark at 19:00.
 - The first-run wizard covers all user defaults, including Sunday/Monday week start, rounding, idle handling, and start with Windows. All choices remain editable.
 - The finalized wizard flow is recorded in `docs/FIRST_RUN_WIZARD.md`: **Use recommended defaults** fast path, required step-by-step basic setup, genuinely optional Advanced setup, restart-before-basic-completion with saved values prefilled, rerunnable settings, optional MATH 100 and Work samples, overwrite-on-type 25-minute default, last-used timing mode, Windows-derived regional/accessibility choices, optional billing and activity tracking, and hover/focus tooltips after setup.
-- Application updates shall use authenticated, signed artifacts published through GitHub Releases. The eventual release pipeline must build/sign x64 and ARM64 MSIX packages and publish updater metadata; its exact implementation waits for stack and signing decisions.
-- `docs/RELEASE.md` records the verified repository state and the required release workflow, integrity checks, safe deferral during active Sessions, and signing controls.
-- Intended licensing is PolyForm Noncommercial 1.0.0 (source-available, not open source), pending inclusion of its unmodified terms and required notice; until then, all rights are reserved.
+- Version 1.0.1 uses manual updates from an intentionally unsigned, self-contained x64 portable archive published through GitHub Releases. The release pipeline publishes SHA-256 checksums, GitHub artifact attestations, provenance, notices, and an SPDX SBOM. Windows may show Unknown publisher or SmartScreen.
+- `docs/RELEASE.md` records the verified repository state, release workflow, integrity checks, unsigned-package disclosure, and safe future-update boundary.
+- First-party licensing is the custom TimeTrek Source-Available License 1.0 (source-available, not open source). Official binaries are free of charge for permitted personal, educational, and internal noncommercial use; redistribution, product incorporation, commercial use, and derivative products require prior written permission.
 - Product decisions precede a separate technology-stack comparison.
 - Interface design is active. `docs/INTERFACE.md` defines the non-collapsible icon-only navigation column (64 px default), dedicated Archive destination, remembered 1280×800 initial shell with 960×640 minimum, approximately six visible Studio One-inspired Stream channels, and a persistent bottom Session transport bar.
 - Practical region and column widths are draggable, saved immediately, and restored automatically. Stream channels share one width, so dragging any channel edge resizes every channel. `Ctrl++`, `Ctrl+-`, `Ctrl+0`, `Ctrl+wheel`, and pinch scale the whole interface from 80–150%, persist the choice, and re-layout content within the viewport; Settings can reset layout defaults.
@@ -177,7 +177,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Recently Deleted defaults to 30 days, supports 7/14/30/60/90-day presets and custom 1–365 days, shows purge deadlines, and purges automatically. A large organization cascade begins at five affected organization objects or 25 Sessions.
 - Settings provides live appearance/rounding previews, progressive billing controls, privacy/storage disclosure, update status, data tools, preference-only reset, sample-data creation, safe wizard rerun, and content-excluding diagnostics. Google Calendar has no placeholder UI before it ships.
 - Built-in/default presentation targets WCAG 2.2 AA principles where applicable, complete keyboard access, Windows UI Automation, screen-reader labeling, system text scaling, and non-color state cues. Explicitly acknowledged custom palettes may violate contrast only.
-- All non-Calendar functional requirements form one initial-release baseline rather than a reduced MVP. Implementation may be sequenced incrementally, but Windows 10/11 and x64/ARM64 support are expected from the first executable build intended for use.
+- All non-Calendar functional requirements form one initial-release baseline rather than a reduced MVP. Implementation may be sequenced incrementally. Windows 11 x64 is the supported release platform; Windows 10 22H2 x64 remains compatibility-only.
 
 ## Technical guardrails
 
@@ -188,15 +188,15 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Core features must remain usable offline.
 - Archive rather than delete when the user's intent is to remove completed organization objects from active use.
 - Never store secrets in exports, backups, the repository, or installed-program directories.
-- The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, stable Windows App SDK, Generic Host/MVVM, SQLite through EF Core, and packaged self-contained per-user MSIX artifacts. `docs/TECHNICAL_DESIGN.md` is the implementation-method authority.
+- The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, stable Windows App SDK, Generic Host/MVVM, SQLite through EF Core, and self-contained x64 portable artifacts. MSIX project tooling remains available for development and a future signed installer. `docs/TECHNICAL_DESIGN.md` is the implementation-method authority.
 - Treat all input and imported data as untrusted. Prevent SQL/command/markup/path/regex and spreadsheet-formula injection, hostile ZIP/JSON allocation, overflow, and unbounded resource growth.
 - Durable committed state is the recovery authority after application failure, forced termination, Windows crash, or power loss. Never silently replace a corrupt store or show successful persistence that did not complete.
 
 ## Decisions still requiring owner input
 
 - Remaining focused-dialog visual polish, exact copy, and final palette values.
-- Final MSIX identity/publisher identity and production signing certificate or managed service.
-- Stable update-metadata location if required by packaged validation, emergency rollback/revocation procedure, and final release protection.
+- Clean Windows 11 portable-launch/rendering evidence and optional Windows 10 compatibility evidence.
+- Emergency rollback/revocation procedure and final release protection.
 - Final license/copyright notice review before distribution.
 
 ## Repository conventions
@@ -218,7 +218,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 ### 2026-08-23 — First-principles consistency audit
 
 - Resolved Pomodoro pause timing, setup completion, documented shortcut scope, close behavior, raw-default Stats and budgets, multi-Category drill-down, non-elevating activity tracking, explicit activity-export inclusion, update-control semantics, and low-contrast accessibility exceptions.
-- Confirmed one unified non-Calendar initial-release baseline and Windows 10/11 x64/ARM64 coverage from the first executable build intended for use.
+- Confirmed one unified non-Calendar initial-release baseline, self-contained x64 packaging, Windows 11 support without an SLA, and best-effort Windows 10 22H2 compatibility.
 
 ### 2026-08-20 — Initial baseline
 
@@ -243,7 +243,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 ### 2026-08-20 — First-run wizard baseline
 
 - Finalized the setup structure and defaults; Google Calendar is deferred and absent from the initial wizard.
-- Added signed GitHub Release-based automatic updates as a release requirement.
+- Originally specified signed automatic updates; superseded for 1.0.1 by manual, attested unsigned portable GitHub Releases on 2026-08-25.
 
 ### 2026-08-20 — Deferred Calendar and billing conflicts
 
