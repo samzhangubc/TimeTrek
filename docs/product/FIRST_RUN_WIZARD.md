@@ -4,7 +4,7 @@
 | --- | --- |
 | Status | Functional baseline |
 | Last updated | 2026-08-23 |
-| Authority | Supplements `docs/SDD.md`; the SDD wins if a conflict is introduced |
+| Authority | Supplements `docs/product/SDD.md`; the SDD wins if a conflict is introduced |
 
 ## 1. Goals
 

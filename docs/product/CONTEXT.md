@@ -2,7 +2,7 @@
 
 ## Why this file exists
 
-This is the durable product context for contributors and future development sessions. It separates confirmed direction from implementation proposals and unresolved decisions. Update it with `docs/SDD.md` and `llm.txt`; never turn an assumption into a requirement silently.
+This is the durable product context for contributors and future development sessions. It separates confirmed direction from implementation proposals and unresolved decisions. Update it with `docs/product/SDD.md` and `docs/engineering/llm.txt`; never turn an assumption into a requirement silently.
 
 ## Current product statement
 
@@ -157,12 +157,12 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Backups include all non-secret app data and settings, including opted-in application records after disclosure, are not application-encrypted, and restore by previewed Replace or Merge (Replace default).
 - Appearance warns but permits low-contrast custom palettes after explicit acknowledgement. Built-in/default palettes target WCAG 2.2 AA; acknowledged custom palettes are a contrast exception. Scheduled mode defaults light at 07:00 and dark at 19:00.
 - The first-run wizard covers all user defaults, including Sunday/Monday week start, rounding, idle handling, and start with Windows. All choices remain editable.
-- The finalized wizard flow is recorded in `docs/FIRST_RUN_WIZARD.md`: **Use recommended defaults** fast path, required step-by-step basic setup, genuinely optional Advanced setup, restart-before-basic-completion with saved values prefilled, rerunnable settings, optional MATH 100 and Work samples, overwrite-on-type 25-minute default, last-used timing mode, Windows-derived regional/accessibility choices, optional billing and activity tracking, and hover/focus tooltips after setup.
+- The finalized wizard flow is recorded in `docs/product/FIRST_RUN_WIZARD.md`: **Use recommended defaults** fast path, required step-by-step basic setup, genuinely optional Advanced setup, restart-before-basic-completion with saved values prefilled, rerunnable settings, optional MATH 100 and Work samples, overwrite-on-type 25-minute default, last-used timing mode, Windows-derived regional/accessibility choices, optional billing and activity tracking, and hover/focus tooltips after setup.
 - Version 1.0.1 uses manual updates from an intentionally unsigned, self-contained x64 portable archive published through GitHub Releases. The release pipeline publishes SHA-256 checksums, GitHub artifact attestations, provenance, notices, and an SPDX SBOM. Windows may show Unknown publisher or SmartScreen.
-- `docs/RELEASE.md` records the verified repository state, release workflow, integrity checks, unsigned-package disclosure, and safe future-update boundary.
+- `docs/release/RELEASE.md` records the verified repository state, release workflow, integrity checks, unsigned-package disclosure, and safe future-update boundary.
 - First-party licensing is the custom Thyme-Me Source-Available License 1.0 (source-available, not open source). Official binaries are free of charge for permitted personal, educational, and internal noncommercial use; redistribution, product incorporation, commercial use, and derivative products require prior written permission.
 - Product decisions precede a separate technology-stack comparison.
-- Interface design is active. `docs/INTERFACE.md` defines the non-collapsible icon-only navigation column (64 px default), dedicated Archive destination, remembered 1280×800 initial shell with 960×640 minimum, approximately six visible Studio One-inspired Stream channels, and a persistent bottom Session transport bar.
+- Interface design is active. `docs/product/INTERFACE.md` defines the non-collapsible icon-only navigation column (64 px default), dedicated Archive destination, remembered 1280×800 initial shell with 960×640 minimum, approximately six visible Studio One-inspired Stream channels, and a persistent bottom Session transport bar.
 - Practical region and column widths are draggable, saved immediately, and restored automatically. Stream channels share one width, so dragging any channel edge resizes every channel. `Ctrl++`, `Ctrl+-`, `Ctrl+0`, `Ctrl+wheel`, and pinch scale the whole interface from 80–150%, persist the choice, and re-layout content within the viewport; Settings can reset layout defaults.
 - Currency input uses a searchable named-currency list with CAD and USD pinned first and all other currencies alphabetized; the persistence model remains ISO code plus banker's-rounded minor units.
 - History is a virtualized continuous table with sticky date groups, one dense header row, removable filter chips, persistent checkboxes, and an optional draggable right inspector. It defaults to All time/newest first. Column order is Time, Duration, Stream, Category, Project, Description, Origin, actions; widths save but columns do not reorder, and lower-priority columns hide at narrow widths.
@@ -188,7 +188,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Core features must remain usable offline.
 - Archive rather than delete when the user's intent is to remove completed organization objects from active use.
 - Never store secrets in exports, backups, the repository, or installed-program directories.
-- The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, stable Windows App SDK, Generic Host/MVVM, SQLite through EF Core, and self-contained x64 portable artifacts. MSIX project tooling remains available for development and a future signed installer. `docs/TECHNICAL_DESIGN.md` is the implementation-method authority.
+- The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, stable Windows App SDK, Generic Host/MVVM, SQLite through EF Core, and self-contained x64 portable artifacts. MSIX project tooling remains available for development and a future signed installer. `docs/engineering/TECHNICAL_DESIGN.md` is the implementation-method authority.
 - Treat all input and imported data as untrusted. Prevent SQL/command/markup/path/regex and spreadsheet-formula injection, hostile ZIP/JSON allocation, overflow, and unbounded resource growth.
 - Durable committed state is the recovery authority after application failure, forced termination, Windows crash, or power loss. Never silently replace a corrupt store or show successful persistence that did not complete.
 
@@ -202,8 +202,8 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 ## Repository conventions
 
 - This is a one-person project. Commit directly to `main` unless a release is active or the owner explicitly requests a branch.
-- Implementation is authorized using `docs/TECHNICAL_DESIGN.md`; `IMPLEMENTATION_PROMPT.md` is the prepared kickoff for a separate project chat.
-- Update `README.md`, `docs/SDD.md`, this file, and `llm.txt` when a decision makes them inaccurate.
+- Implementation is authorized using `docs/engineering/TECHNICAL_DESIGN.md`; `docs/engineering/IMPLEMENTATION_PROMPT.md` is the prepared kickoff for a separate project chat.
+- Update `README.md`, `docs/product/SDD.md`, this file, and `docs/engineering/llm.txt` when a decision makes them inaccurate.
 - Label proposals and unresolved decisions explicitly.
 - Never commit secrets, local databases, build output, or machine-specific configuration.
 
@@ -213,7 +213,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 
 - Implemented a viewport-aware first-run wizard and responsive Home, transport, History, Stats, Archive, and Settings layouts with a 960×640 minimum window and remembered bounds.
 - Added whole-interface scaling, safe state-dependent transport actions, Enter-to-complete behavior, per-Stream association defaults, configurable Stream budgets, named currency selection, Stats range/view controls, and a live timer tray icon.
-- Expanded `docs/CODE_MAP.md` and `docs/feature-index.json` with direct ownership routes for these capabilities.
+- Expanded `docs/engineering/CODE_MAP.md` and `docs/engineering/feature-index.json` with direct ownership routes for these capabilities.
 
 ### 2026-08-23 — First-principles consistency audit
 

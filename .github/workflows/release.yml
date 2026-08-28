@@ -123,7 +123,12 @@ jobs:
           Copy-Item -LiteralPath $sbom.FullName -Destination $releaseSbom
           $releaseArchive = Join-Path $releaseDirectory "Thyme-Me-$($env:RELEASE_VERSION)-win-x64-portable.zip"
           Compress-Archive -Path (Join-Path $publishDirectory '*') -DestinationPath $releaseArchive -CompressionLevel Optimal
-          Copy-Item LICENSE,NOTICE,PROVENANCE.json,THIRD_PARTY_NOTICES.md -Destination $releaseDirectory
+          Copy-Item -LiteralPath @(
+            'LICENSE',
+            'docs/legal/NOTICE',
+            'docs/legal/PROVENANCE.json',
+            'docs/legal/THIRD_PARTY_NOTICES.md'
+          ) -Destination $releaseDirectory
           $hashTargets = @($releaseArchive, $releaseSbom)
           $checksumLines = foreach ($target in $hashTargets) {
             $hash = Get-FileHash -Algorithm SHA256 -LiteralPath $target
@@ -176,5 +181,5 @@ jobs:
           gh release create $tag @assets `
             --verify-tag `
             --title "Thyme-Me $($env:RELEASE_VERSION)" `
-            --notes-file "docs/releases/$tag.md" `
+            --notes-file "docs/release/versions/$tag.md" `
             --latest

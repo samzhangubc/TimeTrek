@@ -65,7 +65,7 @@ boundary.
 
 ## Release procedure
 
-1. Set the source and package version and update `docs/releases/v<version>.md`.
+1. Set the source and package version and update `docs/release/versions/v<version>.md`.
 2. Run Release build, tests, formatting verification, and a local portable publish.
 3. Commit the exact source to `main` and create the annotated `v<version>` tag.
 4. Run the `release` workflow with the matching version input.

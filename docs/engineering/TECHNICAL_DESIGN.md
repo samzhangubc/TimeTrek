@@ -4,8 +4,8 @@
 | --- | --- |
 | Status | Approved implementation baseline |
 | Approved | 2026-08-23 |
-| Product authority | `docs/SDD.md` |
-| Interface authority | `docs/INTERFACE.md` |
+| Product authority | `docs/product/SDD.md` |
+| Interface authority | `docs/product/INTERFACE.md` |
 
 ## 1. Purpose and decision order
 
@@ -13,10 +13,10 @@ This document fixes the implementation methods that were intentionally left open
 
 When documents appear to conflict, use this order:
 
-1. `docs/SDD.md` for user-visible behavior and invariants.
-2. `docs/INTERFACE.md` and `docs/FIRST_RUN_WIZARD.md` for interaction and layout.
+1. `docs/product/SDD.md` for user-visible behavior and invariants.
+2. `docs/product/INTERFACE.md` and `docs/product/FIRST_RUN_WIZARD.md` for interaction and layout.
 3. This document for architecture and implementation methods.
-4. `docs/CONTEXT.md` and `llm.txt` for condensed rationale and guardrails.
+4. `docs/product/CONTEXT.md` and `docs/engineering/llm.txt` for condensed rationale and guardrails.
 
 Implementation may proceed in verified increments, but every non-Calendar requirement remains part of the single initial-release baseline. An incremental build order is not permission to discard or silently defer a requirement.
 

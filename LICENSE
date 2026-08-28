@@ -53,12 +53,12 @@ at https://github.com/samzhangubc/Thyme-Me.
 5. Contributions
 
 Submitting a contribution does not grant permission to redistribute the Software.
-Contribution terms are stated in CONTRIBUTING.md. No contribution is accepted
+Contribution terms are stated in `.github/CONTRIBUTING.md`. No contribution is accepted
 unless the copyright holder expressly merges or otherwise accepts it.
 
 6. Required notices
 
-Any copy permitted by this license must retain this license, NOTICE, and all
+Any copy permitted by this license must retain this license, `docs/legal/NOTICE`, and all
 applicable third-party notices. You may not claim authorship of code you did not
 write.
 
@@ -69,7 +69,8 @@ This license grants no trademark, trade-name, logo, or branding rights.
 8. Third-party material
 
 Third-party components are governed solely by their respective licenses. Those
-licenses may grant rights that this license does not. See THIRD_PARTY_NOTICES.md.
+licenses may grant rights that this license does not. See
+`docs/legal/THIRD_PARTY_NOTICES.md`.
 
 9. Termination and cure
 

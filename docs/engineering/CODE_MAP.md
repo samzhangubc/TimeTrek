@@ -1,6 +1,6 @@
 # Thyme-Me code map
 
-Read this after `IMPLEMENTATION_PROMPT.md`. Product behavior remains governed by `docs/SDD.md`; this file identifies the code that implements each capability. Update it whenever ownership moves.
+Read this after `docs/engineering/IMPLEMENTATION_PROMPT.md`. Product behavior remains governed by `docs/product/SDD.md`; this file identifies the code that implements each capability. Update it whenever ownership moves.
 
 The public product, repository, and workspace name is **Thyme-Me**. Code uses the
 dash-free `ThymeMe` identifier for .NET namespaces, assemblies, project directories,
@@ -33,11 +33,11 @@ through C# code.
 | Currency selection/conversion | `Domain/Billing/BillingPolicy.cs` | ISO code/minor-unit fields in persistence | `Presentation.WinUI/Common/CurrencyCatalog.cs`, `Home/HomePage.xaml.cs`; currency tests |
 | Appearance | `Domain/Appearance/*` | settings and Palette rows | Settings and `Shell/AppShell.xaml.cs`; contrast tests |
 | Updates | `Application/Updates/UpdateContracts.cs` | `Platform.Windows/Updates/*` | Settings Updates; owner configuration required |
-| Product/release identity, provenance, license | `Application/ProductIdentity.cs`, `LICENSE`, `NOTICE`, `PROVENANCE.json`, `Directory.Build.props` | `.github/workflows/release.yml`, `src/ThymeMe.App/Package.appxmanifest` | `Settings/SettingsViewModel.cs`, `SettingsPage.xaml`, release evidence |
+| Product/release identity, provenance, license | `Application/ProductIdentity.cs`, `LICENSE`, `docs/legal/NOTICE`, `docs/legal/PROVENANCE.json`, `Directory.Build.props` | `.github/workflows/release.yml`, `src/ThymeMe.App/Package.appxmanifest` | `Settings/SettingsViewModel.cs`, `SettingsPage.xaml`, release evidence |
 | Calendar seam | `ICalendarIntegration` | `DeferredCalendarIntegration` | deliberately no UI |
 | Schema/migrations | Domain/Application models | `PersistenceRows.cs`, `ThymeMeDbContext.cs`, `Migrations/` | migration/SQLite tests |
 
-All paths above are relative to `src/ThymeMe.*` unless already rooted at `tests/`. The compact machine index is `docs/feature-index.json`.
+All paths above are relative to `src/ThymeMe.*` unless already rooted at `tests/`. The compact machine index is `docs/engineering/feature-index.json`.
 
 ## Change routing
 

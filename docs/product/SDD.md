@@ -11,7 +11,7 @@
 
 This document is the implementation baseline for Thyme-Me. It records confirmed product behavior, safety constraints, data concepts, exclusions, and decisions that still require the product owner's input. An implementation must not silently resolve an open decision.
 
-Future product decisions must update this document, `docs/CONTEXT.md`, and `llm.txt` together.
+Future product decisions must update this document, `docs/product/CONTEXT.md`, and `docs/engineering/llm.txt` together.
 
 ## 2. Product summary
 
@@ -99,7 +99,7 @@ Requirements use stable identifiers so later decisions, implementation work, and
 - **FR-005:** A Stream shall be able to include zero or more scoped Categories.
 - **FR-006:** A Project may stand alone or optionally belong to exactly one Stream.
 
-Each Stream strip shall show the active timer; start/stop, add-Session, and negative-time/Session controls; Category and Project defaults for the next Session; and today, current-week, and all-time totals. Stream creation/editing uses the right inspector defined in `docs/INTERFACE.md`; Home ordering, shared draggable channel width, horizontal overflow, and empty states are also finalized there.
+Each Stream strip shall show the active timer; start/stop, add-Session, and negative-time/Session controls; Category and Project defaults for the next Session; and today, current-week, and all-time totals. Stream creation/editing uses the right inspector defined in `docs/product/INTERFACE.md`; Home ordering, shared draggable channel width, horizontal overflow, and empty states are also finalized there.
 
 ### 6.2 Organization hierarchy and Session associations
 
@@ -414,7 +414,7 @@ Official OpenAI documentation does not currently publish a Codex appearance-pres
 - **FR-203:** Writes shall be resilient to interruption and shall not knowingly leave the primary data store partially written.
 - **FR-204:** Schema changes shall use an explicit version and migration strategy before a release changes stored data.
 
-The approved persistence method is SQLite through the stable .NET 10-compatible EF Core SQLite provider. Physical representation, migration, transaction, recovery, and dependency-boundary rules are defined in `docs/TECHNICAL_DESIGN.md`.
+The approved persistence method is SQLite through the stable .NET 10-compatible EF Core SQLite provider. Physical representation, migration, transaction, recovery, and dependency-boundary rules are defined in `docs/engineering/TECHNICAL_DESIGN.md`.
 
 ### 6.19 First-run setup wizard
 
@@ -426,14 +426,14 @@ The approved persistence method is SQLite through the stable .NET 10-compatible 
 - **FR-215:** If Thyme-Me closes before basic setup completion, the wizard shall restart at its first page on the next launch; settings already saved by completed pages remain valid and are prefilled. Closing after basic completion while optional Advanced setup is open shall not make setup incomplete.
 - **FR-216:** The Welcome page shall provide **Use recommended defaults**, which completes basic setup immediately with documented safe defaults, creates no sample organization, and opens Home. Optional advanced settings remain available later in Settings.
 
-The detailed screen flow, copy requirements, defaults, skip rules, and acceptance criteria are defined in `docs/FIRST_RUN_WIZARD.md`. The wizard uses required basic setup followed by optional advanced setup. Basic setup becomes complete when its last required page is saved; optional Advanced may then be entered or skipped without blocking application use. If Thyme-Me closes before basic setup completes, it restarts from the beginning with saved page choices prefilled. It may be rerun later without data loss, offers backup restore first, and saves each completed page immediately. It does not ask the user's purpose. It offers optional MATH 100 and Work sample organization, defaults normal Sessions to an overwrite-on-type 25-minute duration, remembers the last timing mode, and exposes editable remembered Pomodoro defaults. It follows Windows time/accessibility conventions and asks for week start, appearance/custom colors, Windows startup, rounding, optional billing, per-event interruption behavior with a 10-minute inactivity default, and explicit foreground-tracking consent. Completion opens the main page and highlights Start Session. Subsequent onboarding uses hover/focus tooltips rather than a persistent tour.
+The detailed screen flow, copy requirements, defaults, skip rules, and acceptance criteria are defined in `docs/product/FIRST_RUN_WIZARD.md`. The wizard uses required basic setup followed by optional advanced setup. Basic setup becomes complete when its last required page is saved; optional Advanced may then be entered or skipped without blocking application use. If Thyme-Me closes before basic setup completes, it restarts from the beginning with saved page choices prefilled. It may be rerun later without data loss, offers backup restore first, and saves each completed page immediately. It does not ask the user's purpose. It offers optional MATH 100 and Work sample organization, defaults normal Sessions to an overwrite-on-type 25-minute duration, remembers the last timing mode, and exposes editable remembered Pomodoro defaults. It follows Windows time/accessibility conventions and asks for week start, appearance/custom colors, Windows startup, rounding, optional billing, per-event interruption behavior with a 10-minute inactivity default, and explicit foreground-tracking consent. Completion opens the main page and highlights Start Session. Subsequent onboarding uses hover/focus tooltips rather than a persistent tour.
 
 ### 6.20 Installation, instances, and release policy
 
 - **FR-220:** Thyme-Me 1.0.1 shall be distributed as an intentionally unsigned, self-contained x64 portable ZIP through GitHub Releases. Users extract it to a writable folder and may uninstall it by closing the app and deleting that folder; local application data is removed separately through the documented data controls.
 - **FR-221:** Only one Thyme-Me instance may run per Windows user at a time; a second launch shall activate the existing instance.
 - **FR-222:** Automatic start with Windows shall be available, off by default, and offered in the first-run wizard.
-- **FR-223:** The application shall use the approved C# 14/.NET 10 LTS, WinUI 3/Windows App SDK, Generic Host, modular-monolith, SQLite/EF Core, and self-contained portable x64 baseline defined in `docs/TECHNICAL_DESIGN.md`. MSIX tooling remains available for development and a future signed installer.
+- **FR-223:** The application shall use the approved C# 14/.NET 10 LTS, WinUI 3/Windows App SDK, Generic Host, modular-monolith, SQLite/EF Core, and self-contained portable x64 baseline defined in `docs/engineering/TECHNICAL_DESIGN.md`. MSIX tooling remains available for development and a future signed installer.
 - **FR-224:** Thyme-Me first-party code shall use the custom Thyme-Me Source-Available License 1.0. Official binaries are free of charge for permitted personal, educational, and internal noncommercial use. Redistribution, product incorporation, commercial use, and derivative products require prior written permission. The license is source-available and not OSI-approved open source. Third-party components retain their own terms.
 - **FR-225:** Thyme-Me 1.0.1 shall use manual updates from stable GitHub Releases. The inactive `IUpdateService` shall report that automatic updates are not configured. A future updater shall verify release authenticity and integrity and shall never replace an active-session binary unsafely.
 - **FR-226:** The release pipeline shall build an intentionally unsigned, self-contained x64 portable archive, attach SHA-256 checksums, GitHub artifact attestations, notices, provenance, and an SPDX SBOM to a versioned GitHub Release, and disclose that Windows may show Unknown publisher or SmartScreen. Publishing a GitHub Release is an owner-authorized operation.
@@ -443,7 +443,7 @@ The initial application follows stable GitHub Releases only. When **Check automa
 
 ### 6.21 Interface-design baseline
 
-The detailed interface specification is maintained in `docs/INTERFACE.md`. The initial shell opens around 1280×800, remembers later window bounds/maximized state, and enforces a 960×640 minimum. Primary navigation is a non-collapsible, icon-only column that defaults to 64 px, has a draggable width, and provides accessible hover/focus tooltips. Archive is a dedicated primary destination.
+The detailed interface specification is maintained in `docs/product/INTERFACE.md`. The initial shell opens around 1280×800, remembers later window bounds/maximized state, and enforces a 960×640 minimum. Primary navigation is a non-collapsible, icon-only column that defaults to 64 px, has a draggable width, and provides accessible hover/focus tooltips. Archive is a dedicated primary destination.
 
 Home uses readable vertical mixer channels inspired structurally by the Studio One console, targeting about six visible channels at 1280 px and horizontal scrolling beyond that. It retains aligned repeated zones without copying audio-specific controls. A persistent bottom transport bar owns the selected/active Session configuration and global Start/Pause/Stop actions. Individual channels show only their own Stream time and retain a direct Start Timer action.
 
@@ -451,7 +451,7 @@ The bottom transport is a square-cornered structural shell panel with no externa
 
 Starting from either the bottom transport or a Stream channel always prompts for duration with the remembered `25` selected; Enter accepts it and numeric typing replaces it. During an active normal Session, the requested total duration remains editable and recalculates the scheduled automatic end. Reducing it to at or below elapsed active time stops immediately and begins completion; increasing it extends the end without rewriting elapsed history.
 
-Stats uses the owner-approved activity-dashboard reference hierarchy: a compact full-width headline-metric strip, one dominant full-width activity visualization with a compact view switch, and two balanced lower insight/ranking columns. It adapts this structure to Thyme-Me data rather than copying the reference application's labels. The visual treatment remains restrained and dense, avoids oversized KPI cards, stacks lower columns at narrow widths, and preserves the application-wide navigation, transport, and saved resizing behavior. Finalized metric mappings and timeline placement are defined in `docs/INTERFACE.md`.
+Stats uses the owner-approved activity-dashboard reference hierarchy: a compact full-width headline-metric strip, one dominant full-width activity visualization with a compact view switch, and two balanced lower insight/ranking columns. It adapts this structure to Thyme-Me data rather than copying the reference application's labels. The visual treatment remains restrained and dense, avoids oversized KPI cards, stacks lower columns at narrow widths, and preserves the application-wide navigation, transport, and saved resizing behavior. Finalized metric mappings and timeline placement are defined in `docs/product/INTERFACE.md`.
 
 - **FR-230:** Practical horizontal regions, split panes, and data columns shall provide visible pointer-drag resize handles and a keyboard-accessible resizing equivalent.
 - **FR-231:** A width customization shall be persisted automatically when changed and restored on subsequent launches.
@@ -531,7 +531,7 @@ Thyme-Me 1.x supports currently serviced Windows 11 releases on x64 without an S
 
 ## 8. Conceptual data model
 
-This section remains the product vocabulary rather than a table-by-table physical schema. The approved physical representation and mapping rules are governed by `docs/TECHNICAL_DESIGN.md` and committed migrations.
+This section remains the product vocabulary rather than a table-by-table physical schema. The approved physical representation and mapping rules are governed by `docs/engineering/TECHNICAL_DESIGN.md` and committed migrations.
 
 ### Stream
 
@@ -623,7 +623,7 @@ Derived totals and visualizations should be calculated from Sessions unless a la
 - **Persistence:** local store, migrations, backup, restore, and protected credentials.
 - **Appearance:** mode scheduling, palettes, contrast, import/export, and derived colors.
 
-The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, the stable Windows App SDK, Generic Host, MVVM, SQLite through EF Core, and self-contained x64 portable release artifacts. `docs/TECHNICAL_DESIGN.md` defines module/dependency boundaries, timing and persistence methods, Windows adapters, defensive limits, updates, tests, and incremental implementation order.
+The approved implementation is a C# 14/.NET 10 LTS modular monolith using WinUI 3, the stable Windows App SDK, Generic Host, MVVM, SQLite through EF Core, and self-contained x64 portable release artifacts. `docs/engineering/TECHNICAL_DESIGN.md` defines module/dependency boundaries, timing and persistence methods, Windows adapters, defensive limits, updates, tests, and incremental implementation order.
 
 ## 10. External feasibility constraints
 
@@ -702,7 +702,7 @@ The functional product baseline is closed for interface-design purposes. Remaini
 
 All functional requirements other than the explicitly deferred Google Calendar extension belong to one initial-release baseline. The owner has declined a reduced MVP or staged product-requirement split; implementation sequencing may be incremental, but the requirements are not divided into separate product milestones. Windows 11 x64 is the supported release platform; Windows 10 22H2 x64 is compatibility-tested only.
 
-1. **Implementation:** build the complete non-Calendar baseline using `docs/TECHNICAL_DESIGN.md`; exact remaining copy, icon glyphs, and palette triplets may be completed as visual implementation work without reopening confirmed behavior.
+1. **Implementation:** build the complete non-Calendar baseline using `docs/engineering/TECHNICAL_DESIGN.md`; exact remaining copy, icon glyphs, and palette triplets may be completed as visual implementation work without reopening confirmed behavior.
 2. **Release-owner inputs:** approve the unsigned-release/SmartScreen disclosure, source-available license, release notes, and emergency rollback procedure.
 3. **Release engineering:** validate the GitHub Actions workflow, unsigned self-contained x64 portable artifact, SHA-256 checksums, GitHub attestations, SBOM, and clean Windows 11 launch/rendering behavior.
 4. **Distribution readiness:** review the custom Thyme-Me Source-Available License 1.0, required copyright notice, third-party notices, provenance manifest, and SBOM.

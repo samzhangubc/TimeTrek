@@ -95,7 +95,7 @@ For reproducible problems, open a
 [GitHub issue](https://github.com/samzhangubc/Thyme-Me/issues) with the Thyme-Me
 version, Windows version, steps to reproduce, and diagnostics copied from
 **Settings → About**. Do not attach a database, backup, or export unless you have
-reviewed it for private information. See [support policy](SUPPORT.md).
+reviewed it for private information. See [support policy](.github/SUPPORT.md).
 
 ## Planned: user-owned cloud backup and sync
 
@@ -111,9 +111,20 @@ only a development plan: version 1.0.1 contains no Google login or cloud-sync co
 Thyme-Me is source-available, not OSI-approved open-source software. Official
 binaries are free for permitted personal, educational, and internal noncommercial
 use. Redistribution, use in another product, commercial use, and derivative
-products require prior written permission. Read [LICENSE](LICENSE), [NOTICE](NOTICE),
-and [third-party notices](THIRD_PARTY_NOTICES.md) before redistributing or modifying
+products require prior written permission. Read [LICENSE](LICENSE),
+[NOTICE](docs/legal/NOTICE), and
+[third-party notices](docs/legal/THIRD_PARTY_NOTICES.md) before redistributing or modifying
 the software.
 
-Developer and maintainer documentation is under [`docs/`](docs), beginning with
-the [code map](docs/CODE_MAP.md) and [technical design](docs/TECHNICAL_DESIGN.md).
+Developer and maintainer documentation begins at the
+[documentation index](docs/README.md), with direct links to the
+[code map](docs/engineering/CODE_MAP.md) and
+[technical design](docs/engineering/TECHNICAL_DESIGN.md).
+
+## Repository layout
+
+- [`src/`](src) — application source code, organized by architectural layer.
+- [`tests/`](tests) — automated application, domain, infrastructure, and architecture tests.
+- [`docs/`](docs) — indexed product, engineering, release, and legal documentation.
+- [`.github/`](.github) — contribution guidance and GitHub Actions workflows.
+- [`.config/`](.config) — shared development-tool configuration.

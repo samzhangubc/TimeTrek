@@ -4,7 +4,7 @@
 | --- | --- |
 | Status | Active interface-design specification |
 | Last updated | 2026-08-24 |
-| Authority | Supplements `docs/SDD.md`; functional behavior remains defined by the SDD |
+| Authority | Supplements `docs/product/SDD.md`; functional behavior remains defined by the SDD |
 
 ## 1. Design direction
 

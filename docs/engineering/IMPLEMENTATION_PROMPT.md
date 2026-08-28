@@ -14,19 +14,19 @@ Deliver the complete non-Google-Calendar Thyme-Me baseline as a working, tested 
 
 Read these files completely before making changes:
 
-1. `AGENTS.md`, if present, then `llm.txt`.
-2. `docs/SDD.md`.
-3. `docs/INTERFACE.md` and `docs/FIRST_RUN_WIZARD.md`.
-4. `docs/TECHNICAL_DESIGN.md`.
-5. `docs/CONTEXT.md`, `docs/RELEASE.md`, and `README.md`.
+1. `AGENTS.md`, if present, then `docs/engineering/llm.txt`.
+2. `docs/product/SDD.md`.
+3. `docs/product/INTERFACE.md` and `docs/product/FIRST_RUN_WIZARD.md`.
+4. `docs/engineering/TECHNICAL_DESIGN.md`.
+5. `docs/product/CONTEXT.md`, `docs/release/RELEASE.md`, and `README.md`.
 6. The current Git status and recent history.
 
 Use this conflict order:
 
-1. `docs/SDD.md` for user-visible behavior, scope, and invariants.
-2. `docs/INTERFACE.md` and `docs/FIRST_RUN_WIZARD.md` for layout and interaction.
-3. `docs/TECHNICAL_DESIGN.md` for architecture and implementation methods.
-4. `docs/CONTEXT.md` and `llm.txt` for condensed rationale and guardrails.
+1. `docs/product/SDD.md` for user-visible behavior, scope, and invariants.
+2. `docs/product/INTERFACE.md` and `docs/product/FIRST_RUN_WIZARD.md` for layout and interaction.
+3. `docs/engineering/TECHNICAL_DESIGN.md` for architecture and implementation methods.
+4. `docs/product/CONTEXT.md` and `docs/engineering/llm.txt` for condensed rationale and guardrails.
 
 Do not silently resolve an open decision or weaken a confirmed requirement. If two authoritative statements genuinely conflict and the order above does not resolve them, record the exact conflict and ask for the smallest owner decision needed. Exact copy, icon glyphs, and palette values may be completed with restrained, accessible choices because the specifications identify them as implementation polish.
 
@@ -40,7 +40,7 @@ Use:
 - WinUI 3 on a compatible stable Windows App SDK, never a preview SDK for release builds;
 - .NET Generic Host, built-in dependency injection/configuration/logging, and MVVM;
 - SQLite through the stable .NET 10-compatible EF Core provider;
-- a modular monolith with the projects and dependency directions defined in `docs/TECHNICAL_DESIGN.md`;
+- a modular monolith with the projects and dependency directions defined in `docs/engineering/TECHNICAL_DESIGN.md`;
 - self-contained x64 portable GitHub Release output; Windows 11 x64 is supported without an SLA and Windows 10 22H2 x64 is compatibility-tested only; MSIX remains a future signed-installer option;
 - one application instance per user.
 
@@ -50,7 +50,7 @@ Do not add a backend, accounts, cloud sync, telemetry, a Windows service, micros
 
 ## Execution
 
-First inspect the installed Windows/.NET toolchain, repository state, and any relevant stable platform/package compatibility. Report real environment gaps without changing the approved stack. Then make a short plan using the eight-step incremental order in `docs/TECHNICAL_DESIGN.md` section 16, and begin the first executable vertical slice immediately. Do not stop after analysis, planning, or empty scaffolding.
+First inspect the installed Windows/.NET toolchain, repository state, and any relevant stable platform/package compatibility. Report real environment gaps without changing the approved stack. Then make a short plan using the eight-step incremental order in `docs/engineering/TECHNICAL_DESIGN.md` section 16, and begin the first executable vertical slice immediately. Do not stop after analysis, planning, or empty scaffolding.
 
 For every slice:
 
@@ -85,7 +85,7 @@ Preserve unrelated user changes. Local commits may be made only when they are fo
 
 Implement and verify every non-Calendar requirement in the SDD, including organization and mixer Home; normal and Pomodoro timing; completion and Windows notification-area lifecycle; manual, continued, recreated, and negative-adjustment records; History and Recently Deleted; Stats and Timeline; billing, rounding, budgets, archiving, cascade deletion/restore; CSV/JSON export; backup/restore; appearance; first-run wizard; Settings; optional foreground-app tracking; updates; accessibility; recovery; and self-contained x64 packaging.
 
-Use the exact quality gates, scale targets, hostile-input tests, fault-injection tests, forced-termination checks, platform adapter tests, and definition of done in `docs/SDD.md` and `docs/TECHNICAL_DESIGN.md`. If the current environment cannot exercise a Windows/package behavior, implement its boundary and contract tests, record the exact unverified command or manual check, and continue with other safe work. Never claim a check passed when it did not run.
+Use the exact quality gates, scale targets, hostile-input tests, fault-injection tests, forced-termination checks, platform adapter tests, and definition of done in `docs/product/SDD.md` and `docs/engineering/TECHNICAL_DESIGN.md`. If the current environment cannot exercise a Windows/package behavior, implement its boundary and contract tests, record the exact unverified command or manual check, and continue with other safe work. Never claim a check passed when it did not run.
 
 For version 1.0.1, build an intentionally unsigned self-contained portable x64 archive through the tag-bound GitHub workflow. Publish SHA-256 checksums, SPDX SBOM, GitHub provenance/SBOM attestations, legal notices, and a conspicuous Unknown publisher/SmartScreen disclosure. Do not publish an unsigned MSIX or claim a verified Windows publisher. A future signed installer requires separate approval and signing inputs.
 
