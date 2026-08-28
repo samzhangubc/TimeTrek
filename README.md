@@ -7,9 +7,7 @@ your activity to a Thyme-Me server.
 [Download the latest release](https://github.com/samzhangubc/Thyme-Me/releases/latest)
 
 > [!WARNING]
-> The currently published 1.0.1 release is intentionally unsigned and predates the
-> Thyme-Me rename, so its archive and executable still use their pre-rename filenames.
-> Windows may show **Unknown publisher**
+> The current 1.0.2 release is intentionally unsigned. Windows may show **Unknown publisher**
 > or a Microsoft Defender SmartScreen warning. Download only from this repository's
 > Releases page, verify the published SHA-256 checksum or GitHub attestation, and
 > do not run a copy from an untrusted source.
@@ -29,7 +27,7 @@ your activity to a Thyme-Me server.
 
 Thyme-Me stores its working data locally in your Windows application-data area.
 It does not include telemetry, advertising, accounts, or cloud sync in version
-1.0.1. Use **Settings → Data → Create backup** before moving computers or making
+1.0.2. Use **Settings → Data → Create backup** before moving computers or making
 major changes.
 
 ## Install and run
@@ -39,10 +37,10 @@ Thyme-Me supports Windows 11 on x64 PCs without a support SLA. Windows 10
 provided.
 
 1. Open [GitHub Releases](https://github.com/samzhangubc/Thyme-Me/releases) and
-   download `TimeTrek-1.0.1-win-x64-portable.zip` plus `SHA256SUMS.txt`.
+   download `Thyme-Me-1.0.2-win-x64-portable.zip` plus `SHA256SUMS.txt`.
 2. Extract the entire ZIP to a writable folder. Do not run the executable from
    inside the compressed archive.
-3. Open the extracted folder and run `TimeTrek.App.exe`.
+3. Open the extracted folder and run `thymeme.exe`.
 4. If SmartScreen appears, confirm that the file came from this repository. Select
    **More info → Run anyway** only after you are satisfied with its source and
    checksum.
@@ -61,14 +59,14 @@ folder does not automatically remove Thyme-Me's separate local application data.
 From PowerShell in the folder containing the download:
 
 ```powershell
-Get-FileHash .\TimeTrek-1.0.1-win-x64-portable.zip -Algorithm SHA256
+Get-FileHash .\Thyme-Me-1.0.2-win-x64-portable.zip -Algorithm SHA256
 ```
 
 Compare the result with `SHA256SUMS.txt` on the same GitHub Release. If you use the
 GitHub CLI, you can also verify which repository and workflow produced the archive:
 
 ```powershell
-gh attestation verify .\TimeTrek-1.0.1-win-x64-portable.zip --repo samzhangubc/Thyme-Me
+gh attestation verify .\Thyme-Me-1.0.2-win-x64-portable.zip --repo samzhangubc/Thyme-Me
 ```
 
 An attestation proves build provenance; it is not a malware guarantee or a Windows
@@ -87,7 +85,7 @@ prompt. Durable local data is treated as the recovery authority.
 
 ## Updates and support
 
-Version 1.0.1 uses manual updates. Check the
+Version 1.0.2 uses manual updates. Check the
 [Releases page](https://github.com/samzhangubc/Thyme-Me/releases) for newer stable
 versions; the in-app automatic updater is not configured yet.
 
@@ -104,7 +102,7 @@ the user's own Google account and storage quota. The intended experience is
 explicit opt-in, a standard Google consent screen, clear last-sync/error status,
 manual disconnect, encrypted transport, bounded retries, and conflict-safe local
 recovery—without a Thyme-Me-hosted account or paid Thyme-Me server. This feature is
-only a development plan: version 1.0.1 contains no Google login or cloud-sync code.
+only a development plan: version 1.0.2 contains no Google login or cloud-sync code.
 
 ## License and notices
 

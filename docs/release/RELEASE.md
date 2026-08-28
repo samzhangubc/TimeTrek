@@ -2,8 +2,8 @@
 
 | Item | Verified state |
 | --- | --- |
-| Status | v1.0.1 published under the legacy name; Thyme-Me release identity implemented for the next version |
-| Last verified | 2026-08-25 |
+| Status | v1.0.2 release baseline |
+| Last verified | 2026-08-28 |
 | Repository | `samzhangubc/Thyme-Me` |
 | Default branch | `main` |
 | Public channel | GitHub Releases |
@@ -11,8 +11,9 @@
 ## Release design
 
 Thyme-Me is distributed as a self-contained Windows x64 portable ZIP from GitHub
-Releases. The existing v1.0.1 artifact predates the rename and contains
-`TimeTrek.App.exe` because it predates the rename; future releases contain `thymeme.exe` while the installed and public product name is Thyme-Me. The archive also contains the .NET runtime, Windows App SDK
+Releases. The historical v1.0.1 artifact predates the rename and contains
+`TimeTrek.App.exe`; v1.0.2 and later contain `thymeme.exe` while the installed and
+public product name is Thyme-Me. The archive also contains the .NET runtime, Windows App SDK
 runtime files, legal notices, and provenance metadata. It does not install a
 system-wide runtime or require Developer Mode. Users extract the complete archive
 to a writable folder and launch the executable in place.
@@ -51,12 +52,12 @@ gh attestation verify Thyme-Me-<version>-win-x64-portable.zip --repo samzhangubc
 
 Windows 11 x64 is supported without an SLA. Windows 10 22H2 x64 is a
 technical-compatibility target only, with no promise of Windows 10-specific fixes.
-ARM64 and x86 artifacts are not published for 1.0.1. A compatibility claim requires
+ARM64 and x86 artifacts are not published for 1.0.2. A compatibility claim requires
 a clean-machine launch and rendering smoke test; compilation alone is insufficient.
 
 ## Updates
 
-Version 1.0.1 uses manual updates from GitHub Releases. The application must not
+Version 1.0.2 uses manual updates from GitHub Releases. The application must not
 claim that automatic updating is configured. A future updater may check stable
 GitHub Releases and verify the archive checksum and GitHub attestation, but it must
 not replace running files or interrupt an active Session. Public-trust code signing
