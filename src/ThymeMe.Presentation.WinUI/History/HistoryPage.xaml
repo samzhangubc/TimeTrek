@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="ThymeMe.Presentation.WinUI.History.HistoryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Padding="24" RowSpacing="12">
+    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+    <Grid ColumnSpacing="12">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="280" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+      <StackPanel><TextBlock Text="History" Style="{StaticResource TitleTextBlockStyle}" /><TextBlock Text="{x:Bind ViewModel.Summary, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" /></StackPanel>
+      <TextBox Grid.Column="1" x:Name="SearchBox" PlaceholderText="Search Sessions" AutomationProperties.Name="Search History" />
+      <Button Grid.Column="2" Content="Search" Click="OnSearch" />
+    </Grid>
+    <ToggleSwitch Grid.Row="1" Header="Recently Deleted" IsOn="{x:Bind ViewModel.ShowRecentlyDeleted, Mode=TwoWay}" Toggled="OnSearch" />
+    <CommandBar Grid.Row="2"><AppBarButton Label="Add Session" Icon="Add" Click="OnAddSession" /><AppBarButton Label="Subtract time" Icon="Remove" Click="OnAddAdjustment" /><AppBarSeparator /><AppBarButton Label="Continue" Icon="Play" Click="OnContinue" /><AppBarButton Label="Edit description" Icon="Edit" Click="OnEditDescription" /><AppBarButton Label="Delete or restore" Icon="Delete" Click="OnDeleteOrRestore" /></CommandBar>
+    <ListView Grid.Row="3" x:Name="HistoryList" ItemsSource="{x:Bind ViewModel.Items}" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
+      <ListView.Header>
+        <TextBlock Padding="12,8" Text="Sessions" FontWeight="SemiBold" />
+      </ListView.Header>
+      <ListView.ItemTemplate><DataTemplate><Grid Padding="8,6" ColumnSpacing="12" RowSpacing="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <TextBlock Text="{Binding Date}" /><TextBlock Grid.Column="1" Text="{Binding Time}" /><TextBlock Grid.Column="2" Text="{Binding Duration}" FontFamily="Consolas" /><TextBlock Grid.Column="3" Text="{Binding Description}" TextTrimming="CharacterEllipsis" /><TextBlock Grid.Row="1" Grid.ColumnSpan="4" Text="{Binding Details}" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource TextFillColorSecondaryBrush}" /><TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding DeletionDeadline}" FontSize="10" HorizontalAlignment="Right" />
+      </Grid></DataTemplate></ListView.ItemTemplate>
+    </ListView>
+  </Grid>
+</UserControl>

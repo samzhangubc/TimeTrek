@@ -59,25 +59,25 @@ jobs:
         shell: pwsh
         run: |
           dotnet tool restore
-          dotnet restore TimeTrek.slnx -r win-x64
+          dotnet restore thymeme.slnx -r win-x64
 
       - name: Verify formatting
-        run: dotnet format TimeTrek.slnx --verify-no-changes --no-restore
+        run: dotnet format thymeme.slnx --verify-no-changes --no-restore
 
       - name: Build Release
-        run: dotnet build TimeTrek.slnx --configuration Release --no-restore
+        run: dotnet build thymeme.slnx --configuration Release --no-restore
 
       - name: Test Release
-        run: dotnet test TimeTrek.slnx --configuration Release --no-build
+        run: dotnet test thymeme.slnx --configuration Release --no-build
 
       - name: Publish self-contained portable x64 application
         id: package
         shell: pwsh
         run: |
-          $publishDirectory = Join-Path $env:RUNNER_TEMP 'TimeTrek-portable'
-          $releaseDirectory = Join-Path $env:RUNNER_TEMP 'TimeTrek-release'
+          $publishDirectory = Join-Path $env:RUNNER_TEMP 'Thyme-Me-portable'
+          $releaseDirectory = Join-Path $env:RUNNER_TEMP 'Thyme-Me-release'
           New-Item -ItemType Directory -Path $publishDirectory,$releaseDirectory -Force | Out-Null
-          dotnet publish src/TimeTrek.App/TimeTrek.App.csproj `
+          dotnet publish src/ThymeMe.App/ThymeMe.App.csproj `
             --configuration Release `
             --runtime win-x64 `
             --no-restore `
@@ -85,7 +85,7 @@ jobs:
             -p:Platform=x64 `
             -p:WindowsPackageType=None
           $requiredFiles = @(
-            'TimeTrek.App.exe',
+            'thymeme.exe',
             'LICENSE.txt',
             'NOTICE.txt',
             'PROVENANCE.json',
@@ -101,9 +101,9 @@ jobs:
           if (-not $runtimeEvidence) {
             throw "Portable release is not self-contained."
           }
-          $signature = Get-AuthenticodeSignature -LiteralPath (Join-Path $publishDirectory 'TimeTrek.App.exe')
+          $signature = Get-AuthenticodeSignature -LiteralPath (Join-Path $publishDirectory 'thymeme.exe')
           @(
-            'This TimeTrek release is intentionally unsigned.'
+            'This Thyme-Me release is intentionally unsigned.'
             "Authenticode status: $($signature.Status)"
             'Windows may show an Unknown publisher or SmartScreen warning.'
             'Verify SHA256SUMS.txt and the GitHub artifact attestation before running it.'
@@ -111,17 +111,17 @@ jobs:
           dotnet tool run sbom-tool generate `
             -b $publishDirectory `
             -bc $env:GITHUB_WORKSPACE `
-            -pn TimeTrek `
+            -pn Thyme-Me `
             -pv $env:RELEASE_VERSION `
             -ps 'Sam Zhang' `
-            -nsb 'https://github.com/samzhangubc/TimeTrek'
+            -nsb 'https://github.com/samzhangubc/Thyme-Me'
           $sbom = Get-ChildItem -LiteralPath (Join-Path $publishDirectory '_manifest') -Recurse -File -Filter 'manifest.spdx.json' | Select-Object -First 1
           if (-not $sbom) {
             throw "SBOM generation did not produce an SPDX manifest."
           }
-          $releaseSbom = Join-Path $releaseDirectory "TimeTrek-$($env:RELEASE_VERSION)-sbom.spdx.json"
+          $releaseSbom = Join-Path $releaseDirectory "Thyme-Me-$($env:RELEASE_VERSION)-sbom.spdx.json"
           Copy-Item -LiteralPath $sbom.FullName -Destination $releaseSbom
-          $releaseArchive = Join-Path $releaseDirectory "TimeTrek-$($env:RELEASE_VERSION)-win-x64-portable.zip"
+          $releaseArchive = Join-Path $releaseDirectory "Thyme-Me-$($env:RELEASE_VERSION)-win-x64-portable.zip"
           Compress-Archive -Path (Join-Path $publishDirectory '*') -DestinationPath $releaseArchive -CompressionLevel Optimal
           Copy-Item LICENSE,NOTICE,PROVENANCE.json,THIRD_PARTY_NOTICES.md -Destination $releaseDirectory
           $hashTargets = @($releaseArchive, $releaseSbom)
@@ -151,14 +151,14 @@ jobs:
         shell: pwsh
         run: |
           Copy-Item -LiteralPath '${{ steps.provenance.outputs.bundle-path }}' `
-            -Destination (Join-Path '${{ steps.package.outputs.directory }}' "TimeTrek-$($env:RELEASE_VERSION)-provenance.jsonl")
+            -Destination (Join-Path '${{ steps.package.outputs.directory }}' "Thyme-Me-$($env:RELEASE_VERSION)-provenance.jsonl")
           Copy-Item -LiteralPath '${{ steps.sbom-attestation.outputs.bundle-path }}' `
-            -Destination (Join-Path '${{ steps.package.outputs.directory }}' "TimeTrek-$($env:RELEASE_VERSION)-sbom-attestation.jsonl")
+            -Destination (Join-Path '${{ steps.package.outputs.directory }}' "Thyme-Me-$($env:RELEASE_VERSION)-sbom-attestation.jsonl")
 
       - name: Upload release evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: TimeTrek-${{ inputs.version }}-unsigned-release
+          name: Thyme-Me-${{ inputs.version }}-unsigned-release
           path: ${{ steps.package.outputs.directory }}
           if-no-files-found: error
           retention-days: 30
@@ -175,6 +175,6 @@ jobs:
           $assets = Get-ChildItem -LiteralPath '${{ steps.package.outputs.directory }}' -File | Select-Object -ExpandProperty FullName
           gh release create $tag @assets `
             --verify-tag `
-            --title "TimeTrek $($env:RELEASE_VERSION)" `
+            --title "Thyme-Me $($env:RELEASE_VERSION)" `
             --notes-file "docs/releases/$tag.md" `
             --latest

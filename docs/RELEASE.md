@@ -2,16 +2,17 @@
 
 | Item | Verified state |
 | --- | --- |
-| Status | Unsigned x64 portable-release workflow implemented; GitHub-hosted validation pending |
+| Status | v1.0.1 published under the legacy name; Thyme-Me release identity implemented for the next version |
 | Last verified | 2026-08-25 |
-| Repository | `samzhangubc/TimeTrek` |
+| Repository | `samzhangubc/Thyme-Me` |
 | Default branch | `main` |
 | Public channel | GitHub Releases |
 
 ## Release design
 
-TimeTrek 1.0.1 is distributed as a self-contained Windows x64 portable ZIP from
-GitHub Releases. It contains `TimeTrek.App.exe`, the .NET runtime, Windows App SDK
+Thyme-Me is distributed as a self-contained Windows x64 portable ZIP from GitHub
+Releases. The existing v1.0.1 artifact predates the rename and contains
+`TimeTrek.App.exe` because it predates the rename; future releases contain `thymeme.exe` while the installed and public product name is Thyme-Me. The archive also contains the .NET runtime, Windows App SDK
 runtime files, legal notices, and provenance metadata. It does not install a
 system-wide runtime or require Developer Mode. Users extract the complete archive
 to a writable folder and launch the executable in place.
@@ -31,9 +32,9 @@ key, certificate, or production secret is required.
 
 ## Public artifacts
 
-- `TimeTrek-<version>-win-x64-portable.zip`
+- `Thyme-Me-<version>-win-x64-portable.zip`
 - `SHA256SUMS.txt`
-- `TimeTrek-<version>-sbom.spdx.json`
+- `Thyme-Me-<version>-sbom.spdx.json`
 - GitHub artifact-attestation bundles
 - `UNSIGNED_RELEASE.txt`
 - `LICENSE`, `NOTICE`, `PROVENANCE.json`, and `THIRD_PARTY_NOTICES.md`
@@ -43,7 +44,7 @@ the archive. It is not a malware audit or a substitute for code signing. Users c
 verify it with:
 
 ```powershell
-gh attestation verify TimeTrek-1.0.1-win-x64-portable.zip --repo samzhangubc/TimeTrek
+gh attestation verify Thyme-Me-<version>-win-x64-portable.zip --repo samzhangubc/Thyme-Me
 ```
 
 ## Platform policy
@@ -69,7 +70,7 @@ boundary.
 3. Commit the exact source to `main` and create the annotated `v<version>` tag.
 4. Run the `release` workflow with the matching version input.
 5. Confirm the workflow attestation and SHA-256 checksum match the attached archive.
-6. On a clean Windows 11 x64 machine, extract the archive, launch TimeTrek, complete
+6. On a clean Windows 11 x64 machine, extract the archive, launch Thyme-Me, complete
    setup, start/pause/resume/stop a Session, reopen the app, and verify persistence.
 7. Record Windows 10 results separately; failure there does not expand support.
 8. If a release is bad, remove it from Latest, publish a corrected higher version,

@@ -1,4 +1,4 @@
-# TimeTrek Software Development Document
+# Thyme-Me Software Development Document
 
 | Field | Value |
 | --- | --- |
@@ -9,13 +9,13 @@
 
 ## 1. Purpose
 
-This document is the implementation baseline for TimeTrek. It records confirmed product behavior, safety constraints, data concepts, exclusions, and decisions that still require the product owner's input. An implementation must not silently resolve an open decision.
+This document is the implementation baseline for Thyme-Me. It records confirmed product behavior, safety constraints, data concepts, exclusions, and decisions that still require the product owner's input. An implementation must not silently resolve an open decision.
 
 Future product decisions must update this document, `docs/CONTEXT.md`, and `llm.txt` together.
 
 ## 2. Product summary
 
-TimeTrek is a local-first Windows time tracker intended primarily for students while remaining useful for employment, research, freelance work, and personal life. It organizes time around **Streams**, which appear side by side as vertical channel strips inspired by a DAW mixer.
+Thyme-Me is a local-first Windows time tracker intended primarily for students while remaining useful for employment, research, freelance work, and personal life. It organizes time around **Streams**, which appear side by side as vertical channel strips inspired by a DAW mixer.
 
 A Stream can represent a course, job, client, research area, hobby, or other ongoing context. Sessions may also be associated with Categories and Projects or recorded without any association. The primary experience must remain low-friction even as optional organization, reporting, billing, calendar, and activity-tracking features are added.
 
@@ -52,7 +52,7 @@ A Stream can represent a course, job, client, research area, hobby, or other ong
 
 ### 4.2 Explicitly excluded at this stage
 
-- User accounts, TimeTrek-hosted backend services, and TimeTrek cloud synchronization.
+- User accounts, Thyme-Me-hosted backend services, and Thyme-Me cloud synchronization.
 - Mobile, web, macOS, or Linux clients.
 - Multi-user collaboration, managers, permissions, timesheet approvals, payroll, and workforce surveillance.
 - Productivity targets, streak targets, or required time goals.
@@ -152,7 +152,7 @@ Renaming an organization object changes the name shown throughout current UI and
 
 Exactly one Session may be active globally. A positive duration is required for every started Session; open-ended stopwatch Sessions are not supported. Accepted formats are bare minutes, `h`, decimal hours, mixed hours/minutes, minute suffixes, and `HH:MM` (for example `45`, `1.5h`, `1h 30m`, `90m`, and `01:30`). Input trims surrounding whitespace, accepts both `.` and the Windows regional decimal separator, and interprets `HH:MM` as hours and minutes. Invalid input shows accepted-format examples. The application warns at 24 hours but allows the Session to continue. Pause/resume is supported within one Session, with paused time excluded. **Cancel** is available only before a Session starts and dismisses the start workflow without creating a record. Once timing begins, **Stop** is the terminating action and always saves elapsed time. Manual overlaps and any manual Session extending partly or wholly into the future warn but are allowed after confirmation. Sessions crossing midnight remain one Session while Stats and the timeline split their duration by local day.
 
-Explicit quit during an active Session offers **Stop, save, and quit** or **Cancel**. After a crash or forced shutdown, TimeTrek reconstructs the active Session from persisted timestamps. If its requested end has passed, it ends at the scheduled end and queues the normal completion workflow; otherwise it resumes as active.
+Explicit quit during an active Session offers **Stop, save, and quit** or **Cancel**. After a crash or forced shutdown, Thyme-Me reconstructs the active Session from persisted timestamps. If its requested end has passed, it ends at the scheduled end and queues the normal completion workflow; otherwise it resumes as active.
 
 #### Continue previous Session
 
@@ -172,7 +172,7 @@ Continue copies associations, billability, and wage only; it does not copy descr
 
 Pomodoro repeats work/break cycles until a required total cycle duration is reached. The total is a hard cap over work, breaks, and five-minute boundary buffers; time spent manually paused is excluded because pausing freezes the active interval and the total countdown. The start prompt asks for total duration plus work and break durations. Work/break defaults begin at 25/5 minutes, and the most recently entered work/break values become future defaults. If the remaining cycle time cannot contain a full interval, the current/final segment is shortened to the remaining time; reaching the cap saves that partial segment and starts no further interval.
 
-At a work interval boundary, TimeTrek continues recording work for a maximum five-minute buffer while waiting for the user to return and confirm the break. If the user does not return, work stops at boundary plus five minutes and break recording begins automatically. Each next work interval still requires manual confirmation.
+At a work interval boundary, Thyme-Me continues recording work for a maximum five-minute buffer while waiting for the user to return and confirm the break. If the user does not return, work stops at boundary plus five minutes and break recording begins automatically. Each next work interval still requires manual confirmation.
 
 Pause freezes the active interval and overall Pomodoro elapsed progress. **Skip Work** saves the elapsed partial work segment and enters break; **Skip Break** ends the break and waits for confirmation to start work. Stopping Pomodoro early saves all completed and partial segments, displays the summary, and queues the normal completion description. Break segments are stored separately and excluded from normal work/study totals; each Pomodoro start asks whether stored breaks count toward billable hours. Windows notifications are on and sound is off by default.
 
@@ -186,7 +186,7 @@ Pause freezes the active interval and overall Pomodoro elapsed progress. **Skip 
 - **FR-055:** An empty submission shall save the Session without description text.
 - **FR-056:** The saved description shall be attached atomically to the exact Session that opened the completion workflow.
 
-When completion occurs while hidden, TimeTrek shall show a Windows notification. Activating it restores the in-app completion view. Multiple pending descriptions are queued oldest-first and shown sequentially. Quitting with pending descriptions is allowed; the queue is restored next launch without silently filling descriptions. Saved descriptions remain editable in History. The implementation must not substitute an independent top-level dialog for the required in-app completion view.
+When completion occurs while hidden, Thyme-Me shall show a Windows notification. Activating it restores the in-app completion view. Multiple pending descriptions are queued oldest-first and shown sequentially. Quitting with pending descriptions is allowed; the queue is restored next launch without silently filling descriptions. Saved descriptions remain editable in History. The implementation must not substitute an independent top-level dialog for the required in-app completion view.
 
 ### 6.6 Manual entry, history, filtering, and sorting
 
@@ -230,32 +230,32 @@ A negative correction is stored as a separate signed adjustment record with loca
 - **FR-084:** Billability and wage shall remain optional for school and personal use.
 - **FR-085:** A saved Session shall preserve the billable status and wage applied when it was created so later default changes do not silently rewrite history.
 
-Categories define the default billable/non-billable state for new Sessions. Each Session may override that state when started. When multiple selected Categories disagree on billability, hourly wage, or currency, the start dialog requires the user to resolve the conflicting values before the Session can start; it never chooses a Category by selection order. Multiple currencies are supported at every applicable level. TimeTrek calculates estimated earnings only and does not invoice. Each Session's earning is calculated with decimal arithmetic from its effective rounded billable duration and historical hourly wage, then permanently rounded to that currency's minor unit using banker's rounding; aggregates sum these stored per-Session amounts. Historical Sessions preserve their effective billability, wage, currency, rounding inputs, and resulting rounded earning.
+Categories define the default billable/non-billable state for new Sessions. Each Session may override that state when started. When multiple selected Categories disagree on billability, hourly wage, or currency, the start dialog requires the user to resolve the conflicting values before the Session can start; it never chooses a Category by selection order. Multiple currencies are supported at every applicable level. Thyme-Me calculates estimated earnings only and does not invoice. Each Session's earning is calculated with decimal arithmetic from its effective rounded billable duration and historical hourly wage, then permanently rounded to that currency's minor unit using banker's rounding; aggregates sum these stored per-Session amounts. Historical Sessions preserve their effective billability, wage, currency, rounding inputs, and resulting rounded earning.
 
 ### 6.8 Idle, display, sleep, and screen-saver behavior
 
 - **FR-090:** Settings shall provide a toggle controlling automatic idle/display interruption handling. It is on by default, subject to the user's first-run selection.
-- **FR-091:** When that setting is enabled, a Session is active, and TimeTrek is the foreground application, TimeTrek shall request that Windows prevent automatic system sleep and automatic monitor power-off.
-- **FR-092:** When feasible on the selected Windows framework, TimeTrek shall also prevent automatic screen-saver activation while it is the foreground application and the setting is enabled.
-- **FR-093:** TimeTrek shall never block an explicit user request to sleep, hibernate, lock, sign out, shut down, or turn off the display.
-- **FR-094:** If Windows reports display-off, screen-saver/lock, or system-suspend state during an active Session, and the setting is enabled, TimeTrek shall stop the Session at the detected transition rather than count the inactive interval.
-- **FR-095:** On the next detected user activity or resume, TimeTrek shall issue a Windows notification explaining that the Session stopped and provide a route to the pending completion workflow.
+- **FR-091:** When that setting is enabled, a Session is active, and Thyme-Me is the foreground application, Thyme-Me shall request that Windows prevent automatic system sleep and automatic monitor power-off.
+- **FR-092:** When feasible on the selected Windows framework, Thyme-Me shall also prevent automatic screen-saver activation while it is the foreground application and the setting is enabled.
+- **FR-093:** Thyme-Me shall never block an explicit user request to sleep, hibernate, lock, sign out, shut down, or turn off the display.
+- **FR-094:** If Windows reports display-off, screen-saver/lock, or system-suspend state during an active Session, and the setting is enabled, Thyme-Me shall stop the Session at the detected transition rather than count the inactive interval.
+- **FR-095:** On the next detected user activity or resume, Thyme-Me shall issue a Windows notification explaining that the Session stopped and provide a route to the pending completion workflow.
 - **FR-096:** The stopped Session shall be persisted even when the main window is hidden.
 - **FR-097:** Preventing automatic sleep/display-off shall be active only while the conditions in FR-091 hold and shall be cleared immediately when those conditions stop holding.
 
-When enabled, a configurable generic keyboard/mouse inactivity threshold also stops a Session and defaults to 10 minutes. Display off, screen saver, lock, and suspend are individually configurable. The default stop timestamp is TimeTrek's detected transition/stop time. After resume/activity, TimeTrek notifies the user and opens the pending completion workflow when the notification is activated.
+When enabled, a configurable generic keyboard/mouse inactivity threshold also stops a Session and defaults to 10 minutes. Display off, screen saver, lock, and suspend are individually configurable. The default stop timestamp is Thyme-Me's detected transition/stop time. After resume/activity, Thyme-Me notifies the user and opens the pending completion workflow when the notification is activated.
 
 Windows exposes system/display power notifications and wake-prevention APIs, but the wake-prevention API does not itself suppress screen savers. Exact screen-saver and session-lock detection must be validated against the chosen framework and supported Windows versions.
 
 ### 6.9 Window, notification-area, and keyboard behavior
 
-- **FR-100:** Closing the main window while a Session is active shall hide the window, keep timing, and leave TimeTrek accessible in the Windows notification area.
-- **FR-101:** Closing the main window when no Session or completion interaction is active shall exit TimeTrek.
+- **FR-100:** Closing the main window while a Session is active shall hide the window, keep timing, and leave Thyme-Me accessible in the Windows notification area.
+- **FR-101:** Closing the main window when no Session or completion interaction is active shall exit Thyme-Me.
 - **FR-102:** The notification-area representation shall communicate elapsed Session time as closely as practical within Windows icon-size and refresh constraints.
 - **FR-103:** The user shall be able to restore the main window from the notification area.
-- **FR-104:** When a Session ends while the main window is hidden, TimeTrek shall persist the elapsed result and remain able to complete the description workflow.
+- **FR-104:** When a Session ends while the main window is hidden, Thyme-Me shall persist the elapsed result and remain able to complete the description workflow.
 - **FR-105:** `Ctrl+W` shall invoke the same state-dependent close-window behavior as the window close control: hide to the notification area when work is active or pending, otherwise exit.
-- **FR-106:** TimeTrek shall expose only documented keyboard behavior. Contextual navigation, search, timeline zoom, accessibility, layout, close, and quit shortcuts are permitted; hidden global action shortcuts are prohibited.
+- **FR-106:** Thyme-Me shall expose only documented keyboard behavior. Contextual navigation, search, timeline zoom, accessibility, layout, close, and quit shortcuts are permitted; hidden global action shortcuts are prohibited.
 
 The notification-area icon shall show compact elapsed time in `h:mm` where legible and exact time in its tooltip. `Ctrl+Q` is the explicit-quit command and confirms when a Session is active. The window close control, `Ctrl+W`, and `Alt+F4` all use the same state-dependent close behavior: hide while a Session or completion workflow is active or pending, otherwise exit.
 
@@ -264,7 +264,7 @@ The notification-area icon shall show compact elapsed time in `h:mm` where legib
 - **FR-110:** The application shall provide a Stats page containing the built-in calendar timeline and summary views.
 - **FR-111:** The timeline shall visualize Sessions as time blocks positioned by time of day and grouped by calendar day.
 - **FR-112:** The timeline shall show duration spent per day and across the hours of a day.
-- **FR-113:** The timeline shall work entirely from local TimeTrek data without requiring Google Calendar or another service.
+- **FR-113:** The timeline shall work entirely from local Thyme-Me data without requiring Google Calendar or another service.
 - **FR-114:** The Stats page shall provide weekly and monthly summaries.
 - **FR-115:** Summary dimensions shall include Stream, Project, Category, and billable versus non-billable time when applicable.
 - **FR-116:** The user shall be able to choose the dimension used for a summary visualization.
@@ -294,12 +294,12 @@ Google Calendar is not part of the initial implementation. The architecture shal
 - **FR-121:** If the future Calendar extension is implemented, it shall use an OAuth 2.0 client registered as a desktop application and complete authorization in the user's system browser.
 - **FR-122:** If implemented, the extension shall request the narrowest Google Calendar scope needed for the finalized behavior; write access shall not be requested for a read-only feature.
 - **FR-123:** If implemented, OAuth tokens shall be stored locally using an appropriate Windows-protected credential mechanism, not as plain text in the application directory.
-- **FR-124:** A future Google Calendar connection shall not require or operate a TimeTrek backend.
+- **FR-124:** A future Google Calendar connection shall not require or operate a Thyme-Me backend.
 - **FR-125:** If implemented, the user shall be able to disconnect the account and remove locally stored authorization tokens.
 - **FR-126:** If implemented, connection failure, token expiry, revoked consent, offline operation, or Google service unavailability shall not prevent local tracking, history, timeline, export, or backup.
-- **FR-127:** If implemented, external calendar events and TimeTrek Sessions shall remain distinguishable in the timeline.
+- **FR-127:** If implemented, external calendar events and Thyme-Me Sessions shall remain distinguishable in the timeline.
 
-A possible later integration remains constrained to a read-only timeline overlay plus one-way conversion of an event into a manual Session, user-selected calendars, and a labelled offline cache. It may be implemented only while fully client-side and Google-hosted, with no TimeTrek backend or publisher-operated service. These requirements define an extension seam, not initial-release functionality.
+A possible later integration remains constrained to a read-only timeline overlay plus one-way conversion of an event into a manual Session, user-selected calendars, and a labelled offline cache. It may be implemented only while fully client-side and Google-hosted, with no Thyme-Me backend or publisher-operated service. These requirements define an extension seam, not initial-release functionality.
 
 ### 6.12 Configurable time rounding
 
@@ -316,9 +316,9 @@ Rounding offers 5, 10, 15, and 30-minute presets plus a custom 1–60-minute inc
 ### 6.13 Optional foreground-application tracking
 
 - **FR-140:** Foreground-application tracking shall be off by default.
-- **FR-141:** TimeTrek shall begin collecting foreground-application data only after the user explicitly enables the feature through its full disclosure in Settings or the optional Advanced wizard.
+- **FR-141:** Thyme-Me shall begin collecting foreground-application data only after the user explicitly enables the feature through its full disclosure in Settings or the optional Advanced wizard.
 - **FR-142:** Enabling the feature shall first explain what is collected, when it is collected, where it is stored, and how it can be deleted.
-- **FR-143:** TimeTrek shall request only non-administrator permissions actually required by the chosen Windows APIs and only as part of this opt-in flow.
+- **FR-143:** Thyme-Me shall request only non-administrator permissions actually required by the chosen Windows APIs and only as part of this opt-in flow.
 - **FR-144:** The initial application shall not request or run with administrator elevation for foreground-application tracking. Intervals whose application identity is inaccessible shall be accumulated under a visible **Unknown elevated application** label.
 - **FR-145:** While enabled, application-focus data shall be collected only during an active Session.
 - **FR-146:** The baseline collection shall record application identity and accumulated foreground duration; it shall not collect keystrokes, screenshots, clipboard contents, document contents, or browser history.
@@ -351,7 +351,7 @@ Archiving a Stream automatically archives its scoped Categories and Projects own
 
 ### 6.15 Time budgets
 
-- **FR-160:** TimeTrek shall support optional **time budgets** on Streams and Projects without requiring them for ordinary tracking.
+- **FR-160:** Thyme-Me shall support optional **time budgets** on Streams and Projects without requiring them for ordinary tracking.
 - **FR-161:** When configured, the application shall compare the relevant tracked time with its time budget.
 - **FR-162:** A time budget shall not prevent tracking after it is reached.
 
@@ -363,7 +363,7 @@ Time budgets are non-recurring by default with optional weekly or monthly reset.
 - **FR-171:** CSV export shall preserve dates, raw timestamps, associations, descriptions, billing values, rounding information, and the documented organization name snapshots.
 - **FR-172:** The user shall be able to export JSON whose fields and semantics correspond to the finalized CSV schema, while using appropriate JSON types and nested structures where documented.
 - **FR-173:** Export shall not silently include OAuth tokens, credentials, or other secrets.
-- **FR-174:** The user shall be able to create a local backup file containing the data and non-secret settings required to restore TimeTrek.
+- **FR-174:** The user shall be able to create a local backup file containing the data and non-secret settings required to restore Thyme-Me.
 - **FR-175:** The user shall be able to select and restore a local backup file.
 - **FR-176:** Restore shall validate format/version before mutation, explain whether data will be merged or replaced, require confirmation for replacement, and avoid leaving the live store partially restored.
 - **FR-177:** Backup and restore shall not require a network connection.
@@ -371,11 +371,11 @@ Time budgets are non-recurring by default with optional weekly or monthly reset.
 
 CSV uses UTF-8, comma delimiters, RFC 4180 quoting, ISO 8601 timestamps, and quoted multiline descriptions. Its minimum columns are `schema_version`, `session_id`, `start_utc`, `end_utc`, `timezone`, `local_date`, `raw_seconds`, `rounded_seconds`, `rounding_increment`, `origin`, `timing_mode`, Stream ID/current name/original-name snapshot, Category IDs/current names/original-name snapshots/scopes, Project ID/current name/original-name snapshot, description, billable, wage, and currency. Multiple Category values are encoded as JSON arrays inside properly quoted CSV cells, so each Session or adjustment remains one row.
 
-A versioned schema also represents pauses, Pomodoro segments, negative adjustments, and foreground-application summaries. JSON uses nested application records. **Include application breakdown** is off by default and requires an explicit choice for each export. When selected, CSV includes a companion applications CSV keyed by `session_id`; it does not place application arrays in the Session CSV. Export offers All and Current Filtered Results. JSON is a versioned document with metadata, lookup objects, and Session records matching CSV semantics. Both formats include a concise data dictionary identifying TimeTrek and explaining fields so an LLM or analyst can interpret the data.
+A versioned schema also represents pauses, Pomodoro segments, negative adjustments, and foreground-application summaries. JSON uses nested application records. **Include application breakdown** is off by default and requires an explicit choice for each export. When selected, CSV includes a companion applications CSV keyed by `session_id`; it does not place application arrays in the Session CSV. Export offers All and Current Filtered Results. JSON is a versioned document with metadata, lookup objects, and Session records matching CSV semantics. Both formats include a concise data dictionary identifying Thyme-Me and explaining fields so an LLM or analyst can interpret the data.
 
-CSV export is delivered as a ZIP bundle containing `sessions.csv`, `applications.csv` when applicable, and a README/data dictionary describing TimeTrek, schema version, fields, units, time-zone conventions, and relationships. JSON export stores equivalent metadata and its data dictionary inside the versioned JSON document.
+CSV export is delivered as a ZIP bundle containing `sessions.csv`, `applications.csv` when applicable, and a README/data dictionary describing Thyme-Me, schema version, fields, units, time-zone conventions, and relationships. JSON export stores equivalent metadata and its data dictionary inside the versioned JSON document.
 
-A backup is a versioned ZIP containing structured JSON data, non-secret settings, custom palettes, foreground-application records, checksums, and a data dictionary; OAuth tokens are excluded and there is no application-level encryption. Before creation, the backup workflow discloses that opted-in foreground-application data is included for complete restoration. Before either Replace or Merge mutates live data, TimeTrek automatically creates a local rollback backup and reports its location. Restore offers Replace and Merge with a preview and defaults to Replace. During Merge, identical stable IDs with identical content are skipped. If the same ID has differing content, the incoming record receives a new ID and all incoming relationships are remapped consistently before the preview is confirmed.
+A backup is a versioned ZIP containing structured JSON data, non-secret settings, custom palettes, foreground-application records, checksums, and a data dictionary; OAuth tokens are excluded and there is no application-level encryption. Before creation, the backup workflow discloses that opted-in foreground-application data is included for complete restoration. Before either Replace or Merge mutates live data, Thyme-Me automatically creates a local rollback backup and reports its location. Restore offers Replace and Merge with a preview and defaults to Replace. During Merge, identical stable IDs with identical content are skipped. If the same ID has differing content, the incoming record receives a new ID and all incoming relationships are remapped consistently before the preview is confirmed.
 
 ### 6.17 Appearance and color palettes
 
@@ -423,19 +423,19 @@ The approved persistence method is SQLite through the stable .NET 10-compatible 
 - **FR-212:** The wizard shall include idle/display handling, inactivity behavior and threshold, stop-timestamp behavior, rounding defaults, local week start (Sunday or Monday), optional start with Windows (off by default), and every other default finalized through the dedicated wizard questionnaire.
 - **FR-213:** Optional privacy-sensitive features shall be off until their own disclosure and explicit consent step, even when introduced by the wizard.
 - **FR-214:** All wizard choices shall remain editable later in Settings.
-- **FR-215:** If TimeTrek closes before basic setup completion, the wizard shall restart at its first page on the next launch; settings already saved by completed pages remain valid and are prefilled. Closing after basic completion while optional Advanced setup is open shall not make setup incomplete.
+- **FR-215:** If Thyme-Me closes before basic setup completion, the wizard shall restart at its first page on the next launch; settings already saved by completed pages remain valid and are prefilled. Closing after basic completion while optional Advanced setup is open shall not make setup incomplete.
 - **FR-216:** The Welcome page shall provide **Use recommended defaults**, which completes basic setup immediately with documented safe defaults, creates no sample organization, and opens Home. Optional advanced settings remain available later in Settings.
 
-The detailed screen flow, copy requirements, defaults, skip rules, and acceptance criteria are defined in `docs/FIRST_RUN_WIZARD.md`. The wizard uses required basic setup followed by optional advanced setup. Basic setup becomes complete when its last required page is saved; optional Advanced may then be entered or skipped without blocking application use. If TimeTrek closes before basic setup completes, it restarts from the beginning with saved page choices prefilled. It may be rerun later without data loss, offers backup restore first, and saves each completed page immediately. It does not ask the user's purpose. It offers optional MATH 100 and Work sample organization, defaults normal Sessions to an overwrite-on-type 25-minute duration, remembers the last timing mode, and exposes editable remembered Pomodoro defaults. It follows Windows time/accessibility conventions and asks for week start, appearance/custom colors, Windows startup, rounding, optional billing, per-event interruption behavior with a 10-minute inactivity default, and explicit foreground-tracking consent. Completion opens the main page and highlights Start Session. Subsequent onboarding uses hover/focus tooltips rather than a persistent tour.
+The detailed screen flow, copy requirements, defaults, skip rules, and acceptance criteria are defined in `docs/FIRST_RUN_WIZARD.md`. The wizard uses required basic setup followed by optional advanced setup. Basic setup becomes complete when its last required page is saved; optional Advanced may then be entered or skipped without blocking application use. If Thyme-Me closes before basic setup completes, it restarts from the beginning with saved page choices prefilled. It may be rerun later without data loss, offers backup restore first, and saves each completed page immediately. It does not ask the user's purpose. It offers optional MATH 100 and Work sample organization, defaults normal Sessions to an overwrite-on-type 25-minute duration, remembers the last timing mode, and exposes editable remembered Pomodoro defaults. It follows Windows time/accessibility conventions and asks for week start, appearance/custom colors, Windows startup, rounding, optional billing, per-event interruption behavior with a 10-minute inactivity default, and explicit foreground-tracking consent. Completion opens the main page and highlights Start Session. Subsequent onboarding uses hover/focus tooltips rather than a persistent tour.
 
 ### 6.20 Installation, instances, and release policy
 
-- **FR-220:** TimeTrek 1.0.1 shall be distributed as an intentionally unsigned, self-contained x64 portable ZIP through GitHub Releases. Users extract it to a writable folder and may uninstall it by closing the app and deleting that folder; local application data is removed separately through the documented data controls.
-- **FR-221:** Only one TimeTrek instance may run per Windows user at a time; a second launch shall activate the existing instance.
+- **FR-220:** Thyme-Me 1.0.1 shall be distributed as an intentionally unsigned, self-contained x64 portable ZIP through GitHub Releases. Users extract it to a writable folder and may uninstall it by closing the app and deleting that folder; local application data is removed separately through the documented data controls.
+- **FR-221:** Only one Thyme-Me instance may run per Windows user at a time; a second launch shall activate the existing instance.
 - **FR-222:** Automatic start with Windows shall be available, off by default, and offered in the first-run wizard.
 - **FR-223:** The application shall use the approved C# 14/.NET 10 LTS, WinUI 3/Windows App SDK, Generic Host, modular-monolith, SQLite/EF Core, and self-contained portable x64 baseline defined in `docs/TECHNICAL_DESIGN.md`. MSIX tooling remains available for development and a future signed installer.
-- **FR-224:** TimeTrek first-party code shall use the custom TimeTrek Source-Available License 1.0. Official binaries are free of charge for permitted personal, educational, and internal noncommercial use. Redistribution, product incorporation, commercial use, and derivative products require prior written permission. The license is source-available and not OSI-approved open source. Third-party components retain their own terms.
-- **FR-225:** TimeTrek 1.0.1 shall use manual updates from stable GitHub Releases. The inactive `IUpdateService` shall report that automatic updates are not configured. A future updater shall verify release authenticity and integrity and shall never replace an active-session binary unsafely.
+- **FR-224:** Thyme-Me first-party code shall use the custom Thyme-Me Source-Available License 1.0. Official binaries are free of charge for permitted personal, educational, and internal noncommercial use. Redistribution, product incorporation, commercial use, and derivative products require prior written permission. The license is source-available and not OSI-approved open source. Third-party components retain their own terms.
+- **FR-225:** Thyme-Me 1.0.1 shall use manual updates from stable GitHub Releases. The inactive `IUpdateService` shall report that automatic updates are not configured. A future updater shall verify release authenticity and integrity and shall never replace an active-session binary unsafely.
 - **FR-226:** The release pipeline shall build an intentionally unsigned, self-contained x64 portable archive, attach SHA-256 checksums, GitHub artifact attestations, notices, provenance, and an SPDX SBOM to a versioned GitHub Release, and disclose that Windows may show Unknown publisher or SmartScreen. Publishing a GitHub Release is an owner-authorized operation.
 - **FR-227:** Settings may retain automatic-update controls for the replaceable future adapter, but 1.0.1 shall not imply that automatic checking or downloading works. Manual **Check Now** shall return an explicit not-configured status.
 
@@ -451,12 +451,12 @@ The bottom transport is a square-cornered structural shell panel with no externa
 
 Starting from either the bottom transport or a Stream channel always prompts for duration with the remembered `25` selected; Enter accepts it and numeric typing replaces it. During an active normal Session, the requested total duration remains editable and recalculates the scheduled automatic end. Reducing it to at or below elapsed active time stops immediately and begins completion; increasing it extends the end without rewriting elapsed history.
 
-Stats uses the owner-approved activity-dashboard reference hierarchy: a compact full-width headline-metric strip, one dominant full-width activity visualization with a compact view switch, and two balanced lower insight/ranking columns. It adapts this structure to TimeTrek data rather than copying the reference application's labels. The visual treatment remains restrained and dense, avoids oversized KPI cards, stacks lower columns at narrow widths, and preserves the application-wide navigation, transport, and saved resizing behavior. Finalized metric mappings and timeline placement are defined in `docs/INTERFACE.md`.
+Stats uses the owner-approved activity-dashboard reference hierarchy: a compact full-width headline-metric strip, one dominant full-width activity visualization with a compact view switch, and two balanced lower insight/ranking columns. It adapts this structure to Thyme-Me data rather than copying the reference application's labels. The visual treatment remains restrained and dense, avoids oversized KPI cards, stacks lower columns at narrow widths, and preserves the application-wide navigation, transport, and saved resizing behavior. Finalized metric mappings and timeline placement are defined in `docs/INTERFACE.md`.
 
 - **FR-230:** Practical horizontal regions, split panes, and data columns shall provide visible pointer-drag resize handles and a keyboard-accessible resizing equivalent.
 - **FR-231:** A width customization shall be persisted automatically when changed and restored on subsequent launches.
 - **FR-232:** Dragging any Stream-channel width handle shall change one shared channel width applied to all existing and future Stream channels rather than creating independent per-channel widths.
-- **FR-233:** `Ctrl++`, `Ctrl+-`, `Ctrl+0`, `Ctrl+wheel`, and supported pinch gestures shall adjust or reset the whole TimeTrek interface scale, including text, controls, icons, spacing, and content. Scale shall persist automatically, stay within 80–150%, and re-layout to the current viewport rather than cropping the application.
+- **FR-233:** `Ctrl++`, `Ctrl+-`, `Ctrl+0`, `Ctrl+wheel`, and supported pinch gestures shall adjust or reset the whole Thyme-Me interface scale, including text, controls, icons, spacing, and content. Scale shall persist automatically, stay within 80–150%, and re-layout to the current viewport rather than cropping the application.
 - **FR-234:** Settings shall provide a Reset Layout command that restores default region widths, data-column widths, shared Stream-channel width, and interface scale.
 
 ### 6.22 Settings
@@ -501,8 +501,8 @@ The Settings dashboard begins at General and keeps all major sections visible as
 - **FR-272:** CSV export shall prevent spreadsheet-formula execution from user-controlled text while preserving a reversible representation documented in the packaged data dictionary. JSON exports and backups shall retain the exact original strings.
 - **FR-273:** Import, backup, palette, and update inputs shall be checked for supported versions, type/Unicode validity, numeric overflow, lengths, counts, relationship validity, JSON depth, archive entry paths, duplicate/conflicting entries, checksums, expanded size, and compression ratio before mutation or unbounded allocation. Invalid input shall fail without changing live data.
 - **FR-274:** Starting or transitioning a timer shall not be reported as successful until the corresponding state is committed durably. Application, process, Windows, or whole-PC failure shall recover from the last committed transition rather than UI ticks or an assumed in-memory state.
-- **FR-275:** TimeTrek shall distinguish clean from unclean shutdown. After an unclean shutdown it shall validate the local store before ordinary mutation, reconstruct active/completion state according to the scheduled-end rules, and avoid duplicating or silently discarding Sessions.
-- **FR-276:** A corrupt, unreadable, partially migrated, or incompatible store shall never be silently replaced by a new empty store. TimeTrek shall preserve the affected store and offer an applicable rollback, restore, or read-only salvage/export path with a clear explanation.
+- **FR-275:** Thyme-Me shall distinguish clean from unclean shutdown. After an unclean shutdown it shall validate the local store before ordinary mutation, reconstruct active/completion state according to the scheduled-end rules, and avoid duplicating or silently discarding Sessions.
+- **FR-276:** A corrupt, unreadable, partially migrated, or incompatible store shall never be silently replaced by a new empty store. Thyme-Me shall preserve the affected store and offer an applicable rollback, restore, or read-only salvage/export path with a clear explanation.
 - **FR-277:** Disk-full, access-denied, failed flush/replace, unavailable-device, and similar persistence failures shall not display false success. The application shall preserve the last durable state, show a recoverable error, and support safe bounded retry or exit where possible.
 - **FR-278:** Repeated startup failure shall enter a safe recovery mode that suppresses optional adapters and custom appearance, avoids automatic destructive migration, and keeps diagnostics, backup, restore, and recovery access available without deleting user data.
 - **FR-279:** Long operations, collections, caches, event queues, network responses, imports, exports, backups, restores, and reports shall be streamed, paged, virtualized, cancellable, size-limited, or backpressured as applicable so user-controlled scale cannot cause unbounded memory growth. A true process-wide memory exhaustion or corrupt-process condition shall terminate for next-launch recovery rather than attempting unsafe continued operation.
@@ -516,7 +516,7 @@ The exact defensive limits are versioned implementation constants sized above th
 - **NFR-003 — Reliability:** A running Session must not depend on the main window remaining visible.
 - **NFR-004 — Accessibility:** Default and built-in controls, dialogs, charts, keyboard behavior, and palettes shall follow WCAG 2.2 Level AA principles where applicable to a Windows desktop application. The application shall provide complete keyboard operation, non-color state cues, Windows UI Automation names/roles/states, screen-reader labels, system text scaling, and readable contrast. A custom palette that the user explicitly saves after a failed-contrast warning is an acknowledged exception to palette contrast conformance; keyboard and assistive-technology requirements still apply.
 - **NFR-005 — Privacy:** No study record, activity record, or description may leave the device except through a user-requested export, backup, or explicitly authorized Google Calendar operation.
-- **NFR-006 — Least privilege:** TimeTrek must not request administrator elevation or external-account scopes beyond a feature's demonstrated need.
+- **NFR-006 — Least privilege:** Thyme-Me must not request administrator elevation or external-account scopes beyond a feature's demonstrated need.
 - **NFR-007 — Recoverability:** The design must minimize lost or duplicated Sessions after crash, suspension, restore, or interrupted writes.
 - **NFR-008 — Auditability:** Raw timestamps and the rules used to derive rounded/billable values must remain inspectable.
 - **NFR-009 — Offline operation:** All core tracking, history, statistics, export, backup, and restore features must work without network access.
@@ -527,7 +527,7 @@ The exact defensive limits are versioned implementation constants sized above th
 - **NFR-014 — Failure transparency:** Disk, permission, corruption, migration, import, export, backup, restore, and update failures must be reported accurately and must never show a successful state that was not made durable.
 - **NFR-015 — Supply-chain integrity:** Release dependencies, update metadata, checksums, archives, SBOMs, and GitHub attestations must be generated or verified through the approved build and release design; an untrusted artifact must never execute as an automatic update. Artifact attestation establishes provenance, not malware safety or a verified Windows publisher.
 
-TimeTrek 1.x supports currently serviced Windows 11 releases on x64 without an SLA or guaranteed response time. Windows 10 22H2 x64 is a technical-compatibility target only and receives no promise of Windows 10-specific fixes. The 1.0.1 release does not publish ARM64 or x86 packages. Engineering targets are at least 100,000 Sessions/adjustments, 1,000 organization objects, and 1,000,000 accumulated foreground-application records, with ordinary durable commands completing within 200 ms, initial Home/History results within 300 ms, and common Stats/timeline views within one second on the representative SSD-based system defined by the technical test plan.
+Thyme-Me 1.x supports currently serviced Windows 11 releases on x64 without an SLA or guaranteed response time. Windows 10 22H2 x64 is a technical-compatibility target only and receives no promise of Windows 10-specific fixes. The 1.0.1 release does not publish ARM64 or x86 packages. Engineering targets are at least 100,000 Sessions/adjustments, 1,000 organization objects, and 1,000,000 accumulated foreground-application records, with ordinary durable commands completing within 200 ms, initial Home/History results within 300 ms, and common Stats/timeline views within one second on the representative SSD-based system defined by the technical test plan.
 
 ## 8. Conceptual data model
 
@@ -705,7 +705,7 @@ All functional requirements other than the explicitly deferred Google Calendar e
 1. **Implementation:** build the complete non-Calendar baseline using `docs/TECHNICAL_DESIGN.md`; exact remaining copy, icon glyphs, and palette triplets may be completed as visual implementation work without reopening confirmed behavior.
 2. **Release-owner inputs:** approve the unsigned-release/SmartScreen disclosure, source-available license, release notes, and emergency rollback procedure.
 3. **Release engineering:** validate the GitHub Actions workflow, unsigned self-contained x64 portable artifact, SHA-256 checksums, GitHub attestations, SBOM, and clean Windows 11 launch/rendering behavior.
-4. **Distribution readiness:** review the custom TimeTrek Source-Available License 1.0, required copyright notice, third-party notices, provenance manifest, and SBOM.
+4. **Distribution readiness:** review the custom Thyme-Me Source-Available License 1.0, required copyright notice, third-party notices, provenance manifest, and SBOM.
 
 ## 14. Change control
 

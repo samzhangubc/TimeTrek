@@ -1,6 +1,6 @@
-# Contributing to TimeTrek
+# Contributing to Thyme-Me
 
-TimeTrek is a one-person, source-available project. Bug reports and focused pull
+Thyme-Me is a one-person, source-available project. Bug reports and focused pull
 requests are welcome, but acceptance is not guaranteed and no support response
 time is promised.
 
@@ -10,7 +10,7 @@ and private evaluation; it does not permit publishing or distributing a fork.
 By intentionally submitting a contribution, you certify that you have the right
 to submit it and grant Sam Zhang a perpetual, worldwide, non-exclusive,
 royalty-free, irrevocable copyright and patent license to use, reproduce, modify,
-distribute, sublicense, and relicense that contribution as part of TimeTrek. You
+distribute, sublicense, and relicense that contribution as part of Thyme-Me. You
 retain copyright in work you wrote. A contribution is accepted only when it is
 expressly merged or otherwise accepted by the maintainer.
 
@@ -22,4 +22,3 @@ Security vulnerabilities should not be placed in a public issue. Contact the
 maintainer privately through the contact method on the GitHub profile when one is
 available; otherwise open a minimal issue requesting a private reporting channel
 without disclosing the vulnerability.
-

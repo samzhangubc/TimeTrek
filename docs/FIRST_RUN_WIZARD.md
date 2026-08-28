@@ -1,4 +1,4 @@
-# TimeTrek First-Run Setup Wizard
+# Thyme-Me First-Run Setup Wizard
 
 | Field | Value |
 | --- | --- |
@@ -8,7 +8,7 @@
 
 ## 1. Goals
 
-The wizard configures TimeTrek's important defaults without forcing optional integrations or organization. It uses a short basic setup followed by an optional advanced section. All choices remain editable in Settings, and the wizard can be run again without erasing Sessions or organization data.
+The wizard configures Thyme-Me's important defaults without forcing optional integrations or organization. It uses a short basic setup followed by an optional advanced section. All choices remain editable in Settings, and the wizard can be run again without erasing Sessions or organization data.
 
 Essential basic setup must be completed unless the user chooses **Use recommended defaults**. Optional Advanced sections may be skipped. Closing before basic setup completes returns to the beginning on the next launch while retaining validated choices from completed pages for prefilling. After basic setup completes, closing during optional Advanced setup does not block application use.
 
@@ -26,7 +26,7 @@ Each page saves its validated choices immediately when the user selects **Next**
 
 ### 3.1 Welcome and data source
 
-Explain that TimeTrek is local-first. Offer **Use recommended defaults**, **Set up step by step**, or **Restore a backup**. Restore follows the SDD's validated preview flow.
+Explain that Thyme-Me is local-first. Offer **Use recommended defaults**, **Set up step by step**, or **Restore a backup**. Restore follows the SDD's validated preview flow.
 
 **Use recommended defaults** completes basic setup immediately, creates no sample organization, and opens Home with: Normal 25-minute Sessions, remembered Pomodoro 25/5, notifications on, sound off, Windows-derived time/region/week start, Follow Windows appearance, start with Windows off, rounding off, billing off, idle/display handling on with a 10-minute generic inactivity threshold, and foreground-application tracking off. Every value remains editable in Settings.
 
@@ -61,7 +61,7 @@ Accessibility behavior follows Windows automatically rather than adding a separa
 
 ### 3.5 Windows startup
 
-Ask whether TimeTrek starts with Windows. Preselect **Off**.
+Ask whether Thyme-Me starts with Windows. Preselect **Off**.
 
 ## 4. Optional advanced setup
 
@@ -87,12 +87,12 @@ Ask whether idle/display interruption handling is enabled, with **On** preselect
 - Let the user enable display off, screen saver, lock, and suspend individually.
 - Ask separately whether generic keyboard/mouse inactivity stops a Session.
 - When generic inactivity is enabled, default its threshold to 10 minutes and allow editing.
-- Use TimeTrek's detected transition/stop time, not the last input time, as the default stop timestamp.
+- Use Thyme-Me's detected transition/stop time, not the last input time, as the default stop timestamp.
 - Explain that the stopped Session is saved and completion remains pending.
 
 ### 4.4 Foreground-application tracking
 
-Explain the feature and allow explicit opt-in, with **Off** preselected. Before enabling, require acknowledgement that collection occurs only during active work intervals, pauses during Session pauses and Pomodoro breaks, and stores only application display name, executable filename, and duration locally. Explicitly state that applications used during Pomodoro breaks are not collected. Also explain deletion and that TimeTrek never requests elevation; inaccessible elevated applications are grouped as **Unknown elevated application**.
+Explain the feature and allow explicit opt-in, with **Off** preselected. Before enabling, require acknowledgement that collection occurs only during active work intervals, pauses during Session pauses and Pomodoro breaks, and stores only application display name, executable filename, and duration locally. Explicitly state that applications used during Pomodoro breaks are not collected. Also explain deletion and that Thyme-Me never requests elevation; inaccessible elevated applications are grouped as **Unknown elevated application**.
 
 Google Calendar is deferred and does not appear in the initial wizard. The application architecture retains the integration boundary described in the SDD for possible later implementation.
 

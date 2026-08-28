@@ -1,4 +1,4 @@
-# TimeTrek Technical Design
+# Thyme-Me Technical Design
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 
 ## 1. Purpose and decision order
 
-This document fixes the implementation methods that were intentionally left open while the product behavior was being designed. It exists to keep TimeTrek modular, testable, and practical for one maintainer to patch over many releases.
+This document fixes the implementation methods that were intentionally left open while the product behavior was being designed. It exists to keep Thyme-Me modular, testable, and practical for one maintainer to patch over many releases.
 
 When documents appear to conflict, use this order:
 
@@ -26,7 +26,7 @@ Implementation may proceed in verified increments, but every non-Calendar requir
 - **Desktop UI:** WinUI 3 on the latest compatible stable Windows App SDK. Preview or experimental SDK channels are prohibited in release builds.
 - **Application model:** WinUI desktop application that can run unpackaged; MSIX project support remains for development and a future signed installer.
 - **Distribution:** an intentionally unsigned, self-contained x64 portable ZIP distributed through GitHub Releases. ARM64 and x86 packages are not part of the 1.0.1 release.
-- **Minimum target:** the package remains technically installable from Windows 10 version 1809, build 17763, so Windows 10 22H2 can be compatibility-tested. Windows 11 x64 is the supported platform without an SLA. TimeTrek does not use APIs newer than the declared minimum without capability checks and a working fallback.
+- **Minimum target:** the package remains technically installable from Windows 10 version 1809, build 17763, so Windows 10 22H2 can be compatibility-tested. Windows 11 x64 is the supported platform without an SLA. Thyme-Me does not use APIs newer than the declared minimum without capability checks and a working fallback.
 - **Hosting/composition:** .NET Generic Host and the built-in dependency-injection, configuration, and logging abstractions.
 - **Presentation pattern:** MVVM. `CommunityToolkit.Mvvm` may provide observable-property and command plumbing; it must not contain domain behavior.
 - **Persistence:** SQLite through the stable .NET 10-compatible EF Core SQLite provider.
@@ -36,16 +36,16 @@ All package versions are pinned centrally. Stable patch updates are allowed thro
 
 ## 3. Architectural style
 
-TimeTrek is a **modular monolith**. It has one main application process and one local database. It does not introduce an internal HTTP server, hosted backend, Windows service, microservices, or a general-purpose plugin system.
+Thyme-Me is a **modular monolith**. It has one main application process and one local database. It does not introduce an internal HTTP server, hosted backend, Windows service, microservices, or a general-purpose plugin system.
 
 The solution uses these responsibilities:
 
-- **`TimeTrek.Domain`** — entities, value objects, policies, state machines, validation, and domain errors. It references no UI, EF Core, filesystem, network, or Windows API package.
-- **`TimeTrek.Application`** — commands, queries, use-case orchestration, authorization-free local workflows, transaction boundaries, ports, and result models. It references Domain.
-- **`TimeTrek.Infrastructure`** — EF Core mappings and migrations, repositories/query implementations, settings, export, backup/restore, rollback snapshots, and privacy-safe local logging. It implements Application ports.
-- **`TimeTrek.Platform.Windows`** — notification-area behavior, app notifications, single instancing, activation, startup registration, foreground-app observation, input inactivity, power/display/session events, wake prevention, protected credentials, and updates. It implements Application ports.
-- **`TimeTrek.Presentation.WinUI`** — pages, dialogs, controls, view models, navigation, accessibility metadata, formatting, and visual state. It invokes Application use cases and does not access EF Core or Win32 directly.
-- **`TimeTrek.App`** — executable, package manifest, Generic Host setup, dependency registrations, startup sequencing, activation routing, and graceful shutdown. It is the composition root and is the only production project permitted to reference every implementation assembly.
+- **`ThymeMe.Domain`** — entities, value objects, policies, state machines, validation, and domain errors. It references no UI, EF Core, filesystem, network, or Windows API package.
+- **`ThymeMe.Application`** — commands, queries, use-case orchestration, authorization-free local workflows, transaction boundaries, ports, and result models. It references Domain.
+- **`ThymeMe.Infrastructure`** — EF Core mappings and migrations, repositories/query implementations, settings, export, backup/restore, rollback snapshots, and privacy-safe local logging. It implements Application ports.
+- **`ThymeMe.Platform.Windows`** — notification-area behavior, app notifications, single instancing, activation, startup registration, foreground-app observation, input inactivity, power/display/session events, wake prevention, protected credentials, and updates. It implements Application ports.
+- **`ThymeMe.Presentation.WinUI`** — pages, dialogs, controls, view models, navigation, accessibility metadata, formatting, and visual state. It invokes Application use cases and does not access EF Core or Win32 directly.
+- **`ThymeMe.App`** — executable, package manifest, Generic Host setup, dependency registrations, startup sequencing, activation routing, and graceful shutdown. It is the composition root and is the only production project permitted to reference every implementation assembly.
 - **Test projects** — unit tests for Domain/Application, SQLite integration and migration tests, adapter contract tests, UI/view-model tests, and packaged Windows smoke tests.
 
 Feature folders inside each assembly should use the same vocabulary—Timing, Organization, History, Reporting, Billing, Archive, Appearance, Settings, DataPortability, ActivityTracking, Lifecycle, and Updates—so a change can be followed vertically without creating a separate assembly for every feature.
@@ -170,7 +170,7 @@ Platform APIs are capability checked. Unsupported or inaccessible data becomes a
 Views and controls contain layout and visual behavior only. View models expose immutable screen state and invoke Application commands/queries. Long-running work is cancellable and never blocks the UI thread.
 
 - Use WinUI virtualization primitives for History, Archive, and large Stream collections.
-- Implement heatmap, timeline, budget bars, and simple pie visualizations as TimeTrek-owned WinUI controls unless a dependency review establishes a clear accessibility and maintenance advantage for a library.
+- Implement heatmap, timeline, budget bars, and simple pie visualizations as Thyme-Me-owned WinUI controls unless a dependency review establishes a clear accessibility and maintenance advantage for a library.
 - Every custom control exposes Windows UI Automation name, role, value/state, keyboard interaction, focus visuals, and non-color cues.
 - Resizing, icon scale, filters, columns, and other persisted layout state go through typed settings services.
 - Formatting of duration, money, dates, time zones, and regional input is centralized and separately tested.

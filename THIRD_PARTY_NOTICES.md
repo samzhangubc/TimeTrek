@@ -1,6 +1,6 @@
-# TimeTrek third-party notices
+# Thyme-Me third-party notices
 
-TimeTrek 1.0.1 includes or is built with third-party software. Each component
+Thyme-Me includes or is built with third-party software. Each component
 remains governed by its own terms. The release SBOM is the authoritative inventory
 for the exact artifact; this file records the principal redistributed families.
 
@@ -68,4 +68,3 @@ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-

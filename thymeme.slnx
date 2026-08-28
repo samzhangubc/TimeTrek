@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ThymeMe.App/ThymeMe.App.csproj" />
+    <Project Path="src/ThymeMe.Application/ThymeMe.Application.csproj" />
+    <Project Path="src/ThymeMe.Domain/ThymeMe.Domain.csproj" />
+    <Project Path="src/ThymeMe.Infrastructure/ThymeMe.Infrastructure.csproj" />
+    <Project Path="src/ThymeMe.Platform.Windows/ThymeMe.Platform.Windows.csproj" />
+    <Project Path="src/ThymeMe.Presentation.WinUI/ThymeMe.Presentation.WinUI.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ThymeMe.Application.Tests/ThymeMe.Application.Tests.csproj" />
+    <Project Path="tests/ThymeMe.Architecture.Tests/ThymeMe.Architecture.Tests.csproj" />
+    <Project Path="tests/ThymeMe.Domain.Tests/ThymeMe.Domain.Tests.csproj" />
+    <Project Path="tests/ThymeMe.Infrastructure.Tests/ThymeMe.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

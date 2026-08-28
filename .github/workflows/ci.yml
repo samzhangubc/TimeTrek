@@ -17,10 +17,10 @@ jobs:
         with:
           dotnet-version: 10.0.x
       - name: Restore
-        run: dotnet restore TimeTrek.slnx
+        run: dotnet restore thymeme.slnx
       - name: Build x64
-        run: dotnet build TimeTrek.slnx --configuration Release --no-restore
+        run: dotnet build thymeme.slnx --configuration Release --no-restore
       - name: Test
-        run: dotnet test TimeTrek.slnx --configuration Release --no-build
+        run: dotnet test thymeme.slnx --configuration Release --no-build
       - name: Compile self-contained x64 app
-        run: dotnet build src/TimeTrek.App/TimeTrek.App.csproj --configuration Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64
+        run: dotnet build src/ThymeMe.App/ThymeMe.App.csproj --configuration Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64

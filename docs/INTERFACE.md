@@ -1,4 +1,4 @@
-# TimeTrek Interface Design
+# Thyme-Me Interface Design
 
 | Field | Value |
 | --- | --- |
@@ -8,7 +8,7 @@
 
 ## 1. Design direction
 
-The Home workspace uses the structural idea of the PreSonus Studio One console: adjacent vertical channel strips, repeated stacked control zones, persistent identity per channel, and horizontal navigation across the mixer. TimeTrek does not imitate audio controls literally. Its strips are substantially wider so Stream names, selectors, actions, timers, and summaries remain easy to read.
+The Home workspace uses the structural idea of the PreSonus Studio One console: adjacent vertical channel strips, repeated stacked control zones, persistent identity per channel, and horizontal navigation across the mixer. Thyme-Me does not imitate audio controls literally. Its strips are substantially wider so Stream names, selectors, actions, timers, and summaries remain easy to read.
 
 Reference: [PreSonus Studio One Console documentation](https://s1manual.presonus.com/en/Content/Mixing_Topics/The_Console.htm).
 
@@ -153,7 +153,7 @@ Stats shall use the owner-provided activity-dashboard image as a structural refe
 
 1. one compact, full-width strip of evenly divided headline metrics;
 2. one dominant, full-width activity visualization with a compact view switch aligned to its heading;
-3. two balanced lower columns: concise TimeTrek insights on the left and a ranked organizational list on the right.
+3. two balanced lower columns: concise Thyme-Me insights on the left and a ranked organizational list on the right.
 
 The result remains restrained and information-dense, but uses slightly larger typography and spacing than the reference. It retains subtle separators, avoids oversized KPI cards, and reserves generous space for the primary activity pattern. The fixed application navigation and persistent bottom transport remain unchanged.
 

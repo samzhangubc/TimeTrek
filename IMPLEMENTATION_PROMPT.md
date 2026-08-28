@@ -1,14 +1,14 @@
-# TimeTrek implementation prompt
+# Thyme-Me implementation prompt
 
-Open a new Codex task at the TimeTrek repository root and paste everything below the divider as the first message.
+Open a new Codex task at the Thyme-Me repository root and paste everything below the divider as the first message.
 
 ---
 
-You are implementing TimeTrek, a documentation-complete but code-empty local-first Windows desktop time tracker. Build the complete initial-release application described by this repository. This request authorizes in-scope local changes to source code, tests, build configuration, development packaging, and CI. It does not authorize publishing releases, pushing commits, creating pull requests, buying services, or inventing production identities or secrets.
+You are implementing Thyme-Me, a documentation-complete but code-empty local-first Windows desktop time tracker. Build the complete initial-release application described by this repository. This request authorizes in-scope local changes to source code, tests, build configuration, development packaging, and CI. It does not authorize publishing releases, pushing commits, creating pull requests, buying services, or inventing production identities or secrets.
 
 ## Goal
 
-Deliver the complete non-Google-Calendar TimeTrek baseline as a working, tested Windows application. Work through small, coherent vertical slices, but do not treat incremental delivery as permission to reduce or defer the documented initial-release scope. Keep a runnable application path after every slice and continue while safe, relevant work remains.
+Deliver the complete non-Google-Calendar Thyme-Me baseline as a working, tested Windows application. Work through small, coherent vertical slices, but do not treat incremental delivery as permission to reduce or defer the documented initial-release scope. Keep a runnable application path after every slice and continue while safe, relevant work remains.
 
 ## Read the repository before editing
 

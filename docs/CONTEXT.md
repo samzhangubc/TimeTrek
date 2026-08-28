@@ -1,4 +1,4 @@
-# TimeTrek Project Context
+# Thyme-Me Project Context
 
 ## Why this file exists
 
@@ -6,7 +6,7 @@ This is the durable product context for contributors and future development sess
 
 ## Current product statement
 
-TimeTrek is a local-first Windows desktop application for recording and understanding how time is spent. Students are the initial audience, but the organization model also supports work, research, freelance, and personal activities.
+Thyme-Me is a local-first Windows desktop application for recording and understanding how time is spent. Students are the initial audience, but the organization model also supports work, research, freelance, and personal activities.
 
 The home screen uses a DAW-mixer metaphor: each top-level **Stream** appears as a simple vertical strip with its main time data and controls.
 
@@ -68,7 +68,7 @@ Rounding offers 5/10/15/30-minute presets and custom 1–60-minute increments, u
 - `Ctrl+W` invokes that same state-dependent close behavior.
 - Only documented keyboard behavior is allowed: contextual navigation, search, timeline zoom, accessibility, layout, close, and quit commands. Hidden global action shortcuts are excluded.
 - Optional idle/display interruption handling is configured in Settings.
-- When enabled and TimeTrek is foreground during a Session, it requests that Windows prevent automatic sleep and monitor power-off.
+- When enabled and Thyme-Me is foreground during a Session, it requests that Windows prevent automatic sleep and monitor power-off.
 - Explicit user sleep, lock, sign-out, shutdown, or display-off actions are never blocked.
 - If display-off, lock/screen-saver, or suspension is detected, the enabled behavior stops the Session at the transition and notifies the user on next activity/resume.
 
@@ -84,16 +84,16 @@ Windows' documented wake-prevention API does not suppress screen savers, so the 
 - No permission request occurs until the user enables the feature, and then only the minimum non-administrator access is requested. The initial feature never elevates.
 - Stored locally, visibly indicated while active, and deletable by the user.
 
-Only application display name and executable filename are stored. Window titles, full paths, and browser domains are excluded. A per-Session application breakdown appears at completion. TimeTrek never elevates for this feature; inaccessible elevated applications accumulate under **Unknown elevated application**.
+Only application display name and executable filename are stored. Window titles, full paths, and browser domains are excluded. A per-Session application breakdown appears at completion. Thyme-Me never elevates for this feature; inaccessible elevated applications accumulate under **Unknown elevated application**.
 
 ## Calendar integration
 
-The built-in timeline is local and always available. Optional Google Calendar integration is feasible without a TimeTrek backend using Google's desktop OAuth flow.
+The built-in timeline is local and always available. Optional Google Calendar integration is feasible without a Thyme-Me backend using Google's desktop OAuth flow.
 
 - The connection is off until the user explicitly authorizes it.
 - Authorization occurs through the system browser.
 - Tokens are protected locally and removable through Disconnect.
-- TimeTrek requests the narrowest scope; read-only is the maximum initial scope until write behavior is approved.
+- Thyme-Me requests the narrowest scope; read-only is the maximum initial scope until write behavior is approved.
 - Calendar failure or offline operation never breaks local tracking or reporting.
 - Google may require OAuth consent configuration and public-app verification.
 
@@ -105,7 +105,7 @@ Google Calendar is deferred from the initial implementation. The architecture re
 - CSV export is required.
 - JSON export follows the finalized CSV field semantics while using appropriate JSON structures/types.
 - CSV has a versioned rich baseline with raw and rounded times, organization, description, billing, timing, and timezone fields; UTF-8/RFC 4180/ISO 8601 conventions; and All or Current Filtered export. JSON is a versioned structured counterpart.
-- CSV and JSON include a concise TimeTrek data dictionary so humans and LLMs can interpret the values.
+- CSV and JSON include a concise Thyme-Me data dictionary so humans and LLMs can interpret the values.
 - Local backup and restore use user-selected files and work offline.
 - Restore validates before changing live data and makes merge/replace behavior explicit.
 - Exports and backups do not silently include credentials or OAuth tokens.
@@ -128,7 +128,7 @@ Google Calendar is deferred from the initial implementation. The architecture re
 - Custom palettes accept plain `#RRGGBB` values in Settings; saved/imported presets use versioned JSON.
 - Contrast is adjustable with live preview and accessibility warnings.
 
-Official OpenAI documentation did not establish a Codex palette inventory. The Codex-derived set was verified from the locally installed Codex package `26.818.2872.0`: GitHub Light/Dark Default, Light+/Dark+, Catppuccin Latte/Mocha, Gruvbox Light/Dark Medium, and Solarized Light/Dark. A later visual-design pass will finalize exact TimeTrek values.
+Official OpenAI documentation did not establish a Codex palette inventory. The Codex-derived set was verified from the locally installed Codex package `26.818.2872.0`: GitHub Light/Dark Default, Light+/Dark+, Catppuccin Latte/Mocha, Gruvbox Light/Dark Medium, and Solarized Light/Dark. A later visual-design pass will finalize exact Thyme-Me values.
 
 ## Confirmed decision baseline — 2026-08-20
 
@@ -160,7 +160,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - The finalized wizard flow is recorded in `docs/FIRST_RUN_WIZARD.md`: **Use recommended defaults** fast path, required step-by-step basic setup, genuinely optional Advanced setup, restart-before-basic-completion with saved values prefilled, rerunnable settings, optional MATH 100 and Work samples, overwrite-on-type 25-minute default, last-used timing mode, Windows-derived regional/accessibility choices, optional billing and activity tracking, and hover/focus tooltips after setup.
 - Version 1.0.1 uses manual updates from an intentionally unsigned, self-contained x64 portable archive published through GitHub Releases. The release pipeline publishes SHA-256 checksums, GitHub artifact attestations, provenance, notices, and an SPDX SBOM. Windows may show Unknown publisher or SmartScreen.
 - `docs/RELEASE.md` records the verified repository state, release workflow, integrity checks, unsigned-package disclosure, and safe future-update boundary.
-- First-party licensing is the custom TimeTrek Source-Available License 1.0 (source-available, not open source). Official binaries are free of charge for permitted personal, educational, and internal noncommercial use; redistribution, product incorporation, commercial use, and derivative products require prior written permission.
+- First-party licensing is the custom Thyme-Me Source-Available License 1.0 (source-available, not open source). Official binaries are free of charge for permitted personal, educational, and internal noncommercial use; redistribution, product incorporation, commercial use, and derivative products require prior written permission.
 - Product decisions precede a separate technology-stack comparison.
 - Interface design is active. `docs/INTERFACE.md` defines the non-collapsible icon-only navigation column (64 px default), dedicated Archive destination, remembered 1280×800 initial shell with 960×640 minimum, approximately six visible Studio One-inspired Stream channels, and a persistent bottom Session transport bar.
 - Practical region and column widths are draggable, saved immediately, and restored automatically. Stream channels share one width, so dragging any channel edge resizes every channel. `Ctrl++`, `Ctrl+-`, `Ctrl+0`, `Ctrl+wheel`, and pinch scale the whole interface from 80–150%, persist the choice, and re-layout content within the viewport; Settings can reset layout defaults.
@@ -222,7 +222,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 
 ### 2026-08-20 — Initial baseline
 
-- Connected the workspace to `samzhangubc/TimeTrek`.
+- Connected the workspace to `samzhangubc/Thyme-Me`.
 - Recorded the Windows desktop, mixer, timer, notification-area, and local-storage direction.
 
 ### 2026-08-20 — Organization, notes, and billing
@@ -260,7 +260,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 
 - Chose a fixed, non-collapsible, 64 px icon-only primary navigation column with tooltips.
 - Made Archive a primary destination and set remembered window bounds with a 1280×800 first-launch size and 960×640 minimum.
-- Adopted a Studio One console-inspired horizontal channel structure with substantially wider, text-readable TimeTrek strips.
+- Adopted a Studio One console-inspired horizontal channel structure with substantially wider, text-readable Thyme-Me strips.
 - Moved the authoritative active timer and Start/Pause/Stop controls to a persistent bottom transport bar. Stream channels show only their own time and retain direct Start Timer actions.
 - Finalized the transport as a 88–96 px persistent row (two rows at minimum width), with timer left, Session selectors/configuration centered, and controls right; it is present everywhere except Settings.
 - Duration is prompted at every start with overwrite-on-type `25`, then remains editable during a normal active Session to move its automatic stop boundary.

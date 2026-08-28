@@ -11,26 +11,26 @@
     <AssemblyVersion>1.0.1.0</AssemblyVersion>
     <FileVersion>1.0.1.0</FileVersion>
     <Company>Sam Zhang</Company>
-    <Product>TimeTrek</Product>
+    <Product>Thyme-Me</Product>
     <Authors>Sam Zhang</Authors>
     <Copyright>Copyright (c) 2026 Sam Zhang</Copyright>
-    <RepositoryUrl>https://github.com/samzhangubc/TimeTrek</RepositoryUrl>
+    <RepositoryUrl>https://github.com/samzhangubc/Thyme-Me</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>LicenseRef-TimeTrek-Source-Available-1.0</PackageLicenseExpression>
+    <PackageLicenseExpression>LicenseRef-ThymeMe-Source-Available-1.0</PackageLicenseExpression>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
-      <_Parameter1>TimeTrek.ProvenanceId</_Parameter1>
+      <_Parameter1>ThymeMe.ProvenanceId</_Parameter1>
       <_Parameter2>414f593a-ec03-44df-923f-7b961768a20f</_Parameter2>
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
-      <_Parameter1>TimeTrek.License</_Parameter1>
-      <_Parameter2>LicenseRef-TimeTrek-Source-Available-1.0</_Parameter2>
+      <_Parameter1>ThymeMe.License</_Parameter1>
+      <_Parameter2>LicenseRef-ThymeMe-Source-Available-1.0</_Parameter2>
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
       <_Parameter1>RepositoryUrl</_Parameter1>
-      <_Parameter2>https://github.com/samzhangubc/TimeTrek</_Parameter2>
+      <_Parameter2>https://github.com/samzhangubc/Thyme-Me</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
 </Project>

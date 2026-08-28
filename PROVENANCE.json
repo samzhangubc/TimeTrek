@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "product": "TimeTrek",
+  "product": "Thyme-Me",
   "owner": "Sam Zhang",
-  "repository": "https://github.com/samzhangubc/TimeTrek",
+  "repository": "https://github.com/samzhangubc/Thyme-Me",
   "provenanceId": "414f593a-ec03-44df-923f-7b961768a20f",
-  "license": "LicenseRef-TimeTrek-Source-Available-1.0",
+  "license": "LicenseRef-ThymeMe-Source-Available-1.0",
   "firstPartyModules": [
-    "src/TimeTrek.Domain",
-    "src/TimeTrek.Application",
-    "src/TimeTrek.Infrastructure",
-    "src/TimeTrek.Platform.Windows",
-    "src/TimeTrek.Presentation.WinUI",
-    "src/TimeTrek.App"
+    "src/ThymeMe.Domain",
+    "src/ThymeMe.Application",
+    "src/ThymeMe.Infrastructure",
+    "src/ThymeMe.Platform.Windows",
+    "src/ThymeMe.Presentation.WinUI",
+    "src/ThymeMe.App"
   ],
   "runtimeBehavior": {
     "networkAccess": false,

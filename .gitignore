@@ -24,6 +24,6 @@ TestResults/
 *.bak
 *.tmp
 *.log
-src/TimeTrek.App/AppPackages/
-src/TimeTrek.App/BundleArtifacts/
+src/ThymeMe.App/AppPackages/
+src/ThymeMe.App/BundleArtifacts/
 /release/

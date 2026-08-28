@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="ThymeMe.Presentation.WinUI.Timing.TransportControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    SizeChanged="OnSizeChanged">
+  <Grid Margin="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+    <Border Margin="0" Padding="16,10" CornerRadius="0" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+      <Grid x:Name="TransportGrid" ColumnSpacing="12" RowSpacing="8">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="150" /><ColumnDefinition Width="160" /><ColumnDefinition Width="180" />
+          <ColumnDefinition Width="130" /><ColumnDefinition Width="170" /><ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <StackPanel x:Name="TimerArea" VerticalAlignment="Center">
+          <TextBlock Text="{x:Bind ViewModel.StateText, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+          <TextBlock Text="{x:Bind ViewModel.ElapsedText, Mode=OneWay}" FontFamily="Consolas" FontSize="26" TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+        <ComboBox x:Name="StreamPicker" Grid.Column="1" Header="Stream" ItemsSource="{x:Bind ViewModel.Streams}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{x:Bind ViewModel.SelectedStreamId, Mode=TwoWay}" PlaceholderText="Unassigned" />
+        <StackPanel x:Name="AssociationArea" Grid.Column="2" Spacing="4">
+          <TextBlock Text="Categories" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+          <Button Content="{x:Bind ViewModel.CategorySummary, Mode=OneWay}" Click="OnChooseCategories" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" />
+          <ComboBox Header="Project" ItemsSource="{x:Bind ViewModel.Projects}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{x:Bind ViewModel.SelectedProjectId, Mode=TwoWay}" PlaceholderText="No Project" />
+        </StackPanel>
+        <StackPanel x:Name="DurationArea" Grid.Column="3">
+          <TextBox x:Name="DurationTextBox" Header="Duration" Text="{x:Bind ViewModel.DurationText, Mode=TwoWay}" AutomationProperties.Name="Requested duration" GotFocus="OnDurationGotFocus" />
+          <Button x:Name="ApplyDurationButton" Content="Apply duration" Click="OnApplyDuration" HorizontalAlignment="Stretch" />
+        </StackPanel>
+        <StackPanel x:Name="PomodoroArea" Grid.Column="4" Spacing="4">
+          <ToggleSwitch Header="Pomodoro" IsOn="{x:Bind ViewModel.IsPomodoro, Mode=TwoWay}" />
+          <Grid ColumnSpacing="6">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <NumberBox x:Name="PomodoroWork" Header="Focus" Minimum="1" Maximum="1440" SpinButtonPlacementMode="Compact" />
+            <NumberBox x:Name="PomodoroBreak" Grid.Column="1" Header="Break" Minimum="1" Maximum="1440" SpinButtonPlacementMode="Compact" />
+          </Grid>
+        </StackPanel>
+        <InfoBar Grid.Row="1" Grid.ColumnSpan="6" x:Name="ErrorBar" Severity="Error" IsClosable="False" VerticalAlignment="Center" />
+        <StackPanel x:Name="ButtonsArea" Grid.Column="5" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Button x:Name="StartButton" Content="Start" Click="OnStart" Style="{StaticResource AccentButtonStyle}" />
+          <Button x:Name="PauseButton" Content="Pause" Click="OnPause" />
+          <Button x:Name="ResumeButton" Content="Resume" Click="OnResume" />
+          <Button x:Name="StopButton" Content="Stop" Click="OnStop" />
+          <Button x:Name="ConfirmTransitionButton" Content="Continue" Click="OnConfirmTransition" Visibility="Collapsed" />
+          <Button x:Name="SkipTransitionButton" Content="Skip" Click="OnSkipTransition" Visibility="Collapsed" />
+        </StackPanel>
+      </Grid>
+    </Border>
+    <Border x:Name="CompletionPanel" Grid.Row="1" Visibility="Collapsed" Margin="0" Padding="16,12" CornerRadius="0" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderThickness="0,1,0,0" BorderBrush="{ThemeResource AccentFillColorDefaultBrush}">
+      <Grid ColumnSpacing="12">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <TextBox x:Name="CompletionText" Header="What did you complete?" AcceptsReturn="True" TextWrapping="Wrap" MaxLength="4000" PreviewKeyDown="OnCompletionKeyDown" />
+        <Button x:Name="SaveCompletionButton" Grid.Column="1" Content="Save" Click="OnSaveCompletion" VerticalAlignment="Bottom" Style="{StaticResource AccentButtonStyle}" />
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

@@ -1,17 +1,17 @@
-TimeTrek Source-Available License 1.0
+Thyme-Me Source-Available License 1.0
 
 Copyright (c) 2026 Sam Zhang. All rights reserved except as expressly granted below.
 
-This license applies to the TimeTrek first-party source code and official compiled
+This license applies to the Thyme-Me first-party source code and official compiled
 releases identified by the copyright holder. It is a source-available license. It
 is not an open-source license approved by the Open Source Initiative.
 
 1. Definitions
 
-"Official Release" means an unmodified TimeTrek binary published by Sam Zhang
-through https://github.com/samzhangubc/TimeTrek/releases.
+"Official Release" means an unmodified Thyme-Me binary published by Sam Zhang
+through https://github.com/samzhangubc/Thyme-Me/releases.
 
-"Software" means TimeTrek first-party source code, documentation, artwork, and
+"Software" means Thyme-Me first-party source code, documentation, artwork, and
 Official Releases. Third-party components are excluded and remain governed by
 their own license terms.
 
@@ -43,12 +43,12 @@ d. use the Software or a derivative for commercial purposes;
 e. create or distribute a competing Product based substantially on the Software;
 f. remove, conceal, or misrepresent copyright, license, attribution, or provenance
    notices; or
-g. use the TimeTrek name, logo, or branding in a way that suggests endorsement or
+g. use the Thyme-Me name, logo, or branding in a way that suggests endorsement or
    that a modified build is an Official Release.
 
 Giving notice after use begins does not satisfy this section. Permission must be
 obtained first. Permission requests may be sent through the contact method listed
-at https://github.com/samzhangubc/TimeTrek.
+at https://github.com/samzhangubc/Thyme-Me.
 
 5. Contributions
 
@@ -103,4 +103,3 @@ If a provision is unenforceable, it will be limited only as much as necessary an
 the remaining provisions will continue in effect. This license and any separate
 written permission from the copyright holder are the complete copyright terms for
 the Software.
-

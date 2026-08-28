@@ -1,10 +1,17 @@
-# TimeTrek code map
+# Thyme-Me code map
 
 Read this after `IMPLEMENTATION_PROMPT.md`. Product behavior remains governed by `docs/SDD.md`; this file identifies the code that implements each capability. Update it whenever ownership moves.
 
+The public product, repository, and workspace name is **Thyme-Me**. Code uses the
+dash-free `ThymeMe` identifier for .NET namespaces, assemblies, project directories,
+and migration types; lowercase `thymeme` is used for executable, storage, and
+single-instance identifiers. Public name and repository constants are governed by
+`src/ThymeMe.Application/ProductIdentity.cs`; do not scatter a replacement brand
+through C# code.
+
 ## Dependency direction
 
-`TimeTrek.App` composes Presentation, Platform.Windows, and Infrastructure. Presentation calls Application use cases. Infrastructure implements persistence/filesystem ports. Platform.Windows implements Windows ports. Application coordinates use cases. Domain owns invariants and has no outward dependencies. `tests/TimeTrek.Architecture.Tests/DependencyRuleTests.cs` enforces these boundaries.
+`ThymeMe.App` composes Presentation, Platform.Windows, and Infrastructure. Presentation calls Application use cases. Infrastructure implements persistence/filesystem ports. Platform.Windows implements Windows ports. Application coordinates use cases. Domain owns invariants and has no outward dependencies. `tests/ThymeMe.Architecture.Tests/DependencyRuleTests.cs` enforces these boundaries.
 
 ## Feature ownership
 
@@ -26,17 +33,17 @@ Read this after `IMPLEMENTATION_PROMPT.md`. Product behavior remains governed by
 | Currency selection/conversion | `Domain/Billing/BillingPolicy.cs` | ISO code/minor-unit fields in persistence | `Presentation.WinUI/Common/CurrencyCatalog.cs`, `Home/HomePage.xaml.cs`; currency tests |
 | Appearance | `Domain/Appearance/*` | settings and Palette rows | Settings and `Shell/AppShell.xaml.cs`; contrast tests |
 | Updates | `Application/Updates/UpdateContracts.cs` | `Platform.Windows/Updates/*` | Settings Updates; owner configuration required |
-| Release identity, provenance, license | `LICENSE`, `NOTICE`, `PROVENANCE.json`, `Directory.Build.props` | `.github/workflows/release.yml`, `src/TimeTrek.App/Package.appxmanifest` | `Settings/SettingsViewModel.cs`, `SettingsPage.xaml`, release evidence |
+| Product/release identity, provenance, license | `Application/ProductIdentity.cs`, `LICENSE`, `NOTICE`, `PROVENANCE.json`, `Directory.Build.props` | `.github/workflows/release.yml`, `src/ThymeMe.App/Package.appxmanifest` | `Settings/SettingsViewModel.cs`, `SettingsPage.xaml`, release evidence |
 | Calendar seam | `ICalendarIntegration` | `DeferredCalendarIntegration` | deliberately no UI |
-| Schema/migrations | Domain/Application models | `PersistenceRows.cs`, `TimeTrekDbContext.cs`, `Migrations/` | migration/SQLite tests |
+| Schema/migrations | Domain/Application models | `PersistenceRows.cs`, `ThymeMeDbContext.cs`, `Migrations/` | migration/SQLite tests |
 
-All paths above are relative to `src/TimeTrek.*` unless already rooted at `tests/`. The compact machine index is `docs/feature-index.json`.
+All paths above are relative to `src/ThymeMe.*` unless already rooted at `tests/`. The compact machine index is `docs/feature-index.json`.
 
 ## Change routing
 
 - Change an invariant in Domain and its deterministic tests first.
 - Change workflows through Application services/ports; views never call EF Core or Win32/WinRT.
-- Change stored shape in `PersistenceRows.cs` and `TimeTrekDbContext.cs`, then add—not rewrite—an EF migration and test.
+- Change stored shape in `PersistenceRows.cs` and `ThymeMeDbContext.cs`, then add—not rewrite—an EF migration and test.
 - Keep native handles owned and disposed by Platform.Windows adapters.
 - XAML owns layout; its paired view model owns presentation state; neither owns domain rules.
 - Version export/backup changes and add compatibility, hostile-input, resource-limit, and rollback tests.

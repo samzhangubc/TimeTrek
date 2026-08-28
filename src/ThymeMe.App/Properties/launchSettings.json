@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Thyme-Me (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Thyme-Me (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,10 +1,10 @@
-TimeTrek
+Thyme-Me
 Copyright (c) 2026 Sam Zhang
 
-TimeTrek is source available under the TimeTrek Source-Available License 1.0.
+Thyme-Me is source available under the Thyme-Me Source-Available License 1.0.
 It is not OSI-approved open-source software. See LICENSE for permissions and
 restrictions. Official no-charge releases are published at:
-https://github.com/samzhangubc/TimeTrek/releases
+https://github.com/samzhangubc/Thyme-Me/releases
 
 Stable provenance identifier: 414f593a-ec03-44df-923f-7b961768a20f
 
@@ -13,7 +13,6 @@ checksums, and PROVENANCE.json are transparent authorship and build-traceability
 markers. They do not collect data, contact a network service, alter copied code,
 or automatically determine infringement.
 
-TimeTrek redistributes third-party components under their own terms. See
+Thyme-Me redistributes third-party components under their own terms. See
 THIRD_PARTY_NOTICES.md and the release SBOM. No third-party owner endorses
-TimeTrek.
-
+Thyme-Me.
