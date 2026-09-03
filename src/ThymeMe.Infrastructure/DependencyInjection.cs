@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ThymeMe.Application.ActivityTracking;
+using ThymeMe.Application.Appearance;
 using ThymeMe.Application.Archive;
 using ThymeMe.Application.DataPortability;
 using ThymeMe.Application.History;
@@ -35,6 +36,8 @@ public static class DependencyInjection
         services.AddSingleton<IReportingStore, SqliteReportingStore>();
         services.AddSingleton<IArchiveStore, SqliteArchiveStore>();
         services.AddSingleton<IActivityStore, SqliteActivityStore>();
+        services.AddSingleton<IAppearancePaletteStore, SqliteAppearancePaletteStore>();
+        services.AddSingleton<AppearancePaletteService>();
         services.AddSingleton<ArchiveService>();
         services.AddSingleton<IDataPortabilityService>(provider => new SqliteDataPortabilityService(
             provider.GetRequiredService<IDbContextFactory<ThymeMeDbContext>>(),

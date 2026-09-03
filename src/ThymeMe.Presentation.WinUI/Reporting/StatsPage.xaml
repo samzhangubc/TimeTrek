@@ -6,9 +6,10 @@
     SizeChanged="OnSizeChanged">
   <ScrollViewer HorizontalScrollMode="Disabled">
     <StackPanel Padding="24" Spacing="14">
-      <Grid>
+      <Grid ColumnSpacing="12">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
         <TextBlock Text="Stats" Style="{StaticResource TitleTextBlockStyle}" />
-        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
           <Button Content="Raw time" Tag="Raw" Click="OnBasis" />
           <Button Content="Rounded time" Tag="Effective" Click="OnBasis" />
         </StackPanel>

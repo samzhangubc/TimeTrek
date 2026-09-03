@@ -58,6 +58,11 @@ public sealed partial class FirstRunWizardViewModel(
     public partial AppearanceMode AppearanceMode { get; set; } = AppearanceMode.FollowWindows;
 
     [ObservableProperty]
+    public partial string SelectedPaletteId { get; set; } = "github-default";
+
+    public Dictionary<string, string> PaletteContrastAcknowledgements { get; set; } = [];
+
+    [ObservableProperty]
     public partial bool InterruptionHandlingEnabled { get; set; } = true;
 
     [ObservableProperty]
@@ -76,6 +81,8 @@ public sealed partial class FirstRunWizardViewModel(
         NotificationsEnabled = settings.NotificationsEnabled;
         WeekStart = settings.WeekStart;
         AppearanceMode = settings.AppearanceMode;
+        SelectedPaletteId = settings.SelectedPaletteId;
+        PaletteContrastAcknowledgements = new(settings.PaletteContrastAcknowledgements, StringComparer.Ordinal);
         InterruptionHandlingEnabled = settings.InterruptionHandlingEnabled;
         InactivityThresholdMinutes = settings.InactivityThresholdMinutes;
     }
@@ -86,8 +93,20 @@ public sealed partial class FirstRunWizardViewModel(
         await settingsStore.SaveAsync(BuildSettings(current, basicSetupCompleted: false), cancellationToken);
     }
 
-    public async ValueTask<AppSettings> UseRecommendedAsync(CancellationToken cancellationToken = default) =>
-        await bootstrapService.UseRecommendedDefaultsAsync(cancellationToken);
+    public async ValueTask<AppSettings> UseRecommendedAsync(CancellationToken cancellationToken = default)
+    {
+        AppSettings current = await settingsStore.LoadAsync(cancellationToken);
+        await startupRegistration.SetEnabledAsync(false, cancellationToken);
+        try
+        {
+            return await bootstrapService.UseRecommendedDefaultsAsync(cancellationToken);
+        }
+        catch
+        {
+            await startupRegistration.SetEnabledAsync(current.StartWithWindows, CancellationToken.None);
+            throw;
+        }
+    }
 
     public async ValueTask<AppSettings> CompleteStepByStepAsync(CancellationToken cancellationToken = default)
     {
@@ -96,9 +115,6 @@ public sealed partial class FirstRunWizardViewModel(
         try
         {
             AppSettings current = await settingsStore.LoadAsync(cancellationToken);
-            AppSettings settings = BuildSettings(current, basicSetupCompleted: true);
-            await settingsStore.SaveAsync(settings, cancellationToken);
-            await startupRegistration.SetEnabledAsync(settings.StartWithWindows, cancellationToken);
             if (CreateMathSample)
             {
                 await CreateMathSampleAsync(cancellationToken);
@@ -107,6 +123,18 @@ public sealed partial class FirstRunWizardViewModel(
             if (CreateWorkSample)
             {
                 await CreateWorkSampleAsync(cancellationToken);
+            }
+
+            AppSettings settings = BuildSettings(current, basicSetupCompleted: true);
+            await startupRegistration.SetEnabledAsync(settings.StartWithWindows, cancellationToken);
+            try
+            {
+                await settingsStore.SaveAsync(settings, cancellationToken);
+            }
+            catch
+            {
+                await startupRegistration.SetEnabledAsync(current.StartWithWindows, CancellationToken.None);
+                throw;
             }
 
             return settings;
@@ -159,12 +187,19 @@ public sealed partial class FirstRunWizardViewModel(
         NotificationsEnabled = NotificationsEnabled,
         WeekStart = WeekStart,
         AppearanceMode = AppearanceMode,
+        SelectedPaletteId = SelectedPaletteId,
+        PaletteContrastAcknowledgements = PaletteContrastAcknowledgements,
         InterruptionHandlingEnabled = InterruptionHandlingEnabled,
         InactivityThresholdMinutes = InactivityThresholdMinutes,
     };
 
     private async Task CreateMathSampleAsync(CancellationToken cancellationToken)
     {
+        if ((await organizationService.ListStreamsAsync(false, cancellationToken)).Any(item => string.Equals(item.Name, "MATH 100", StringComparison.OrdinalIgnoreCase)))
+        {
+            return;
+        }
+
         Domain.Organization.StreamDefinition? stream = (await organizationService.CreateStreamAsync("MATH 100", cancellationToken: cancellationToken)).Value;
         if (stream is not null)
         {
@@ -175,6 +210,11 @@ public sealed partial class FirstRunWizardViewModel(
 
     private async Task CreateWorkSampleAsync(CancellationToken cancellationToken)
     {
+        if ((await organizationService.ListStreamsAsync(false, cancellationToken)).Any(item => string.Equals(item.Name, "Work", StringComparison.OrdinalIgnoreCase)))
+        {
+            return;
+        }
+
         Domain.Organization.StreamDefinition? stream = (await organizationService.CreateStreamAsync("Work", cancellationToken: cancellationToken)).Value;
         if (stream is not null)
         {

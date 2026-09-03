@@ -18,6 +18,17 @@ public sealed partial class HistoryPage : UserControl
 
     public HistoryViewModel ViewModel { get; }
 
+    private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        bool narrow = e.NewSize.Width < 760;
+        HeaderGrid.ColumnDefinitions[1].Width = narrow ? new GridLength(1, GridUnitType.Star) : new GridLength(280);
+        Grid.SetRow(SearchBox, narrow ? 1 : 0);
+        Grid.SetColumn(SearchBox, narrow ? 0 : 1);
+        Grid.SetColumnSpan(SearchBox, narrow ? 2 : 1);
+        Grid.SetRow(SearchButton, narrow ? 1 : 0);
+        Grid.SetColumn(SearchButton, 2);
+    }
+
     private async void OnSearch(object sender, RoutedEventArgs e)
     {
         ViewModel.Search = SearchBox.Text;

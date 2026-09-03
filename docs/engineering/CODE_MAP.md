@@ -31,9 +31,9 @@ through C# code.
 | Export/backup/restore | `Application/DataPortability/*`, `Domain/DataPortability/DefensiveLimits.cs` | `Infrastructure/DataPortability/*`, `Platform.Windows/DataPortability/WindowsFileDialogService.cs` | first-run and Settings Data |
 | Settings/onboarding wizard | `Application/Settings/*` | `Infrastructure/Settings/*` | `Presentation.WinUI/Settings/*`, `Onboarding/FirstRunWizardView.xaml(.cs)`, `FirstRunWizardViewModel.cs` |
 | Currency selection/conversion | `Domain/Billing/BillingPolicy.cs` | ISO code/minor-unit fields in persistence | `Presentation.WinUI/Common/CurrencyCatalog.cs`, `Home/HomePage.xaml.cs`; currency tests |
-| Appearance | `Domain/Appearance/*` | settings and Palette rows | Settings and `Shell/AppShell.xaml.cs`; contrast tests |
+| Appearance | `Domain/Appearance/*`, `Application/Appearance/*` | `Infrastructure/Persistence/SqliteAppearancePaletteStore.cs` and typed settings | `Presentation.WinUI/Appearance/*`, Settings, `Shell/AppShell.xaml.cs`; palette, contrast, and runtime-mode tests |
 | Updates | `Application/Updates/UpdateContracts.cs` | `Platform.Windows/Updates/*` | Settings Updates; owner configuration required |
-| Product/release identity, provenance, license | `Application/ProductIdentity.cs`, `LICENSE`, `docs/legal/NOTICE`, `docs/legal/PROVENANCE.json`, `Directory.Build.props` | `.github/workflows/release.yml`, `src/ThymeMe.App/Package.appxmanifest` | `Settings/SettingsViewModel.cs`, `SettingsPage.xaml`, release evidence |
+| Product/release identity, provenance, license | `Application/ProductIdentity.cs`, `LICENSE`, `docs/legal/NOTICE`, `docs/legal/PROVENANCE.json`, `Directory.Build.props` | `.github/workflows/release.yml`, `eng/Build-PortableRelease.ps1`, `src/ThymeMe.Launcher/*`, `src/ThymeMe.App/Package.appxmanifest` | root `thymeme.exe`, nested `app` payload, Settings About, release evidence |
 | Calendar seam | `ICalendarIntegration` | `DeferredCalendarIntegration` | deliberately no UI |
 | Schema/migrations | Domain/Application models | `PersistenceRows.cs`, `ThymeMeDbContext.cs`, `Migrations/` | migration/SQLite tests |
 

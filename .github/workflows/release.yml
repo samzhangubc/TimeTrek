@@ -74,70 +74,20 @@ jobs:
         id: package
         shell: pwsh
         run: |
-          $publishDirectory = Join-Path $env:RUNNER_TEMP 'Thyme-Me-portable'
-          $releaseDirectory = Join-Path $env:RUNNER_TEMP 'Thyme-Me-release'
-          New-Item -ItemType Directory -Path $publishDirectory,$releaseDirectory -Force | Out-Null
-          dotnet publish src/ThymeMe.App/ThymeMe.App.csproj `
-            --configuration Release `
-            --runtime win-x64 `
-            --no-restore `
-            --output $publishDirectory `
-            -p:Platform=x64 `
-            -p:WindowsPackageType=None
-          $requiredFiles = @(
-            'thymeme.exe',
-            'LICENSE.txt',
-            'NOTICE.txt',
-            'PROVENANCE.json',
-            'THIRD_PARTY_NOTICES.md'
-          )
-          foreach ($file in $requiredFiles) {
-            if (-not (Test-Path -LiteralPath (Join-Path $publishDirectory $file) -PathType Leaf)) {
-              throw "Portable release is missing '$file'."
-            }
-          }
-          $runtimeEvidence = Get-ChildItem -LiteralPath $publishDirectory -File |
-            Where-Object Name -Match '^(coreclr|hostfxr|Microsoft\.WindowsAppRuntime|Microsoft\.UI\.Xaml).*\.dll$'
-          if (-not $runtimeEvidence) {
-            throw "Portable release is not self-contained."
-          }
-          $signature = Get-AuthenticodeSignature -LiteralPath (Join-Path $publishDirectory 'thymeme.exe')
-          @(
-            'This Thyme-Me release is intentionally unsigned.'
-            "Authenticode status: $($signature.Status)"
-            'Windows may show an Unknown publisher or SmartScreen warning.'
-            'Verify SHA256SUMS.txt and the GitHub artifact attestation before running it.'
-          ) | Set-Content -Encoding utf8 -LiteralPath (Join-Path $releaseDirectory 'UNSIGNED_RELEASE.txt')
-          dotnet tool run sbom-tool generate `
-            -b $publishDirectory `
-            -bc $env:GITHUB_WORKSPACE `
-            -pn Thyme-Me `
-            -pv $env:RELEASE_VERSION `
-            -ps 'Sam Zhang' `
-            -nsb 'https://github.com/samzhangubc/Thyme-Me'
-          $sbom = Get-ChildItem -LiteralPath (Join-Path $publishDirectory '_manifest') -Recurse -File -Filter 'manifest.spdx.json' | Select-Object -First 1
-          if (-not $sbom) {
-            throw "SBOM generation did not produce an SPDX manifest."
-          }
-          $releaseSbom = Join-Path $releaseDirectory "Thyme-Me-$($env:RELEASE_VERSION)-sbom.spdx.json"
-          Copy-Item -LiteralPath $sbom.FullName -Destination $releaseSbom
-          $releaseArchive = Join-Path $releaseDirectory "Thyme-Me-$($env:RELEASE_VERSION)-win-x64-portable.zip"
-          Compress-Archive -Path (Join-Path $publishDirectory '*') -DestinationPath $releaseArchive -CompressionLevel Optimal
-          Copy-Item -LiteralPath @(
-            'LICENSE',
-            'docs/legal/NOTICE',
-            'docs/legal/PROVENANCE.json',
-            'docs/legal/THIRD_PARTY_NOTICES.md'
-          ) -Destination $releaseDirectory
-          $hashTargets = @($releaseArchive, $releaseSbom)
-          $checksumLines = foreach ($target in $hashTargets) {
-            $hash = Get-FileHash -Algorithm SHA256 -LiteralPath $target
-            "$($hash.Hash.ToLowerInvariant())  $([IO.Path]::GetFileName($hash.Path))"
-          }
-          $checksumLines | Set-Content -Encoding utf8 -LiteralPath (Join-Path $releaseDirectory 'SHA256SUMS.txt')
+          $outputRoot = Join-Path $env:RUNNER_TEMP 'Thyme-Me-release'
+          & ./eng/Build-PortableRelease.ps1 -Version $env:RELEASE_VERSION -OutputDirectory $outputRoot
+          $releaseArchive = Join-Path $outputRoot "Thyme-Me-$($env:RELEASE_VERSION)-win-x64-portable.zip"
+          $releaseSbom = Join-Path $outputRoot "portable\metadata\Thyme-Me-$($env:RELEASE_VERSION)-sbom.spdx.json"
+          $releaseDirectory = Join-Path $outputRoot 'evidence'
+          New-Item -ItemType Directory -Path $releaseDirectory | Out-Null
+          Copy-Item -LiteralPath $releaseArchive,$releaseSbom -Destination $releaseDirectory
+          $hash = Get-FileHash -Algorithm SHA256 -LiteralPath $releaseArchive
+          "$($hash.Hash.ToLowerInvariant())  $([IO.Path]::GetFileName($hash.Path))" |
+            Set-Content -Encoding utf8 -LiteralPath (Join-Path $releaseDirectory 'SHA256SUMS.txt')
           "archive=$releaseArchive" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           "directory=$releaseDirectory" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           "sbom=$releaseSbom" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "sha256=$($hash.Hash.ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Attest portable archive provenance
         id: provenance
@@ -177,9 +127,18 @@ jobs:
           if (gh release view $tag 2>$null) {
             throw "GitHub Release '$tag' already exists. Refusing to overwrite it."
           }
-          $assets = Get-ChildItem -LiteralPath '${{ steps.package.outputs.directory }}' -File | Select-Object -ExpandProperty FullName
-          gh release create $tag @assets `
+          $notesPath = Join-Path $env:RUNNER_TEMP 'release-notes.md'
+          Get-Content -Raw -LiteralPath "docs/release/versions/$tag.md" | Set-Content -Encoding utf8 -LiteralPath $notesPath
+          @(
+            ''
+            '## Verify the portable ZIP'
+            ''
+            '```text'
+            '${{ steps.package.outputs.sha256 }}  Thyme-Me-${{ inputs.version }}-win-x64-portable.zip'
+            '```'
+          ) | Add-Content -Encoding utf8 -LiteralPath $notesPath
+          gh release create $tag '${{ steps.package.outputs.archive }}' `
             --verify-tag `
             --title "Thyme-Me $($env:RELEASE_VERSION)" `
-            --notes-file "docs/release/versions/$tag.md" `
+            --notes-file $notesPath `
             --latest

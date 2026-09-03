@@ -137,8 +137,13 @@ public sealed partial class TransportControl : UserControl
     private void OnSizeChanged(object sender, SizeChangedEventArgs e)
     {
         bool narrow = e.NewSize.Width < 1120;
+        bool compact = e.NewSize.Width < 720;
         if (!narrow)
         {
+            ButtonsArea.Orientation = Orientation.Horizontal;
+            CompletionGrid.ColumnDefinitions[1].Width = GridLength.Auto;
+            Grid.SetRow(SaveCompletionButton, 0);
+            Grid.SetColumn(SaveCompletionButton, 1);
             double[] widths = [150, 160, 180, 130, 170, 0];
             for (int index = 0; index < TransportGrid.ColumnDefinitions.Count; index++)
             {
@@ -155,6 +160,24 @@ public sealed partial class TransportControl : UserControl
             return;
         }
 
+        if (compact)
+        {
+            TransportGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
+            for (int index = 1; index < TransportGrid.ColumnDefinitions.Count; index++)
+            {
+                TransportGrid.ColumnDefinitions[index].Width = new GridLength(0);
+            }
+
+            ButtonsArea.Orientation = Orientation.Vertical;
+            CompletionGrid.ColumnDefinitions[1].Width = new GridLength(0);
+            Grid.SetRow(SaveCompletionButton, 1);
+            Grid.SetColumn(SaveCompletionButton, 0);
+            Place(TimerArea, 0, 0); Place(StreamPicker, 1, 0); Place(AssociationArea, 2, 0);
+            Place(DurationArea, 3, 0); Place(PomodoroArea, 4, 0); Place(ButtonsArea, 5, 0);
+            Place(ErrorBar, 6, 0); Grid.SetColumnSpan(ErrorBar, 1);
+            return;
+        }
+
         TransportGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
         TransportGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
         for (int index = 2; index < TransportGrid.ColumnDefinitions.Count; index++)
@@ -162,6 +185,10 @@ public sealed partial class TransportControl : UserControl
             TransportGrid.ColumnDefinitions[index].Width = new GridLength(0);
         }
 
+        ButtonsArea.Orientation = Orientation.Horizontal;
+        CompletionGrid.ColumnDefinitions[1].Width = GridLength.Auto;
+        Grid.SetRow(SaveCompletionButton, 0);
+        Grid.SetColumn(SaveCompletionButton, 1);
         Place(TimerArea, 0, 0); Place(ButtonsArea, 0, 1);
         Place(StreamPicker, 1, 0); Place(AssociationArea, 1, 1);
         Place(DurationArea, 2, 0); Place(PomodoroArea, 2, 1);

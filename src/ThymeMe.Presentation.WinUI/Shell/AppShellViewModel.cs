@@ -103,6 +103,7 @@ public sealed partial class AppShellViewModel(
             IsBusy = true;
             ErrorMessage = null;
             AppSettings appSettings = await operation();
+            await Settings.LoadAsync();
             IsSetupComplete = appSettings.BasicSetupCompleted;
             SelectedDestination = ShellDestination.Home;
             await Home.LoadAsync();

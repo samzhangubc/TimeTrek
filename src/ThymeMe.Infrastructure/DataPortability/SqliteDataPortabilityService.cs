@@ -5,8 +5,10 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ThymeMe.Application;
+using ThymeMe.Application.Appearance;
 using ThymeMe.Application.DataPortability;
 using ThymeMe.Application.Settings;
+using ThymeMe.Domain.Appearance;
 using ThymeMe.Domain.Common;
 using ThymeMe.Domain.DataPortability;
 using ThymeMe.Infrastructure.Persistence;
@@ -159,7 +161,8 @@ public sealed class SqliteDataPortabilityService(
         AddData(context, data, maps, mode);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-        await settingsStore.SaveAsync(data.Settings, cancellationToken).ConfigureAwait(false);
+        AppSettings restoredSettings = RemapPaletteSettings(data.Settings, maps);
+        await settingsStore.SaveAsync(restoredSettings, cancellationToken).ConfigureAwait(false);
     }
 
     private async ValueTask<PortableData> ReadSnapshotAsync(bool includeApplications, CancellationToken cancellationToken)
@@ -334,8 +337,10 @@ public sealed class SqliteDataPortabilityService(
         HashSet<Guid> categoryIds = data.Categories.Select(item => item.Id).ToHashSet();
         HashSet<Guid> projectIds = data.Projects.Select(item => item.Id).ToHashSet();
         HashSet<Guid> sessionIds = data.Sessions.Select(item => item.Id).ToHashSet();
+        HashSet<Guid> paletteIds = data.Palettes.Select(item => item.Id).ToHashSet();
         if (streamIds.Count != data.Streams.Count || categoryIds.Count != data.Categories.Count ||
-            projectIds.Count != data.Projects.Count || sessionIds.Count != data.Sessions.Count)
+            projectIds.Count != data.Projects.Count || sessionIds.Count != data.Sessions.Count ||
+            paletteIds.Count != data.Palettes.Count)
         {
             throw new InvalidDataException("The backup contains duplicate stable identifiers.");
         }
@@ -356,6 +361,17 @@ public sealed class SqliteDataPortabilityService(
                      .Concat(data.Projects.Select(item => item.Name)))
         {
             _ = DomainText.RequiredName(name, "name");
+        }
+
+        foreach (PortablePalette palette in data.Palettes)
+        {
+            _ = new AppearancePalette(
+                palette.Id,
+                palette.Name,
+                palette.FormatVersion,
+                palette.IsBuiltIn,
+                new PaletteVariant(palette.LightCanvas, palette.LightSurface, palette.LightAccent),
+                new PaletteVariant(palette.DarkCanvas, palette.DarkSurface, palette.DarkAccent)).Validate();
         }
     }
 
@@ -389,6 +405,7 @@ public sealed class SqliteDataPortabilityService(
             .Concat(await context.Projects.Select(item => item.Id).ToListAsync(cancellationToken).ConfigureAwait(false))
             .Concat(await context.Sessions.Select(item => item.Id).ToListAsync(cancellationToken).ConfigureAwait(false))
             .Concat(await context.Adjustments.Select(item => item.Id).ToListAsync(cancellationToken).ConfigureAwait(false))
+            .Concat(await context.Palettes.Select(item => item.Id).ToListAsync(cancellationToken).ConfigureAwait(false))
             .ToHashSet();
         return RestoreMaps.Remap(data, existing);
     }
@@ -498,7 +515,7 @@ public sealed class SqliteDataPortabilityService(
         }));
         context.Palettes.AddRange(data.Palettes.Select(item => new PaletteRow
         {
-            Id = mode == RestoreMode.Merge ? Guid.CreateVersion7() : item.Id,
+            Id = maps.Palettes[item.Id],
             Name = item.Name,
             FormatVersion = item.FormatVersion,
             IsBuiltIn = item.IsBuiltIn,
@@ -516,23 +533,50 @@ public sealed class SqliteDataPortabilityService(
         IReadOnlyDictionary<Guid, Guid> Categories,
         IReadOnlyDictionary<Guid, Guid> Projects,
         IReadOnlyDictionary<Guid, Guid> Sessions,
-        IReadOnlyDictionary<Guid, Guid> Adjustments)
+        IReadOnlyDictionary<Guid, Guid> Adjustments,
+        IReadOnlyDictionary<Guid, Guid> Palettes)
     {
         public static RestoreMaps Identity(PortableData data) => new(
             data.Streams.ToDictionary(item => item.Id, item => item.Id),
             data.Categories.ToDictionary(item => item.Id, item => item.Id),
             data.Projects.ToDictionary(item => item.Id, item => item.Id),
             data.Sessions.ToDictionary(item => item.Id, item => item.Id),
-            data.Adjustments.ToDictionary(item => item.Id, item => item.Id));
+            data.Adjustments.ToDictionary(item => item.Id, item => item.Id),
+            data.Palettes.ToDictionary(item => item.Id, item => item.Id));
 
         public static RestoreMaps Remap(PortableData data, IReadOnlySet<Guid> existing) => new(
             Map(data.Streams.Select(item => item.Id), existing),
             Map(data.Categories.Select(item => item.Id), existing),
             Map(data.Projects.Select(item => item.Id), existing),
             Map(data.Sessions.Select(item => item.Id), existing),
-            Map(data.Adjustments.Select(item => item.Id), existing));
+            Map(data.Adjustments.Select(item => item.Id), existing),
+            Map(data.Palettes.Select(item => item.Id), existing));
 
         private static Dictionary<Guid, Guid> Map(IEnumerable<Guid> ids, IReadOnlySet<Guid> existing) =>
             ids.ToDictionary(id => id, id => existing.Contains(id) ? Guid.CreateVersion7() : id);
+    }
+
+    private static AppSettings RemapPaletteSettings(AppSettings settings, RestoreMaps maps)
+    {
+        string selected = settings.SelectedPaletteId;
+        if (AppearancePaletteService.TryParseCustomKey(selected, out Guid selectedId) &&
+            maps.Palettes.TryGetValue(selectedId, out Guid remappedSelected))
+        {
+            selected = AppearancePaletteService.CustomKey(remappedSelected);
+        }
+
+        Dictionary<string, string> acknowledgements = [];
+        foreach ((string key, string signature) in settings.PaletteContrastAcknowledgements)
+        {
+            string remappedKey = key;
+            if (AppearancePaletteService.TryParseCustomKey(key, out Guid id) && maps.Palettes.TryGetValue(id, out Guid remapped))
+            {
+                remappedKey = AppearancePaletteService.CustomKey(remapped);
+            }
+
+            acknowledgements[remappedKey] = signature;
+        }
+
+        return settings with { SelectedPaletteId = selected, PaletteContrastAcknowledgements = acknowledgements };
     }
 }

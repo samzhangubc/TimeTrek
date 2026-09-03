@@ -1,20 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<UserControl x:Class="ThymeMe.Presentation.WinUI.Settings.SettingsPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" SizeChanged="OnSizeChanged">
-  <ScrollViewer><StackPanel Padding="24" Spacing="16">
-    <Grid><TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" /><TextBlock Text="{x:Bind ViewModel.SaveStatus, Mode=OneWay}" HorizontalAlignment="Right" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" /></Grid>
-    <TextBox x:Name="SearchBox" PlaceholderText="Search all settings" AutomationProperties.Name="Search Settings" TextChanged="OnSearchChanged" />
-    <Grid x:Name="SettingsGrid" ColumnSpacing="16" RowSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-      <Border Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="General" Style="{StaticResource SubtitleTextBlockStyle}" /><ComboBox Header="Week starts" x:Name="WeekStart"><ComboBoxItem Content="Windows default" Tag="WindowsDefault" /><ComboBoxItem Content="Sunday" Tag="Sunday" /><ComboBoxItem Content="Monday" Tag="Monday" /></ComboBox><Button Content="Rerun setup wizard (preserves data)" /></StackPanel></Border>
-      <Border Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="Appearance" Style="{StaticResource SubtitleTextBlockStyle}" /><ComboBox Header="Mode" x:Name="Appearance"><ComboBoxItem Content="Light" Tag="Light" /><ComboBoxItem Content="Dark" Tag="Dark" /><ComboBoxItem Content="Follow Windows" Tag="FollowWindows" /><ComboBoxItem Content="Scheduled" Tag="Scheduled" /></ComboBox><StackPanel Orientation="Horizontal" Spacing="8"><TimePicker x:Name="LightStart" Header="Light begins" ClockIdentifier="24HourClock" /><TimePicker x:Name="DarkStart" Header="Dark begins" ClockIdentifier="24HourClock" /></StackPanel><TextBlock Text="GitHub Default · Canvas / Surface / Accent" /></StackPanel></Border>
-      <Border Grid.Row="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="Timing" Style="{StaticResource SubtitleTextBlockStyle}" /><NumberBox x:Name="DefaultMinutes" Header="Default minutes" Minimum="1" Maximum="10080" /><ToggleSwitch x:Name="Rounding" Header="Rounding" /><NumberBox x:Name="RoundingIncrement" Header="Nearest minutes" Minimum="1" Maximum="60" /></StackPanel></Border>
-      <Border Grid.Row="1" Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="Pomodoro" Style="{StaticResource SubtitleTextBlockStyle}" /><NumberBox x:Name="PomodoroWork" Header="Work minutes" Minimum="1" Maximum="1440" /><NumberBox x:Name="PomodoroBreak" Header="Break minutes" Minimum="1" Maximum="1440" /><NumberBox x:Name="PomodoroBuffer" Header="Confirmation buffer minutes" Minimum="1" Maximum="60" /><ToggleSwitch x:Name="BreaksBillable" Header="Breaks are billable" /></StackPanel></Border>
-      <Border Grid.Row="2" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="Billing" Style="{StaticResource SubtitleTextBlockStyle}" /><ToggleSwitch x:Name="Billing" Header="Enable billing fields" /><TextBlock Text="Rates are edited on scoped Categories." TextWrapping="Wrap" /></StackPanel></Border>
-      <Border Grid.Row="2" Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="Activity &amp; Privacy" Style="{StaticResource SubtitleTextBlockStyle}" /><ToggleSwitch x:Name="ForegroundTracking" Header="Track foreground applications during active work only" /><ToggleSwitch x:Name="InterruptionHandling" Header="Enable interruption handling" /><NumberBox x:Name="InactivityMinutes" Header="Inactivity threshold minutes" Minimum="1" Maximum="1440" /><ToggleSwitch x:Name="StopIdle" Header="Stop on generic inactivity" /><ToggleSwitch x:Name="StopDisplay" Header="Stop when display turns off" /><ToggleSwitch x:Name="StopScreenSaver" Header="Stop on screen saver" /><ToggleSwitch x:Name="StopLock" Header="Stop on lock" /><ToggleSwitch x:Name="StopSuspend" Header="Stop on suspend" /><TextBlock Text="No titles, paths, browser domains, screenshots, clipboard, or keystrokes are collected." TextWrapping="Wrap" /><Button Content="Purge all application activity" Click="OnPurgeActivity" /></StackPanel></Border>
-      <Border Grid.Row="3" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="Windows" Style="{StaticResource SubtitleTextBlockStyle}" /><ToggleSwitch x:Name="StartWindows" Header="Start with Windows" /><ToggleSwitch x:Name="Notifications" Header="Notifications" /><ToggleSwitch x:Name="Sound" Header="Sound" /><Expander Header="Layout and interface size"><StackPanel Spacing="8"><NumberBox x:Name="NavigationWidth" Header="Navigation width" Minimum="48" Maximum="160" /><NumberBox x:Name="ChannelWidth" Header="Shared channel width" Minimum="144" Maximum="360" /><NumberBox x:Name="IconScale" Header="Interface scale" Minimum="0.8" Maximum="1.5" SmallChange="0.1" /><TextBlock Text="Use Ctrl++ or Ctrl+- anywhere in Thyme-Me. Ctrl+0 resets the scale." TextWrapping="Wrap" /><Button Content="Reset layout" Click="OnResetLayout" /></StackPanel></Expander></StackPanel></Border>
-      <Border Grid.Row="3" Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="Data" Style="{StaticResource SubtitleTextBlockStyle}" /><StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Export JSON" Click="OnExportJson" /><Button Content="Export CSV" Click="OnExportCsv" /></StackPanel><Button Content="Create backup" Click="OnCreateBackup" /><Button Content="Restore backup" Click="OnRestoreBackup" /><NumberBox x:Name="Retention" Header="Recently Deleted retention days" Minimum="1" Maximum="365" /></StackPanel></Border>
-      <Border Grid.Row="4" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="Updates" Style="{StaticResource SubtitleTextBlockStyle}" /><ToggleSwitch x:Name="UpdateChecks" Header="Check automatically" /><ToggleSwitch x:Name="UpdateDownloads" Header="Download automatically" /><Button Content="Check Now" Click="OnCheckUpdates" /></StackPanel></Border>
-      <Border Grid.Row="4" Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"><StackPanel Spacing="10"><TextBlock Text="About" Style="{StaticResource SubtitleTextBlockStyle}" /><TextBlock Text="{x:Bind ViewModel.AboutSummary}" TextWrapping="Wrap" /><TextBlock Text="Free of charge for permitted personal, educational, and internal noncommercial use. Redistribution and product use require prior written permission." TextWrapping="Wrap" /><TextBlock Text="Windows 11 x64 is supported without an SLA. Windows 10 22H2 is compatibility-only." TextWrapping="Wrap" /><StackPanel Orientation="Horizontal" Spacing="8"><HyperlinkButton Content="License" NavigateUri="https://github.com/samzhangubc/Thyme-Me/blob/main/LICENSE" Padding="0" /><HyperlinkButton Content="Third-party notices" NavigateUri="https://github.com/samzhangubc/Thyme-Me/blob/main/docs/legal/THIRD_PARTY_NOTICES.md" Padding="0" /><HyperlinkButton Content="Repository" NavigateUri="https://github.com/samzhangubc/Thyme-Me" Padding="0" /></StackPanel><Button Content="Copy Diagnostics" Click="OnCopyDiagnostics" /></StackPanel></Border>
-    </Grid>
-    <Button Content="Save settings" HorizontalAlignment="Right" Style="{StaticResource AccentButtonStyle}" Click="OnSave" />
-  </StackPanel></ScrollViewer>
+<UserControl
+    x:Class="ThymeMe.Presentation.WinUI.Settings.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    KeyDown="OnKeyDown"
+    SizeChanged="OnSizeChanged">
+  <ScrollViewer HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+    <StackPanel Padding="24" Spacing="16">
+      <Grid ColumnSpacing="12">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" />
+        <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.SaveStatus, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Right" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+      </Grid>
+      <TextBox x:Name="SearchBox" PlaceholderText="Search all settings" AutomationProperties.Name="Search Settings" TextChanged="OnSearchChanged" />
+      <Grid x:Name="SettingsGrid" ColumnSpacing="16" RowSpacing="16">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border x:Name="GeneralCard" Tag="General week region setup samples" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10">
+            <TextBlock Text="General" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <ComboBox Header="Week starts" x:Name="WeekStart" SelectionChanged="OnSettingChanged">
+              <ComboBoxItem Content="Windows default" Tag="WindowsDefault" /><ComboBoxItem Content="Sunday" Tag="Sunday" /><ComboBoxItem Content="Monday" Tag="Monday" />
+            </ComboBox>
+            <TextBlock Text="Regional number, date, time, and currency formatting follows Windows." TextWrapping="Wrap" />
+            <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Button Content="Create MATH 100 sample" Tag="Math" Click="OnCreateSample" HorizontalAlignment="Stretch" /><Button Grid.Column="1" Content="Create Work sample" Tag="Work" Click="OnCreateSample" HorizontalAlignment="Stretch" /></Grid>
+            <Button Content="Rerun setup wizard (preserves data)" Click="OnRerunWizard" />
+          </StackPanel>
+        </Border>
+
+        <Border x:Name="AppearanceCard" Tag="Appearance theme palette light dark scheduled custom colors canvas surface accent contrast import export" Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Appearance" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <ComboBox Header="Mode" x:Name="Appearance" SelectionChanged="OnSettingChanged">
+              <ComboBoxItem Content="Light" Tag="Light" /><ComboBoxItem Content="Dark" Tag="Dark" /><ComboBoxItem Content="Follow Windows" Tag="FollowWindows" /><ComboBoxItem Content="Scheduled" Tag="Scheduled" />
+            </ComboBox>
+            <StackPanel x:Name="SchedulePanel" Orientation="Horizontal" Spacing="8">
+              <TimePicker x:Name="LightStart" Header="Light begins" ClockIdentifier="24HourClock" TimeChanged="OnTimeChanged" />
+              <TimePicker x:Name="DarkStart" Header="Dark begins" ClockIdentifier="24HourClock" TimeChanged="OnTimeChanged" />
+            </StackPanel>
+            <TextBox x:Name="PaletteSearch" PlaceholderText="Search palettes" TextChanged="OnPaletteSearchChanged" />
+            <ListView x:Name="PaletteList" MaxHeight="220" SelectionMode="Single" SelectionChanged="OnPaletteSelected" AutomationProperties.Name="Color palettes">
+              <ListView.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Padding="6" Spacing="2">
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding LightSwatch}" FontFamily="Consolas" FontSize="11" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{Binding DarkSwatch}" FontFamily="Consolas" FontSize="11" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                </DataTemplate>
+              </ListView.ItemTemplate>
+            </ListView>
+            <Border x:Name="PalettePreviewCanvas" Padding="12" CornerRadius="8" BorderThickness="1">
+              <StackPanel Spacing="8">
+                <TextBlock x:Name="PalettePreviewTitle" Text="Miniature application preview" FontWeight="SemiBold" />
+                <Border x:Name="PalettePreviewSurface" Padding="10" CornerRadius="6">
+                  <StackPanel Spacing="6">
+                    <TextBlock x:Name="PalettePreviewText" Text="Surface and readable text" />
+                    <Button x:Name="PalettePreviewAccent" Content="Accent action" HorizontalAlignment="Left" />
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Border>
+            <TextBlock x:Name="PaletteContrast" TextWrapping="Wrap" />
+            <Grid ColumnSpacing="8" RowSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+              <Button Content="New custom" Click="OnNewPalette" HorizontalAlignment="Stretch" /><Button Grid.Column="1" Content="Edit" Click="OnEditPalette" HorizontalAlignment="Stretch" />
+              <Button Grid.Row="1" Content="Duplicate" Click="OnDuplicatePalette" HorizontalAlignment="Stretch" /><Button Grid.Row="1" Grid.Column="1" Content="Import JSON" Click="OnImportPalette" HorizontalAlignment="Stretch" />
+              <Button Grid.Row="2" Content="Export JSON" Click="OnExportPalette" HorizontalAlignment="Stretch" /><Button Grid.Row="2" Grid.Column="1" Content="Delete" Click="OnDeletePalette" HorizontalAlignment="Stretch" />
+            </Grid>
+          </StackPanel>
+        </Border>
+
+        <Border x:Name="TimingCard" Tag="Timing default duration rounding nearest examples" Grid.Row="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Timing" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <NumberBox x:Name="DefaultMinutes" Header="Default minutes" Minimum="1" Maximum="10080" ValueChanged="OnNumberChanged" />
+            <ToggleSwitch x:Name="Rounding" Header="Rounding" Toggled="OnSettingToggled" />
+            <NumberBox x:Name="RoundingIncrement" Header="Nearest minutes" Minimum="1" Maximum="60" ValueChanged="OnNumberChanged" />
+            <TextBlock x:Name="RoundingExample" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+
+        <Border x:Name="PomodoroCard" Tag="Pomodoro work break buffer billable" Grid.Row="1" Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Pomodoro" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <NumberBox x:Name="PomodoroWork" Header="Work minutes" Minimum="1" Maximum="1440" ValueChanged="OnNumberChanged" />
+            <NumberBox x:Name="PomodoroBreak" Header="Break minutes" Minimum="1" Maximum="1440" ValueChanged="OnNumberChanged" />
+            <NumberBox x:Name="PomodoroBuffer" Header="Confirmation buffer minutes" Minimum="1" Maximum="60" ValueChanged="OnNumberChanged" />
+            <ToggleSwitch x:Name="BreaksBillable" Header="Breaks are billable" Toggled="OnSettingToggled" />
+          </StackPanel>
+        </Border>
+
+        <Border x:Name="BillingCard" Tag="Billing rates category currency" Grid.Row="2" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10"><TextBlock Text="Billing" Style="{StaticResource SubtitleTextBlockStyle}" /><ToggleSwitch x:Name="Billing" Header="Enable billing fields" Toggled="OnSettingToggled" /><TextBlock Text="Rates and named currencies are edited on scoped Categories." TextWrapping="Wrap" /></StackPanel>
+        </Border>
+
+        <Border x:Name="PrivacyCard" Tag="Activity Privacy foreground applications interruption inactivity display screen saver lock suspend purge" Grid.Row="2" Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Activity &amp; Privacy" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <ToggleSwitch x:Name="ForegroundTracking" Header="Track foreground applications during active work only" Toggled="OnSettingToggled" />
+            <ToggleSwitch x:Name="InterruptionHandling" Header="Enable interruption handling" Toggled="OnSettingToggled" />
+            <NumberBox x:Name="InactivityMinutes" Header="Inactivity threshold minutes" Minimum="1" Maximum="1440" ValueChanged="OnNumberChanged" />
+            <ToggleSwitch x:Name="StopIdle" Header="Stop on generic inactivity" Toggled="OnSettingToggled" /><ToggleSwitch x:Name="StopDisplay" Header="Stop when display turns off" Toggled="OnSettingToggled" />
+            <ToggleSwitch x:Name="StopScreenSaver" Header="Stop on screen saver" Toggled="OnSettingToggled" /><ToggleSwitch x:Name="StopLock" Header="Stop on lock" Toggled="OnSettingToggled" /><ToggleSwitch x:Name="StopSuspend" Header="Stop on suspend" Toggled="OnSettingToggled" />
+            <TextBlock Text="No titles, paths, browser domains, screenshots, clipboard, or keystrokes are collected." TextWrapping="Wrap" />
+            <Button Content="Purge all application activity" Click="OnPurgeActivity" />
+          </StackPanel>
+        </Border>
+
+        <Border x:Name="WindowsCard" Tag="Windows startup notifications sound layout navigation channel interface scale reset" Grid.Row="3" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Windows" Style="{StaticResource SubtitleTextBlockStyle}" /><ToggleSwitch x:Name="StartWindows" Header="Start with Windows" Toggled="OnSettingToggled" /><ToggleSwitch x:Name="Notifications" Header="Notifications" Toggled="OnSettingToggled" /><ToggleSwitch x:Name="Sound" Header="Sound" Toggled="OnSettingToggled" />
+            <Expander Header="Advanced layout and interface size"><StackPanel Spacing="8"><NumberBox x:Name="NavigationWidth" Header="Navigation width" Minimum="48" Maximum="160" ValueChanged="OnNumberChanged" /><NumberBox x:Name="ChannelWidth" Header="Shared channel width" Minimum="144" Maximum="360" ValueChanged="OnNumberChanged" /><NumberBox x:Name="IconScale" Header="Interface scale" Minimum="0.8" Maximum="1.5" SmallChange="0.1" ValueChanged="OnNumberChanged" /><TextBlock Text="Ctrl++ and Ctrl+- adjust the interface; Ctrl+0 resets its scale." TextWrapping="Wrap" /><Button Content="Reset layout" Click="OnResetLayout" /></StackPanel></Expander>
+          </StackPanel>
+        </Border>
+
+        <Border x:Name="DataCard" Tag="Data export JSON CSV application breakdown backup restore recently deleted retention reset" Grid.Row="3" Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10"><TextBlock Text="Data" Style="{StaticResource SubtitleTextBlockStyle}" /><ToggleSwitch x:Name="IncludeApplications" Header="Include application breakdown in this export" /><Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Button Content="Export JSON" Click="OnExportJson" HorizontalAlignment="Stretch" /><Button Grid.Column="1" Content="Export CSV" Click="OnExportCsv" HorizontalAlignment="Stretch" /></Grid><TextBlock Text="Backups include opted-in foreground-application records." TextWrapping="Wrap" /><Button Content="Create backup" Click="OnCreateBackup" /><Button Content="Restore backup" Click="OnRestoreBackup" /><NumberBox x:Name="Retention" Header="Recently Deleted retention days" Minimum="1" Maximum="365" ValueChanged="OnNumberChanged" /><Button Content="Reset all settings (preserves data)" Click="OnResetAllSettings" /></StackPanel>
+        </Border>
+
+        <Border x:Name="UpdatesCard" Tag="Updates version status stable check download" Grid.Row="4" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10"><TextBlock Text="Updates" Style="{StaticResource SubtitleTextBlockStyle}" /><TextBlock Text="Automatic updates are not configured in this portable release. Check stable GitHub Releases manually." TextWrapping="Wrap" /><ToggleSwitch x:Name="UpdateChecks" Header="Check automatically (unavailable)" IsEnabled="False" /><ToggleSwitch x:Name="UpdateDownloads" Header="Download automatically (unavailable)" IsEnabled="False" /><Button Content="Check Now" Click="OnCheckUpdates" /></StackPanel>
+        </Border>
+
+        <Border x:Name="AboutCard" Tag="About version license notices provenance repository diagnostics" Grid.Row="4" Grid.Column="1" Padding="16" CornerRadius="8" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+          <StackPanel Spacing="10"><TextBlock Text="About" Style="{StaticResource SubtitleTextBlockStyle}" /><TextBlock Text="{x:Bind ViewModel.AboutSummary}" TextWrapping="Wrap" /><TextBlock Text="Free of charge for permitted personal, educational, and internal noncommercial use. Redistribution and product use require prior written permission." TextWrapping="Wrap" /><TextBlock Text="Windows 11 x64 is supported without an SLA. Windows 10 22H2 is compatibility-only." TextWrapping="Wrap" /><StackPanel Spacing="4"><HyperlinkButton Content="License" NavigateUri="https://github.com/samzhangubc/Thyme-Me/blob/main/LICENSE" Padding="0" HorizontalAlignment="Left" /><HyperlinkButton Content="Third-party notices" NavigateUri="https://github.com/samzhangubc/Thyme-Me/blob/main/docs/legal/THIRD_PARTY_NOTICES.md" Padding="0" HorizontalAlignment="Left" /><HyperlinkButton Content="Repository" NavigateUri="https://github.com/samzhangubc/Thyme-Me" Padding="0" HorizontalAlignment="Left" /></StackPanel><Button Content="Copy Diagnostics" Click="OnCopyDiagnostics" /></StackPanel>
+        </Border>
+      </Grid>
+    </StackPanel>
+  </ScrollViewer>
 </UserControl>

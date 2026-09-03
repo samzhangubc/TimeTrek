@@ -17,8 +17,9 @@
     "archive": ["src/ThymeMe.Application/Archive", "src/ThymeMe.Infrastructure/Persistence/SqliteArchiveStore.cs", "src/ThymeMe.Presentation.WinUI/Archive"],
     "data_portability": ["src/ThymeMe.Application/DataPortability", "src/ThymeMe.Infrastructure/DataPortability", "src/ThymeMe.Platform.Windows/DataPortability"],
     "settings": ["src/ThymeMe.Application/Settings", "src/ThymeMe.Infrastructure/Settings", "src/ThymeMe.Presentation.WinUI/Settings"],
+    "appearance": ["src/ThymeMe.Domain/Appearance", "src/ThymeMe.Application/Appearance", "src/ThymeMe.Infrastructure/Persistence/SqliteAppearancePaletteStore.cs", "src/ThymeMe.Presentation.WinUI/Appearance", "src/ThymeMe.Presentation.WinUI/Shell/AppShell.xaml.cs"],
     "onboarding": ["src/ThymeMe.Presentation.WinUI/Onboarding/FirstRunWizardView.xaml", "src/ThymeMe.Presentation.WinUI/Onboarding/FirstRunWizardView.xaml.cs", "src/ThymeMe.Presentation.WinUI/Onboarding/FirstRunWizardViewModel.cs"],
-    "release_and_provenance": ["src/ThymeMe.Application/ProductIdentity.cs", ".github/workflows/release.yml", "src/ThymeMe.App/ThymeMe.App.csproj", "src/ThymeMe.App/Package.appxmanifest", "Directory.Build.props", "LICENSE", "docs/legal/NOTICE", "docs/legal/PROVENANCE.json", "docs/legal/THIRD_PARTY_NOTICES.md"],
+    "release_and_provenance": ["src/ThymeMe.Application/ProductIdentity.cs", ".github/workflows/release.yml", "eng/Build-PortableRelease.ps1", "src/ThymeMe.Launcher", "src/ThymeMe.App/ThymeMe.App.csproj", "src/ThymeMe.App/Package.appxmanifest", "Directory.Build.props", "LICENSE", "docs/legal/NOTICE", "docs/legal/PROVENANCE.json", "docs/legal/THIRD_PARTY_NOTICES.md"],
     "schema": ["src/ThymeMe.Infrastructure/Persistence/PersistenceRows.cs", "src/ThymeMe.Infrastructure/Persistence/ThymeMeDbContext.cs", "src/ThymeMe.Infrastructure/Persistence/Migrations"]
   }
 }

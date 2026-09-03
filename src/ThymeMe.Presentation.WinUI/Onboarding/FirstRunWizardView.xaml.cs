@@ -2,6 +2,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ThymeMe.Application.DataPortability;
 using ThymeMe.Application.Settings;
+using ThymeMe.Domain.Appearance;
+using ThymeMe.Presentation.WinUI.Appearance;
+using ThymeMe.Presentation.WinUI.Settings;
 using ThymeMe.Presentation.WinUI.Shell;
 
 namespace ThymeMe.Presentation.WinUI.Onboarding;
@@ -10,6 +13,7 @@ public sealed partial class FirstRunWizardView : UserControl
 {
     private readonly FrameworkElement[] steps;
     private int step;
+    private bool completing;
 
     public FirstRunWizardView(AppShellViewModel viewModel)
     {
@@ -23,6 +27,12 @@ public sealed partial class FirstRunWizardView : UserControl
 
     public event EventHandler? SetupCompleted;
 
+    public void Restart()
+    {
+        ErrorBar.IsOpen = false;
+        ShowStep(0);
+    }
+
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         DefaultMinutes.Value = ViewModel.Wizard.DefaultSessionMinutes;
@@ -31,6 +41,10 @@ public sealed partial class FirstRunWizardView : UserControl
         InactivityMinutes.Value = ViewModel.Wizard.InactivityThresholdMinutes;
         SelectTag(WeekStart, ViewModel.Wizard.WeekStart.ToString());
         SelectTag(Appearance, ViewModel.Wizard.AppearanceMode.ToString());
+        WizardPalette.ItemsSource = ViewModel.Settings.Palettes;
+        WizardPalette.SelectedItem = ViewModel.Settings.Palettes.FirstOrDefault(item =>
+            string.Equals(item.Key, ViewModel.Wizard.SelectedPaletteId, StringComparison.Ordinal));
+        UpdateWizardPalettePreview();
         ShowStep(0);
     }
 
@@ -77,7 +91,10 @@ public sealed partial class FirstRunWizardView : UserControl
 
     private async void OnNext(object sender, RoutedEventArgs e)
     {
-        ApplyFields();
+        if (!TryApplyFields())
+        {
+            return;
+        }
         try
         {
             await ViewModel.Wizard.SaveProgressAsync();
@@ -91,16 +108,38 @@ public sealed partial class FirstRunWizardView : UserControl
 
     private async void OnSkip(object sender, RoutedEventArgs e)
     {
-        ApplyFields();
+        if (!TryApplyFields())
+        {
+            return;
+        }
         await ViewModel.Wizard.SaveProgressAsync();
         ShowStep(5);
     }
 
     private async void OnFinish(object sender, RoutedEventArgs e)
     {
-        ApplyFields();
-        await ViewModel.CompleteStepByStepCommand.ExecuteAsync(null);
-        CompleteIfReady();
+        if (completing || !TryApplyFields())
+        {
+            return;
+        }
+
+        completing = true;
+        FinishButton.IsEnabled = false;
+        ErrorBar.IsOpen = false;
+        try
+        {
+            await ViewModel.CompleteStepByStepCommand.ExecuteAsync(null);
+            CompleteIfReady();
+        }
+        catch (Exception exception)
+        {
+            ShowError(exception.Message);
+        }
+        finally
+        {
+            completing = false;
+            FinishButton.IsEnabled = true;
+        }
     }
 
     private void ShowStep(int value)
@@ -121,14 +160,97 @@ public sealed partial class FirstRunWizardView : UserControl
         FinishButton.Visibility = step == 5 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private void ApplyFields()
+    private bool TryApplyFields()
     {
-        ViewModel.Wizard.DefaultSessionMinutes = checked((int)DefaultMinutes.Value);
-        ViewModel.Wizard.PomodoroWorkMinutes = checked((int)WorkMinutes.Value);
-        ViewModel.Wizard.PomodoroBreakMinutes = checked((int)BreakMinutes.Value);
-        ViewModel.Wizard.InactivityThresholdMinutes = checked((int)InactivityMinutes.Value);
+        if (!TryReadInt(DefaultMinutes, out int defaultMinutes) ||
+            !TryReadInt(WorkMinutes, out int workMinutes) ||
+            !TryReadInt(BreakMinutes, out int breakMinutes) ||
+            !TryReadInt(InactivityMinutes, out int inactivityMinutes))
+        {
+            ShowError("Enter a valid whole number in every numeric field.");
+            return false;
+        }
+
+        ViewModel.Wizard.DefaultSessionMinutes = defaultMinutes;
+        ViewModel.Wizard.PomodoroWorkMinutes = workMinutes;
+        ViewModel.Wizard.PomodoroBreakMinutes = breakMinutes;
+        ViewModel.Wizard.InactivityThresholdMinutes = inactivityMinutes;
         ViewModel.Wizard.WeekStart = ParseTag(WeekStart, WeekStartDay.WindowsDefault);
         ViewModel.Wizard.AppearanceMode = ParseTag(Appearance, AppearanceMode.FollowWindows);
+        ViewModel.Wizard.SelectedPaletteId = WizardPalette.SelectedItem is PaletteListItem palette
+            ? palette.Key
+            : "github-default";
+        return true;
+    }
+
+    private void OnWizardPaletteChanged(object sender, SelectionChangedEventArgs e) => UpdateWizardPalettePreview();
+
+    private async void OnWizardNewPalette(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            PaletteEditorResult? result = await PaletteEditorDialog.ShowAsync(XamlRoot);
+            if (result is null)
+            {
+                return;
+            }
+
+            if (result.NeedsContrastAcknowledgement)
+            {
+                ContentDialog warning = new()
+                {
+                    XamlRoot = XamlRoot,
+                    Title = "Use a low-contrast palette?",
+                    Content = $"Accent-to-Surface contrast is {result.LightInteractiveContrast:F2}:1 in Light and {result.DarkInteractiveContrast:F2}:1 in Dark.",
+                    PrimaryButtonText = "Acknowledge and save",
+                    CloseButtonText = "Cancel",
+                    DefaultButton = ContentDialogButton.Close,
+                };
+                if (await warning.ShowAsync() != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+            }
+
+            string? key = await ViewModel.Settings.SaveCustomPaletteAsync(null, result.Name, result.Light, result.Dark);
+            if (key is null)
+            {
+                ShowError(ViewModel.Settings.SaveStatus);
+                return;
+            }
+
+            if (result.NeedsContrastAcknowledgement)
+            {
+                ViewModel.Wizard.PaletteContrastAcknowledgements[key] =
+                    SettingsViewModel.PaletteSignature(result.Light, result.Dark);
+            }
+
+            WizardPalette.ItemsSource = ViewModel.Settings.Palettes;
+            WizardPalette.SelectedItem = ViewModel.Settings.Palettes.First(item => item.Key == key);
+        }
+        catch (Exception exception)
+        {
+            ShowError(exception.Message);
+        }
+    }
+
+    private void UpdateWizardPalettePreview()
+    {
+        if (WizardPalette.SelectedItem is not PaletteListItem palette)
+        {
+            WizardPalettePreview.Text = string.Empty;
+            return;
+        }
+
+        WizardPalettePreview.Text = $"Light  {palette.LightSwatch}\nDark   {palette.DarkSwatch}";
+    }
+
+    private static bool TryReadInt(NumberBox box, out int value)
+    {
+        value = 0;
+        return !double.IsNaN(box.Value) && !double.IsInfinity(box.Value) &&
+            box.Value >= int.MinValue && box.Value <= int.MaxValue &&
+            (value = checked((int)box.Value)) == box.Value;
     }
 
     private void CompleteIfReady()

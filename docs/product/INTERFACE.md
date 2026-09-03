@@ -21,7 +21,7 @@ Reference: [PreSonus Studio One Console documentation](https://s1manual.presonus
 - Every navigation icon has an accessible name and a hover/focus tooltip.
 - The navigation column contains navigation only. Active-Session status and transport controls live in the persistent bottom transport bar.
 - Archive is a dedicated primary navigation destination.
-- Home, History, Stats, Archive, and Settings are the finalized primary destinations in that order, with Settings anchored at the bottom. Exact icon glyph and palette treatment remain visual-polish work.
+- Home, History, Stats, Archive, and Settings are the finalized primary destinations in that order, with Settings anchored at the bottom. Exact icon glyph treatment remains visual-polish work; built-in and custom palette behavior is implemented by the Appearance subsystem.
 - Practical horizontal regions, split panes, and data columns expose pointer-drag resize handles plus keyboard-accessible resizing. Every customized width is saved immediately and restored automatically.
 - `Ctrl++`, `Ctrl+-`, `Ctrl+0`, `Ctrl+wheel`, and supported pinch gestures adjust or reset the entire interface between 80% and 150%. Text, controls, icons, and spacing scale together; the layout is recomputed for the viewport so scaling does not crop the window.
 - Settings provides a Reset Layout action for restoring default widths and interface scale.
@@ -283,4 +283,4 @@ Cards appear in this order: **General, Appearance, Timing, Pomodoro, Billing, Ac
 
 ## 9. Current design phase
 
-Home, History, Stats summary, Stats Timeline, Archive, and Settings are decision-complete for wireframing. Remaining interface work is focused-dialog visual polish, exact copy, and final palette values.
+Home, History, Stats summary, Stats Timeline, Archive, and Settings are decision-complete for wireframing. Remaining interface work is focused-dialog visual polish and exact copy.

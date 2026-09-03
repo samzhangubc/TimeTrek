@@ -8,7 +8,7 @@
     <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
     <Grid x:Name="HeaderGrid" ColumnSpacing="12" RowSpacing="8">
       <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="280" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
       <StackPanel x:Name="HeaderTitle">
         <TextBlock Text="Home" Style="{StaticResource TitleTextBlockStyle}" />
         <TextBlock Text="Choose a Stream and start focused time." Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
@@ -28,7 +28,8 @@
         HorizontalContentAlignment="Stretch"
         ScrollViewer.HorizontalScrollMode="Enabled"
         ScrollViewer.HorizontalScrollBarVisibility="Visible"
-        ScrollViewer.VerticalScrollMode="Disabled">
+        ScrollViewer.VerticalScrollMode="Enabled"
+        ScrollViewer.VerticalScrollBarVisibility="Auto">
       <ListView.ItemsPanel><ItemsPanelTemplate><ItemsStackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ListView.ItemsPanel>
       <ListView.ItemTemplate>
         <DataTemplate>

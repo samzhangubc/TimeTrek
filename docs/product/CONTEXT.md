@@ -158,7 +158,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 - Appearance warns but permits low-contrast custom palettes after explicit acknowledgement. Built-in/default palettes target WCAG 2.2 AA; acknowledged custom palettes are a contrast exception. Scheduled mode defaults light at 07:00 and dark at 19:00.
 - The first-run wizard covers all user defaults, including Sunday/Monday week start, rounding, idle handling, and start with Windows. All choices remain editable.
 - The finalized wizard flow is recorded in `docs/product/FIRST_RUN_WIZARD.md`: **Use recommended defaults** fast path, required step-by-step basic setup, genuinely optional Advanced setup, restart-before-basic-completion with saved values prefilled, rerunnable settings, optional MATH 100 and Work samples, overwrite-on-type 25-minute default, last-used timing mode, Windows-derived regional/accessibility choices, optional billing and activity tracking, and hover/focus tooltips after setup.
-- Version 1.0.1 uses manual updates from an intentionally unsigned, self-contained x64 portable archive published through GitHub Releases. The release pipeline publishes SHA-256 checksums, GitHub artifact attestations, provenance, notices, and an SPDX SBOM. Windows may show Unknown publisher or SmartScreen.
+- Version 1.0.2 uses manual updates from an intentionally unsigned, self-contained x64 portable archive published through GitHub Releases. Releases built from current source expose only the ZIP; its extracted root contains the `thymeme.exe` launcher and `app`, `legal`, and `metadata` folders. SHA-256 is published in release notes, GitHub attestations target the ZIP, and provenance, notices, disclosure, and SPDX SBOM are bundled below the root. Windows may show Unknown publisher or SmartScreen.
 - `docs/release/RELEASE.md` records the verified repository state, release workflow, integrity checks, unsigned-package disclosure, and safe future-update boundary.
 - First-party licensing is the custom Thyme-Me Source-Available License 1.0 (source-available, not open source). Official binaries are free of charge for permitted personal, educational, and internal noncommercial use; redistribution, product incorporation, commercial use, and derivative products require prior written permission.
 - Product decisions precede a separate technology-stack comparison.
@@ -194,7 +194,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 
 ## Decisions still requiring owner input
 
-- Remaining focused-dialog visual polish, exact copy, and final palette values.
+- Remaining focused-dialog visual polish and exact copy.
 - Clean Windows 11 portable-launch/rendering evidence and optional Windows 10 compatibility evidence.
 - Emergency rollback/revocation procedure and final release protection.
 - Final license/copyright notice review before distribution.
@@ -203,7 +203,7 @@ Official OpenAI documentation did not establish a Codex palette inventory. The C
 
 - This is a one-person project. Commit directly to `main` unless a release is active or the owner explicitly requests a branch.
 - Implementation is authorized using `docs/engineering/TECHNICAL_DESIGN.md`; `docs/engineering/IMPLEMENTATION_PROMPT.md` is the prepared kickoff for a separate project chat.
-- Update `README.md`, `docs/product/SDD.md`, this file, and `docs/engineering/llm.txt` when a decision makes them inaccurate.
+- Update `README.md`, `docs/SDD.md`, this file, and `llm.txt` when a decision makes them inaccurate.
 - Label proposals and unresolved decisions explicitly.
 - Never commit secrets, local databases, build output, or machine-specific configuration.
 

@@ -61,6 +61,8 @@ public sealed record AppSettings
 
     public string SelectedPaletteId { get; init; } = "github-default";
 
+    public Dictionary<string, string> PaletteContrastAcknowledgements { get; init; } = [];
+
     public WeekStartDay WeekStart { get; init; } = WeekStartDay.WindowsDefault;
 
     public double NavigationWidth { get; init; } = 64;

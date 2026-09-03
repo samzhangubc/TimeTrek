@@ -37,7 +37,7 @@ Thyme-Me supports Windows 11 on x64 PCs without a support SLA. Windows 10
 provided.
 
 1. Open [GitHub Releases](https://github.com/samzhangubc/Thyme-Me/releases) and
-   download `Thyme-Me-1.0.2-win-x64-portable.zip` plus `SHA256SUMS.txt`.
+   download `Thyme-Me-1.0.2-win-x64-portable.zip`.
 2. Extract the entire ZIP to a writable folder. Do not run the executable from
    inside the compressed archive.
 3. Open the extracted folder and run `thymeme.exe`.
@@ -49,6 +49,12 @@ provided.
 The archive is self-contained: it keeps .NET, Windows App SDK, and supporting
 libraries beside the app. It does not require Developer Mode, administrator
 access, a certificate installation, or a system-wide .NET installation.
+
+Releases built from the current source use `Thyme-Me-<version>-win-x64-portable.zip`.
+After extraction, the root contains only `thymeme.exe` plus the `app`, `legal`, and
+`metadata` folders. Launch the root `thymeme.exe`; supporting runtime files stay
+under `app`, and the ZIP's checksum is printed in its GitHub Release notes. The
+historical v1.0.1 legacy filenames remain documented in its archived release notes.
 
 To uninstall, close Thyme-Me from its notification-area menu and delete the
 extracted program folder. Export or back up your data first; deleting the program
@@ -62,7 +68,7 @@ From PowerShell in the folder containing the download:
 Get-FileHash .\Thyme-Me-1.0.2-win-x64-portable.zip -Algorithm SHA256
 ```
 
-Compare the result with `SHA256SUMS.txt` on the same GitHub Release. If you use the
+Compare the result with the SHA-256 printed in the same GitHub Release notes. If you use the
 GitHub CLI, you can also verify which repository and workflow produced the archive:
 
 ```powershell

@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Grid Padding="24">
-    <Grid Width="720" MaxWidth="720" HorizontalAlignment="Center">
+    <Grid MaxWidth="720" HorizontalAlignment="Stretch">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
@@ -58,6 +58,9 @@
               <ComboBoxItem Content="Dark" Tag="Dark" />
               <ComboBoxItem Content="Scheduled" Tag="Scheduled" />
             </ComboBox>
+            <ComboBox x:Name="WizardPalette" Header="Color palette" DisplayMemberPath="Name" SelectionChanged="OnWizardPaletteChanged" />
+            <TextBlock x:Name="WizardPalettePreview" TextWrapping="Wrap" FontFamily="Consolas" />
+            <Button Content="Create custom palette" Click="OnWizardNewPalette" />
             <ToggleSwitch Header="Start Thyme-Me when I sign in to Windows" IsOn="{x:Bind ViewModel.Wizard.StartWithWindows, Mode=TwoWay}" />
             <TextBlock Text="You can adjust colors, contrast, schedules, and interface size later in Settings." TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
           </StackPanel>

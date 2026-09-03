@@ -341,11 +341,11 @@ public sealed partial class HomePage : UserControl
         if (narrow)
         {
             HeaderGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
-            HeaderGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+            HeaderGrid.ColumnDefinitions[1].Width = new GridLength(0);
             HeaderGrid.ColumnDefinitions[2].Width = new GridLength(0);
-            Grid.SetColumn(HeaderTitle, 0); Grid.SetColumnSpan(HeaderTitle, 2);
+            Grid.SetColumn(HeaderTitle, 0); Grid.SetColumnSpan(HeaderTitle, 1);
             Grid.SetRow(NewStreamName, 1); Grid.SetColumn(NewStreamName, 0);
-            Grid.SetRow(HeaderActions, 1); Grid.SetColumn(HeaderActions, 1);
+            Grid.SetRow(HeaderActions, 2); Grid.SetColumn(HeaderActions, 0);
         }
         else
         {

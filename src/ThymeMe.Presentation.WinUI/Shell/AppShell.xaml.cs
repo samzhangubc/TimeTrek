@@ -1,10 +1,14 @@
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using ThymeMe.Application.Appearance;
 using ThymeMe.Application.Settings;
+using ThymeMe.Domain.Appearance;
+using ThymeMe.Presentation.WinUI.Appearance;
 using ThymeMe.Presentation.WinUI.Archive;
 using ThymeMe.Presentation.WinUI.History;
 using ThymeMe.Presentation.WinUI.Home;
@@ -13,19 +17,33 @@ using ThymeMe.Presentation.WinUI.Reporting;
 using ThymeMe.Presentation.WinUI.Settings;
 using ThymeMe.Presentation.WinUI.Timing;
 using Windows.System;
+using Windows.UI.ViewManagement;
 
 namespace ThymeMe.Presentation.WinUI.Shell;
 
 public sealed partial class AppShell : UserControl
 {
     private readonly DispatcherTimer displayTimer = new() { Interval = TimeSpan.FromSeconds(1) };
+    private readonly DispatcherTimer appearanceTimer = new() { Interval = TimeSpan.FromSeconds(30) };
+    private readonly UISettings uiSettings = new();
+    private readonly AccessibilitySettings accessibilitySettings = new();
+    private readonly TimeProvider timeProvider;
     private readonly TransportControl transport;
     private readonly FirstRunWizardView wizard;
     private double pendingManipulationScale = 1;
+    private string? appliedPaletteKey;
+    private bool highContrastEventSubscribed;
 
-    public AppShell(AppShellViewModel viewModel)
+    public event Action<ElementTheme, PaletteVariant>? AppearanceChanged;
+
+    public ElementTheme CurrentTheme { get; private set; } = ElementTheme.Default;
+
+    public PaletteVariant CurrentPalette { get; private set; } = AppearancePaletteService.BuiltIn[0].Palette.Light;
+
+    public AppShell(AppShellViewModel viewModel, TimeProvider timeProvider)
     {
         ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        this.timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
         InitializeComponent();
         transport = new TransportControl(ViewModel.Transport);
         wizard = new FirstRunWizardView(ViewModel);
@@ -33,8 +51,22 @@ public sealed partial class AppShell : UserControl
         WizardHost.Content = wizard;
         TransportHost.Content = transport;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        ViewModel.Settings.SettingsApplied += OnSettingsApplied;
+        ViewModel.Settings.RerunSetupRequested += OnRerunSetupRequested;
         displayTimer.Tick += OnDisplayTick;
+        appearanceTimer.Tick += OnAppearanceTick;
         displayTimer.Start();
+        appearanceTimer.Start();
+        uiSettings.ColorValuesChanged += OnWindowsColorsChanged;
+        try
+        {
+            accessibilitySettings.HighContrastChanged += OnHighContrastChanged;
+            highContrastEventSubscribed = true;
+        }
+        catch (COMException exception) when ((uint)exception.HResult == 0x80070490)
+        {
+            // Some unpackaged Windows builds do not expose this event; the appearance timer still observes the state.
+        }
         Unloaded += OnUnloaded;
         Refresh();
     }
@@ -53,7 +85,42 @@ public sealed partial class AppShell : UserControl
         }
     }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) => Refresh();
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(AppShellViewModel.IsSetupComplete) or nameof(AppShellViewModel.SelectedDestination))
+        {
+            Refresh();
+        }
+    }
+
+    private void OnSettingsApplied(AppSettings settings)
+    {
+        NavigationColumn.Width = new GridLength(settings.NavigationWidth);
+        UpdateInterfaceScale(settings.IconScale, ViewportRoot.ActualWidth, ViewportRoot.ActualHeight);
+        ApplyAppearance(settings);
+    }
+
+    private async void OnRerunSetupRequested()
+    {
+        try
+        {
+            await ViewModel.Wizard.LoadAsync();
+            wizard.Restart();
+            ViewModel.IsSetupComplete = false;
+        }
+        catch (Exception exception)
+        {
+            ViewModel.Settings.SaveStatus = $"Setup wizard could not open: {exception.Message}";
+        }
+    }
+
+    private void OnAppearanceTick(object? sender, object e) => ApplyAppearance(ViewModel.Settings.Current);
+
+    private void OnWindowsColorsChanged(UISettings sender, object args) =>
+        _ = DispatcherQueue.TryEnqueue(() => ApplyAppearance(ViewModel.Settings.Current));
+
+    private void OnHighContrastChanged(AccessibilitySettings sender, object args) =>
+        _ = DispatcherQueue.TryEnqueue(() => ApplyAppearance(ViewModel.Settings.Current));
 
     private async void OnDisplayTick(object? sender, object e)
     {
@@ -67,8 +134,17 @@ public sealed partial class AppShell : UserControl
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
         displayTimer.Stop();
+        appearanceTimer.Stop();
         displayTimer.Tick -= OnDisplayTick;
+        appearanceTimer.Tick -= OnAppearanceTick;
+        uiSettings.ColorValuesChanged -= OnWindowsColorsChanged;
+        if (highContrastEventSubscribed)
+        {
+            accessibilitySettings.HighContrastChanged -= OnHighContrastChanged;
+        }
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        ViewModel.Settings.SettingsApplied -= OnSettingsApplied;
+        ViewModel.Settings.RerunSetupRequested -= OnRerunSetupRequested;
         wizard.SetupCompleted -= OnSetupCompleted;
         Unloaded -= OnUnloaded;
     }
@@ -85,7 +161,7 @@ public sealed partial class AppShell : UserControl
         FontSize = 14;
         NavigationColumn.Width = new GridLength(settings.NavigationWidth);
         UpdateInterfaceScale(settings.IconScale, ViewportRoot.ActualWidth, ViewportRoot.ActualHeight);
-        RequestedTheme = ResolveTheme(settings);
+        ApplyAppearance(settings);
 
         PageHost.Content = ViewModel.SelectedDestination switch
         {
@@ -167,30 +243,49 @@ public sealed partial class AppShell : UserControl
             return;
         }
 
-        await ViewModel.Settings.SaveAsync(ViewModel.Settings.Current with { IconScale = normalized });
-        Refresh();
+        _ = await ViewModel.Settings.SaveAsync(ViewModel.Settings.Current with { IconScale = normalized });
     }
 
     private static bool IsControlDown() =>
         InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control)
             .HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down);
 
-    private static ElementTheme ResolveTheme(AppSettings settings)
+    public void ApplyCurrentAppearance() => ApplyAppearance(ViewModel.Settings.Current);
+
+    private void ApplyAppearance(AppSettings settings)
     {
-        if (settings.AppearanceMode == AppearanceMode.Scheduled)
+        bool windowsDark = uiSettings.GetColorValue(UIColorType.Background) is { R: < 128, G: < 128, B: < 128 };
+        bool dark = AppearanceRuntime.ResolveDark(
+            settings.AppearanceMode,
+            TimeOnly.FromDateTime(timeProvider.GetLocalNow().DateTime),
+            windowsDark,
+            settings.ScheduledLightStart,
+            settings.ScheduledDarkStart);
+        AppearancePaletteOption palette = ViewModel.Settings.ResolvePalette(settings.SelectedPaletteId);
+        PaletteVariant variant = dark ? palette.Palette.Dark : palette.Palette.Light;
+
+        if (accessibilitySettings.HighContrast)
         {
-            TimeOnly now = TimeOnly.FromDateTime(DateTime.Now);
-            bool dark = settings.ScheduledDarkStart > settings.ScheduledLightStart
-                ? now >= settings.ScheduledDarkStart || now < settings.ScheduledLightStart
-                : now >= settings.ScheduledDarkStart && now < settings.ScheduledLightStart;
-            return dark ? ElementTheme.Dark : ElementTheme.Light;
+            RequestedTheme = ElementTheme.Default;
+            CurrentTheme = ElementTheme.Default;
+            CurrentPalette = variant;
+            appliedPaletteKey = null;
+            AppearanceChanged?.Invoke(CurrentTheme, CurrentPalette);
+            return;
         }
 
-        return settings.AppearanceMode switch
+        ElementTheme theme = dark ? ElementTheme.Dark : ElementTheme.Light;
+        bool paletteChanged = !string.Equals(appliedPaletteKey, $"{palette.Key}:{dark}", StringComparison.Ordinal);
+        AppearanceRuntime.ApplyResources(Resources, variant);
+        if (paletteChanged && RequestedTheme == theme)
         {
-            AppearanceMode.Light => ElementTheme.Light,
-            AppearanceMode.Dark => ElementTheme.Dark,
-            _ => ElementTheme.Default,
-        };
+            RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
+        }
+
+        RequestedTheme = theme;
+        CurrentTheme = theme;
+        CurrentPalette = variant;
+        appliedPaletteKey = $"{palette.Key}:{dark}";
+        AppearanceChanged?.Invoke(theme, variant);
     }
 }

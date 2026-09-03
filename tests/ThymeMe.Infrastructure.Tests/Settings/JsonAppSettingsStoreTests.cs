@@ -35,6 +35,10 @@ public sealed class JsonAppSettingsStoreTests : IDisposable
             WindowWidth = 1440,
             WindowHeight = 900,
             WindowMaximized = true,
+            PaletteContrastAcknowledgements = new Dictionary<string, string>
+            {
+                ["custom:01992ef0-36c4-7582-8e50-b55c2dbf8120"] = "palette-signature",
+            },
             StreamCategoryDefaults = new Dictionary<Guid, Guid[]>
             {
                 [Guid.Parse("01992ef0-36c4-7582-8e50-b55c2dbf8121")] =
@@ -54,7 +58,9 @@ public sealed class JsonAppSettingsStoreTests : IDisposable
         {
             StreamCategoryDefaults = actual.StreamCategoryDefaults,
             StreamProjectDefaults = actual.StreamProjectDefaults,
+            PaletteContrastAcknowledgements = actual.PaletteContrastAcknowledgements,
         }, actual);
+        Assert.Equal(expected.PaletteContrastAcknowledgements, actual.PaletteContrastAcknowledgements);
         KeyValuePair<Guid, Guid[]> categoryDefault = Assert.Single(actual.StreamCategoryDefaults);
         Assert.Equal(Assert.Single(expected.StreamCategoryDefaults).Value, categoryDefault.Value);
         Assert.Equal(expected.StreamCategoryDefaults.Keys, actual.StreamCategoryDefaults.Keys);

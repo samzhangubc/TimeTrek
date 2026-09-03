@@ -1,6 +1,9 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using ThymeMe.Application.Settings;
+using ThymeMe.Domain.Appearance;
+using ThymeMe.Presentation.WinUI.Appearance;
 using ThymeMe.Presentation.WinUI.Shell;
 using Windows.Graphics;
 
@@ -13,10 +16,12 @@ public sealed partial class MainWindow : Window
     private bool closeAllowed;
     private RectInt32 restoredBounds;
     private bool isMaximized;
+    private readonly AppShell shell;
 
     public MainWindow(
         AppShellViewModel viewModel,
         IAppSettingsStore settingsStore,
+        TimeProvider timeProvider,
         Func<ValueTask<bool>> requestClose)
     {
         ArgumentNullException.ThrowIfNull(viewModel);
@@ -48,7 +53,10 @@ public sealed partial class MainWindow : Window
             }
         }
 
-        ShellHost.Content = new AppShell(viewModel);
+        shell = new AppShell(viewModel, timeProvider);
+        shell.AppearanceChanged += OnAppearanceChanged;
+        ShellHost.Content = shell;
+        shell.ApplyCurrentAppearance();
     }
 
     private RectInt32 GetRestoredBounds(AppSettings settings)
@@ -81,6 +89,28 @@ public sealed partial class MainWindow : Window
     {
         closeAllowed = true;
         Close();
+    }
+
+    private void OnAppearanceChanged(ElementTheme theme, PaletteVariant palette)
+    {
+        AppTitleBar.RequestedTheme = theme;
+        if (theme == ElementTheme.Default)
+        {
+            WindowRoot.Background = null;
+            AppWindow.TitleBar.ButtonBackgroundColor = null;
+            AppWindow.TitleBar.ButtonForegroundColor = null;
+            AppWindow.TitleBar.ButtonHoverBackgroundColor = null;
+            AppWindow.TitleBar.ButtonHoverForegroundColor = null;
+            return;
+        }
+
+        Windows.UI.Color canvas = AppearanceRuntime.Parse(palette.Canvas);
+        Windows.UI.Color surface = AppearanceRuntime.Parse(palette.Surface);
+        WindowRoot.Background = new SolidColorBrush(canvas);
+        AppWindow.TitleBar.ButtonBackgroundColor = canvas;
+        AppWindow.TitleBar.ButtonForegroundColor = AppearanceRuntime.HighestContrast(canvas);
+        AppWindow.TitleBar.ButtonHoverBackgroundColor = surface;
+        AppWindow.TitleBar.ButtonHoverForegroundColor = AppearanceRuntime.HighestContrast(surface);
     }
 
     private async void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)

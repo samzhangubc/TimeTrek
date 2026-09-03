@@ -4,6 +4,7 @@
     <Project Path="src/ThymeMe.Application/ThymeMe.Application.csproj" />
     <Project Path="src/ThymeMe.Domain/ThymeMe.Domain.csproj" />
     <Project Path="src/ThymeMe.Infrastructure/ThymeMe.Infrastructure.csproj" />
+    <Project Path="src/ThymeMe.Launcher/ThymeMe.Launcher.csproj" />
     <Project Path="src/ThymeMe.Platform.Windows/ThymeMe.Platform.Windows.csproj" />
     <Project Path="src/ThymeMe.Presentation.WinUI/ThymeMe.Presentation.WinUI.csproj" />
   </Folder>

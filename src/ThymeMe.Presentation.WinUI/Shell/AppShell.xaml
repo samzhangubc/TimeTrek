@@ -24,7 +24,7 @@
           HorizontalContentAlignment="Stretch"
           VerticalContentAlignment="Stretch" />
 
-      <Grid x:Name="MainRoot" Visibility="Collapsed">
+      <Grid x:Name="MainRoot" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed">
         <Grid.ColumnDefinitions><ColumnDefinition x:Name="NavigationColumn" Width="64" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
         <Border Grid.Column="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
           <Grid Padding="8,12"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>

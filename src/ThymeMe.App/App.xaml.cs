@@ -27,6 +27,7 @@ public partial class App : Microsoft.UI.Xaml.Application
         "An unhandled UI exception terminated Thyme-Me.");
 
     private readonly IHost host;
+    private static string? isolatedTestDataDirectory;
     private MainWindow? window;
     private ITrayService? trayService;
 
@@ -68,6 +69,7 @@ public partial class App : Microsoft.UI.Xaml.Application
             window = new MainWindow(
                 viewModel,
                 host.Services.GetRequiredService<ThymeMe.Application.Settings.IAppSettingsStore>(),
+                host.Services.GetRequiredService<TimeProvider>(),
                 OnCloseRequestedAsync);
             window.Closed += OnWindowClosed;
             window.Activate();
@@ -81,6 +83,7 @@ public partial class App : Microsoft.UI.Xaml.Application
         {
             ILogger<App> logger = host.Services.GetRequiredService<ILogger<App>>();
             LogStartupFailure(logger, exception);
+            WriteIsolatedStartupFailure(exception);
             Exit();
         }
     }
@@ -127,6 +130,25 @@ public partial class App : Microsoft.UI.Xaml.Application
 
     private static string GetApplicationDataDirectory()
     {
+        string? testDirectory = Environment.GetEnvironmentVariable("THYMEME_TEST_DATA_DIRECTORY");
+        if (string.Equals(Environment.GetEnvironmentVariable("THYMEME_TEST_MODE"), "1", StringComparison.Ordinal) &&
+            !string.IsNullOrWhiteSpace(testDirectory))
+        {
+            string allowedRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "ThymeMe.Tests"));
+            string requested = Path.GetFullPath(testDirectory);
+            string allowedPrefix = allowedRoot.EndsWith(Path.DirectorySeparatorChar)
+                ? allowedRoot
+                : allowedRoot + Path.DirectorySeparatorChar;
+            if (!requested.StartsWith(allowedPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("The isolated test profile must be below the ThymeMe.Tests temporary directory.");
+            }
+
+            Directory.CreateDirectory(requested);
+            isolatedTestDataDirectory = requested;
+            return requested;
+        }
+
         try
         {
             return ApplicationData.Current.LocalFolder.Path;
@@ -137,6 +159,23 @@ public partial class App : Microsoft.UI.Xaml.Application
             string directory = Path.Combine(localApplicationData, "thymeme");
             Directory.CreateDirectory(directory);
             return directory;
+        }
+    }
+
+    private static void WriteIsolatedStartupFailure(Exception exception)
+    {
+        if (isolatedTestDataDirectory is null)
+        {
+            return;
+        }
+
+        try
+        {
+            File.WriteAllText(Path.Combine(isolatedTestDataDirectory, "startup-error.txt"), exception.ToString());
+        }
+        catch
+        {
+            // The original startup failure remains authoritative.
         }
     }
 

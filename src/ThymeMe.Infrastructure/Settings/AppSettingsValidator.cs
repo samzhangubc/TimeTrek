@@ -6,7 +6,11 @@ internal static class AppSettingsValidator
 {
     public static AppSettings Validate(AppSettings settings)
     {
-        if (settings.DefaultSessionMinutes is < 1 or > 10080 ||
+        if (settings.SelectedPaletteId is null ||
+            settings.PaletteContrastAcknowledgements is null ||
+            settings.StreamCategoryDefaults is null ||
+            settings.StreamProjectDefaults is null ||
+            settings.DefaultSessionMinutes is < 1 or > 10080 ||
             settings.PomodoroWorkMinutes is < 1 or > 1440 ||
             settings.PomodoroBreakMinutes is < 1 or > 1440 ||
             settings.PomodoroBufferMinutes is < 1 or > 60 ||
@@ -21,7 +25,9 @@ internal static class AppSettingsValidator
             settings.StreamCategoryDefaults.Count > 1000 ||
             settings.StreamProjectDefaults.Count > 1000 ||
             settings.StreamCategoryDefaults.Values.Any(ids => ids.Length > 64) ||
-            settings.SelectedPaletteId.Length is 0 or > 200)
+            settings.SelectedPaletteId.Length is 0 or > 200 ||
+            settings.PaletteContrastAcknowledgements.Count > 64 ||
+            settings.PaletteContrastAcknowledgements.Any(item => item.Key.Length is 0 or > 200 || item.Value.Length is 0 or > 512))
         {
             throw new SettingsStoreException("The settings file contains an out-of-range value.");
         }

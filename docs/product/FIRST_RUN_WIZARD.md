@@ -55,7 +55,7 @@ The exact example Category/Project names will be finalized with onboarding copy.
 
 ### 3.4 Appearance
 
-Ask for Light, Dark, Follow Windows, or Scheduled appearance. Include live preset previews and direct custom light/dark `#RRGGBB` entry. A custom palette that fails the contrast threshold may be saved only after an explicit warning acknowledgement. If Scheduled is selected, show editable defaults of light at 07:00 and dark at 19:00.
+Ask for Light, Dark, Follow Windows, or Scheduled appearance. Include live preset previews and direct custom light/dark `#RRGGBB` entry. A custom palette that fails the contrast threshold may be saved only after an explicit warning acknowledgement. If Scheduled is selected, show editable defaults of light at 07:00 and dark at 19:00. Finishing serializes the operation, disables the Finish button while work is active, validates every numeric field, applies startup registration safely, persists the selected palette, and opens Home only after durable settings save succeeds.
 
 Accessibility behavior follows Windows automatically rather than adding a separate accessibility questionnaire.
 

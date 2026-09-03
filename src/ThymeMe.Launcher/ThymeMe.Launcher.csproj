@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>ThymeMe.Launcher</RootNamespace>
+    <AssemblyName>thymeme</AssemblyName>
+    <Platforms>x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationIcon>..\ThymeMe.App\Assets\AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+</Project>
