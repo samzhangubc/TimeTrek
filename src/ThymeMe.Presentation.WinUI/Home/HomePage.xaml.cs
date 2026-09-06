@@ -337,7 +337,8 @@ public sealed partial class HomePage : UserControl
 
     private void OnSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        bool narrow = e.NewSize.Width < 980;
+        bool narrow = e.NewSize.Width < 1320;
+        HeaderActions.Orientation = e.NewSize.Width < 560 ? Orientation.Vertical : Orientation.Horizontal;
         if (narrow)
         {
             HeaderGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);

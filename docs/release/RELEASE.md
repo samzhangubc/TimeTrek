@@ -2,7 +2,7 @@
 
 | Item | Verified state |
 | --- | --- |
-| Status | v1.0.3 release baseline |
+| Status | v1.0.4 release baseline |
 | Last verified | 2026-09-06 |
 | Repository | `samzhangubc/Thyme-Me` |
 | Default branch | `main` |
@@ -72,12 +72,12 @@ gh attestation verify Thyme-Me-<version>-win-x64-portable.zip --repo samzhangubc
 
 Windows 11 x64 is supported without an SLA. Windows 10 22H2 x64 is a
 technical-compatibility target only, with no promise of Windows 10-specific fixes.
-ARM64 and x86 artifacts are not published for 1.0.3. A compatibility claim requires
+ARM64 and x86 artifacts are not published for 1.0.4. A compatibility claim requires
 a clean-machine launch and rendering smoke test; compilation alone is insufficient.
 
 ## Updates
 
-Version 1.0.3 uses manual updates from GitHub Releases. The application must not
+Version 1.0.4 uses manual updates from GitHub Releases. The application must not
 claim that automatic updating is configured. A future updater may check stable
 GitHub Releases and verify the archive checksum and GitHub attestation, but it must
 not replace running files or interrupt an active Session. Public-trust code signing

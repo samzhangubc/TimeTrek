@@ -4,7 +4,7 @@ Thyme-Me includes or is built with third-party software. Each component
 remains governed by its own terms. The release SBOM is the authoritative inventory
 for the exact artifact; this file records the principal redistributed families.
 
-| Component family | Version in 1.0.3 | License |
+| Component family | Version in 1.0.4 | License |
 | --- | --- | --- |
 | .NET runtime and Microsoft.Extensions | 10.0.11 | MIT |
 | Entity Framework Core and Microsoft.Data.Sqlite | 10.0.11 | MIT |

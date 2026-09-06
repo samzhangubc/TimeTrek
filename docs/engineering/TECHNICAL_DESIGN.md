@@ -25,7 +25,7 @@ Implementation may proceed in verified increments, but every non-Calendar requir
 - **Language/runtime:** C# 14 on .NET 10 LTS, using the latest supported .NET 10 servicing release available to the build.
 - **Desktop UI:** WinUI 3 on the latest compatible stable Windows App SDK. Preview or experimental SDK channels are prohibited in release builds.
 - **Application model:** WinUI desktop application that can run unpackaged; MSIX project support remains for development and a future signed installer.
-- **Distribution:** an intentionally unsigned, self-contained x64 portable ZIP distributed through GitHub Releases. ARM64 and x86 packages are not part of the 1.0.3 release.
+- **Distribution:** an intentionally unsigned, self-contained x64 portable ZIP distributed through GitHub Releases. ARM64 and x86 packages are not part of the 1.0.4 release.
 - **Minimum target:** the package remains technically installable from Windows 10 version 1809, build 17763, so Windows 10 22H2 can be compatibility-tested. Windows 11 x64 is the supported platform without an SLA. Thyme-Me does not use APIs newer than the declared minimum without capability checks and a working fallback.
 - **Hosting/composition:** .NET Generic Host and the built-in dependency-injection, configuration, and logging abstractions.
 - **Presentation pattern:** MVVM. `CommunityToolkit.Mvvm` may provide observable-property and command plumbing; it must not contain domain behavior.
@@ -183,7 +183,7 @@ Exact remaining copy, icon glyphs, and palette triplets are visual assets/polish
 Update behavior is exposed through an `IUpdateService`; no page or view model calls GitHub or package-deployment APIs directly.
 
 - Git tags and stable GitHub Releases remain the release authority.
-- Version 1.0.3 uses manual updates. The inactive update adapter reports that automatic updating is not configured instead of claiming the current version is up to date.
+- Version 1.0.4 uses manual updates. The inactive update adapter reports that automatic updating is not configured instead of claiming the current version is up to date.
 - The release archive is intentionally unsigned. Its root contains only `thymeme.exe`, `LICENSE.txt`, `NOTICE.txt`, and `files`; the launcher resolves only `files\app\thymeme.exe`. The workflow publicly exposes the ZIP and `LICENSE` beside GitHub-generated source archives, publishes the ZIP's SHA-256 in release notes, attests the ZIP, bundles the SPDX SBOM/third-party notices/provenance below `files`, retains standalone evidence as an Actions artifact, and plainly warns about Unknown publisher and SmartScreen.
 - A future update adapter may check public release metadata over HTTPS, ignore prereleases, compare semantic versions, and select the matching x64 portable artifact.
 - Before any future automatic download or replacement, verify the published SHA-256 checksum and GitHub artifact attestation. Never replace executable files in process, and defer update actions while timing or completion state is active/pending.

@@ -47,9 +47,9 @@
                 <Grid ColumnSpacing="8">
                   <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                   <TextBlock Text="{Binding Name}" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
-                  <Button Grid.Column="1" Content="⋯" Tag="{Binding}" Click="OnStreamSettings" AutomationProperties.Name="Stream settings" ToolTipService.ToolTip="Rename, color, budget, and archive" />
+                  <Button Grid.Column="1" Content="⋯" Width="32" MinWidth="32" Padding="0" Tag="{Binding}" Click="OnStreamSettings" AutomationProperties.Name="Stream settings" ToolTipService.ToolTip="Rename, color, budget, and archive" />
                 </Grid>
-                <TextBlock Text="{Binding TimerText}" FontFamily="Consolas" FontSize="24" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" AutomationProperties.Name="Stream time" />
+                <TextBlock Text="{Binding TimerText}" FontFamily="Consolas" FontSize="22" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" AutomationProperties.Name="Stream time" />
                 <Button Content="Start Timer" HorizontalAlignment="Stretch" Tag="{Binding}" Click="OnStartTimer" ToolTipService.ToolTip="Choose a duration and start this Stream." />
                 <StackPanel Spacing="4">
                   <TextBlock Text="Categories" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
@@ -60,16 +60,15 @@
                   <ComboBox ItemsSource="{Binding ProjectOptions}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding SelectedProjectId, Mode=TwoWay}" Tag="{Binding}" PlaceholderText="No Project" SelectionChanged="OnProjectChanged" HorizontalAlignment="Stretch" />
                 </StackPanel>
                 <StackPanel Spacing="6">
-                  <Grid><TextBlock Text="Total" /><TextBlock Text="{Binding Total}" HorizontalAlignment="Right" /></Grid>
-                  <Grid><TextBlock Text="Today" /><TextBlock Text="{Binding Today}" HorizontalAlignment="Right" /></Grid>
-                  <Grid><TextBlock Text="This Week" /><TextBlock Text="{Binding ThisWeek}" HorizontalAlignment="Right" /></Grid>
+                  <Grid ColumnSpacing="6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Total" /><TextBlock Grid.Column="1" Text="{Binding Total}" FontFamily="Consolas" FontSize="12" /></Grid>
+                  <Grid ColumnSpacing="6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="Today" /><TextBlock Grid.Column="1" Text="{Binding Today}" FontFamily="Consolas" FontSize="12" /></Grid>
+                  <Grid ColumnSpacing="6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="This Week" /><TextBlock Grid.Column="1" Text="{Binding ThisWeek}" FontFamily="Consolas" FontSize="12" /></Grid>
                   <TextBlock Text="{Binding BudgetProgressText}" TextWrapping="Wrap" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                 </StackPanel>
-                <Grid ColumnSpacing="8">
-                  <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <StackPanel Spacing="6">
                   <Button Content="Add Session" Tag="{Binding Id}" Click="OnAddSession" HorizontalAlignment="Stretch" />
-                  <Button Grid.Column="1" Content="Adjust Time" Tag="{Binding Id}" Click="OnAdjust" HorizontalAlignment="Stretch" />
-                </Grid>
+                  <Button Content="Adjust Time" Tag="{Binding Id}" Click="OnAdjust" HorizontalAlignment="Stretch" />
+                </StackPanel>
               </StackPanel>
             </Grid>
           </Border>
