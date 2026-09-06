@@ -6,7 +6,7 @@ namespace ThymeMe.Launcher;
 
 internal static class Program
 {
-    private const string PayloadRelativePath = @"app\thymeme.exe";
+    private const string PayloadRelativePath = @"files\app\thymeme.exe";
 
     [STAThread]
     private static int Main()

@@ -7,7 +7,7 @@ your activity to a Thyme-Me server.
 [Download the latest release](https://github.com/samzhangubc/Thyme-Me/releases/latest)
 
 > [!WARNING]
-> The current 1.0.2 release is intentionally unsigned. Windows may show **Unknown publisher**
+> The current 1.0.3 release is intentionally unsigned. Windows may show **Unknown publisher**
 > or a Microsoft Defender SmartScreen warning. Download only from this repository's
 > Releases page, verify the published SHA-256 checksum or GitHub attestation, and
 > do not run a copy from an untrusted source.
@@ -27,7 +27,7 @@ your activity to a Thyme-Me server.
 
 Thyme-Me stores its working data locally in your Windows application-data area.
 It does not include telemetry, advertising, accounts, or cloud sync in version
-1.0.2. Use **Settings → Data → Create backup** before moving computers or making
+1.0.3. Use **Settings → Data → Create backup** before moving computers or making
 major changes.
 
 ## Install and run
@@ -37,7 +37,7 @@ Thyme-Me supports Windows 11 on x64 PCs without a support SLA. Windows 10
 provided.
 
 1. Open [GitHub Releases](https://github.com/samzhangubc/Thyme-Me/releases) and
-   download `Thyme-Me-1.0.2-win-x64-portable.zip`.
+   download `Thyme-Me-1.0.3-win-x64-portable.zip`.
 2. Extract the entire ZIP to a writable folder. Do not run the executable from
    inside the compressed archive.
 3. Open the extracted folder and run `thymeme.exe`.
@@ -51,9 +51,9 @@ libraries beside the app. It does not require Developer Mode, administrator
 access, a certificate installation, or a system-wide .NET installation.
 
 Releases built from the current source use `Thyme-Me-<version>-win-x64-portable.zip`.
-After extraction, the root contains only `thymeme.exe` plus the `app`, `legal`, and
-`metadata` folders. Launch the root `thymeme.exe`; supporting runtime files stay
-under `app`, and the ZIP's checksum is printed in its GitHub Release notes. The
+After extraction, the root contains `thymeme.exe`, `LICENSE.txt`, `NOTICE.txt`, and
+the `files` folder. Launch the root `thymeme.exe`; all supporting runtime and
+metadata files stay under `files`, and the ZIP's checksum is printed in its GitHub Release notes. The
 historical v1.0.1 legacy filenames remain documented in its archived release notes.
 
 To uninstall, close Thyme-Me from its notification-area menu and delete the
@@ -65,14 +65,14 @@ folder does not automatically remove Thyme-Me's separate local application data.
 From PowerShell in the folder containing the download:
 
 ```powershell
-Get-FileHash .\Thyme-Me-1.0.2-win-x64-portable.zip -Algorithm SHA256
+Get-FileHash .\Thyme-Me-1.0.3-win-x64-portable.zip -Algorithm SHA256
 ```
 
 Compare the result with the SHA-256 printed in the same GitHub Release notes. If you use the
 GitHub CLI, you can also verify which repository and workflow produced the archive:
 
 ```powershell
-gh attestation verify .\Thyme-Me-1.0.2-win-x64-portable.zip --repo samzhangubc/Thyme-Me
+gh attestation verify .\Thyme-Me-1.0.3-win-x64-portable.zip --repo samzhangubc/Thyme-Me
 ```
 
 An attestation proves build provenance; it is not a malware guarantee or a Windows
@@ -91,7 +91,7 @@ prompt. Durable local data is treated as the recovery authority.
 
 ## Updates and support
 
-Version 1.0.2 uses manual updates. Check the
+Version 1.0.3 uses manual updates. Check the
 [Releases page](https://github.com/samzhangubc/Thyme-Me/releases) for newer stable
 versions; the in-app automatic updater is not configured yet.
 
@@ -108,7 +108,7 @@ the user's own Google account and storage quota. The intended experience is
 explicit opt-in, a standard Google consent screen, clear last-sync/error status,
 manual disconnect, encrypted transport, bounded retries, and conflict-safe local
 recovery—without a Thyme-Me-hosted account or paid Thyme-Me server. This feature is
-only a development plan: version 1.0.2 contains no Google login or cloud-sync code.
+only a development plan: version 1.0.3 contains no Google login or cloud-sync code.
 
 ## License and notices
 

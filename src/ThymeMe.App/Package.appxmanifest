@@ -11,7 +11,7 @@
   <Identity
     Name="44533134-32C0-4B95-8A54-31D9F7CABBE9"
     Publisher="CN=ThymeMeDevelopment"
-    Version="1.0.2.0" />
+    Version="1.0.3.0" />
 
   <mp:PhoneIdentity PhoneProductId="44533134-32C0-4B95-8A54-31D9F7CABBE9" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

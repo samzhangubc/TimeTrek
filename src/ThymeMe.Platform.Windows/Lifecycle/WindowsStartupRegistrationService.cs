@@ -66,7 +66,8 @@ public sealed class WindowsStartupRegistrationService : IStartupRegistrationServ
         string directory = Path.GetDirectoryName(executable)!;
         if (string.Equals(Path.GetFileName(directory), "app", StringComparison.OrdinalIgnoreCase))
         {
-            string launcher = Path.Combine(Path.GetDirectoryName(directory)!, "thymeme.exe");
+            string filesDirectory = Path.GetDirectoryName(directory)!;
+            string launcher = Path.Combine(Path.GetDirectoryName(filesDirectory)!, "thymeme.exe");
             if (File.Exists(launcher))
             {
                 return launcher;

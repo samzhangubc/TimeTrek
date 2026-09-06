@@ -2,8 +2,8 @@
 
 | Item | Verified state |
 | --- | --- |
-| Status | v1.0.2 release baseline |
-| Last verified | 2026-09-02 |
+| Status | v1.0.3 release baseline |
+| Last verified | 2026-09-06 |
 | Repository | `samzhangubc/Thyme-Me` |
 | Default branch | `main` |
 | Public channel | GitHub Releases |
@@ -12,12 +12,12 @@
 
 Thyme-Me is distributed as a self-contained Windows x64 portable ZIP from GitHub
 Releases. The historical v1.0.1 artifact predates the rename and contains
-`TimeTrek.App.exe`; v1.0.2 and later source contains one root entry point named
-`thymeme.exe`, while the installed and
-public product name is Thyme-Me. The root launcher starts the fixed
-`app\thymeme.exe` payload and forwards command-line arguments. The .NET runtime and
-Windows App SDK files live under `app`, notices under `legal`, and provenance,
-unsigned-build disclosure, and SBOM under `metadata`. It does not install a
+`TimeTrek.App.exe`; current source contains one root entry point named
+`thymeme.exe`, while the installed and public product name is Thyme-Me. The root
+launcher starts the fixed `files\app\thymeme.exe` payload and forwards command-line
+arguments. `LICENSE.txt` and `NOTICE.txt` remain readable at the extracted root;
+all runtime, library, third-party notice, provenance, unsigned-build disclosure,
+and SBOM files live below `files`. It does not install a
 system-wide runtime or require Developer Mode. Users extract the complete archive
 to a writable folder and launch the executable in place.
 
@@ -38,18 +38,21 @@ key, certificate, or production secret is required.
 
 ```text
 thymeme.exe
-app/
-legal/
-metadata/
+LICENSE.txt
+NOTICE.txt
+files/
 ```
 
-The extracted root has exactly one regular file. The `app`, `legal`, and
-`metadata` directory names are a release contract used by the launcher, startup
+The extracted root has exactly those three files and one directory. The payload
+is under `files/app`, while supporting legal and metadata files remain below
+`files`. These paths are a release contract used by the launcher, startup
 registration, package validation, and documentation.
 
 ## Public artifacts
 
 - `Thyme-Me-<version>-win-x64-portable.zip`
+- `LICENSE`
+- GitHub-generated source-code archives
 - SHA-256 for that ZIP in the GitHub Release notes
 
 The SBOM, unsigned-build disclosure, license, notices, and provenance are bundled
@@ -69,12 +72,12 @@ gh attestation verify Thyme-Me-<version>-win-x64-portable.zip --repo samzhangubc
 
 Windows 11 x64 is supported without an SLA. Windows 10 22H2 x64 is a
 technical-compatibility target only, with no promise of Windows 10-specific fixes.
-ARM64 and x86 artifacts are not published for 1.0.2. A compatibility claim requires
+ARM64 and x86 artifacts are not published for 1.0.3. A compatibility claim requires
 a clean-machine launch and rendering smoke test; compilation alone is insufficient.
 
 ## Updates
 
-Version 1.0.2 uses manual updates from GitHub Releases. The application must not
+Version 1.0.3 uses manual updates from GitHub Releases. The application must not
 claim that automatic updating is configured. A future updater may check stable
 GitHub Releases and verify the archive checksum and GitHub attestation, but it must
 not replace running files or interrupt an active Session. Public-trust code signing

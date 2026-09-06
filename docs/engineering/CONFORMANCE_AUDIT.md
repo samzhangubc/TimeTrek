@@ -9,7 +9,7 @@ adjacent UI/settings/release contracts that could regress with those changes.
 
 | Design area | Result | Implementation evidence |
 | --- | --- | --- |
-| Portable navigation | Conformant | The ZIP root is validated to contain only `thymeme.exe` plus `app`, `legal`, and `metadata`; `src/ThymeMe.Launcher` resolves only `app\thymeme.exe`. |
+| Portable navigation | Conformant | The ZIP root is validated to contain only `thymeme.exe`, `LICENSE.txt`, `NOTICE.txt`, and `files`; `src/ThymeMe.Launcher` resolves only `files\app\thymeme.exe`. |
 | Release links and startup | Conformant | Unpackaged startup registration targets the root launcher; application assets remain relative to the nested application base directory; the release workflow uploads only the ZIP publicly. |
 | Home and whole-interface zoom | Conformant in code | The scaled root is sized to the inverse viewport, Home streams retain both scroll axes, headers reflow, and the transport has wide, two-column, and compact layouts. |
 | Large-window bottom bar | Conformant in code | Shell, page host, and transport hosts stretch to the scaled viewport width; the transport outer grid and border stretch without a fixed content width. |

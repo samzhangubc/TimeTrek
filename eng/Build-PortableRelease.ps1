@@ -19,9 +19,10 @@ $buildRoot = Join-Path $outputRoot 'build'
 $payloadDirectory = Join-Path $buildRoot 'app-publish'
 $launcherDirectory = Join-Path $buildRoot 'launcher-publish'
 $portableDirectory = Join-Path $outputRoot 'portable'
-$appDirectory = Join-Path $portableDirectory 'app'
-$legalDirectory = Join-Path $portableDirectory 'legal'
-$metadataDirectory = Join-Path $portableDirectory 'metadata'
+$filesDirectory = Join-Path $portableDirectory 'files'
+$appDirectory = Join-Path $filesDirectory 'app'
+$legalDirectory = Join-Path $filesDirectory 'legal'
+$metadataDirectory = Join-Path $filesDirectory 'metadata'
 New-Item -ItemType Directory -Path $payloadDirectory,$launcherDirectory,$appDirectory,$legalDirectory,$metadataDirectory | Out-Null
 
 dotnet tool restore
@@ -58,8 +59,8 @@ if (-not (Test-Path -LiteralPath $launcherPath -PathType Leaf)) {
 
 Copy-Item -Path (Join-Path $payloadDirectory '*') -Destination $appDirectory -Recurse
 Copy-Item -LiteralPath $launcherPath -Destination (Join-Path $portableDirectory 'thymeme.exe')
-Copy-Item -LiteralPath (Join-Path $repositoryRoot 'LICENSE') -Destination (Join-Path $legalDirectory 'LICENSE.txt')
-Copy-Item -LiteralPath (Join-Path $repositoryRoot 'docs\legal\NOTICE') -Destination (Join-Path $legalDirectory 'NOTICE.txt')
+Copy-Item -LiteralPath (Join-Path $repositoryRoot 'LICENSE') -Destination (Join-Path $portableDirectory 'LICENSE.txt')
+Copy-Item -LiteralPath (Join-Path $repositoryRoot 'docs\legal\NOTICE') -Destination (Join-Path $portableDirectory 'NOTICE.txt')
 Copy-Item -LiteralPath (Join-Path $repositoryRoot 'docs\legal\THIRD_PARTY_NOTICES.md') -Destination $legalDirectory
 Copy-Item -LiteralPath (Join-Path $repositoryRoot 'docs\legal\PROVENANCE.json') -Destination $metadataDirectory
 
@@ -96,13 +97,13 @@ $runtimeEvidence = Get-ChildItem -LiteralPath $appDirectory -File |
     Where-Object Name -Match '^(coreclr|hostfxr|Microsoft\.WindowsAppRuntime|Microsoft\.UI\.Xaml).*\.dll$'
 if (-not $runtimeEvidence) { throw 'Portable payload is not self-contained.' }
 
-$rootFiles = @(Get-ChildItem -LiteralPath $portableDirectory -File)
-if ($rootFiles.Count -ne 1 -or $rootFiles[0].Name -cne 'thymeme.exe') {
-    throw 'The extracted portable root must contain exactly one regular file named thymeme.exe.'
+$rootFiles = @(Get-ChildItem -LiteralPath $portableDirectory -File | Sort-Object Name | Select-Object -ExpandProperty Name)
+if (($rootFiles -join ',') -cne 'LICENSE.txt,NOTICE.txt,thymeme.exe') {
+    throw "Unexpected portable root files: $($rootFiles -join ', ')"
 }
 
 $rootDirectories = @(Get-ChildItem -LiteralPath $portableDirectory -Directory | Sort-Object Name | Select-Object -ExpandProperty Name)
-if (($rootDirectories -join ',') -cne 'app,legal,metadata') {
+if (($rootDirectories -join ',') -cne 'files') {
     throw "Unexpected portable root directories: $($rootDirectories -join ', ')"
 }
 
